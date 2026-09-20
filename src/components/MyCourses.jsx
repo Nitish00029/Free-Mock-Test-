@@ -5,84 +5,19 @@ const MyCourses = () => {
   const [search, setSearch] = useState("");
 
   const tests = [
-    {
-      id: 2,
-      title: "Bihar All Exam Mock Tests",
-      button: "Start",
-      link: "/bihar-exam"
-    },
-    {
-      id: 1,
-      title: "Daily Current Affairs",
-      button: "Start",
-      link: "/daily-current-affairs"
-    },
-    {
-      id: 4,
-      title: "Current Affairs 2026",
-      button: "Start",
-      link: "/current-affairs-2026"
-    },
-    {
-      id: 8,
-      title: "SSC CHSL PYQ",
-      button: "Start",
-      link: "/bssc"
-    },
-    {
-      id: 9,
-      title: "SSC CGL PYQ",
-      button: "Start",
-      link: "/bssc"
-    },
-    {
-      id: 10,
-      title: "SSC MTS PYQ",
-      button: "Start",
-      link: "/bssc"
-    },
-    {
-      id: 11,
-      title: "NEET 10YEAR+ PYQ",
-      button: "Start",
-      link: "/bssc"
-    },
-    {
-      id: 12,
-      title: "UPSC 10 YEAR+ PYQ",
-      button: "Start",
-      link: "/bssc"
-    },
-    {
-      id: 5,
-      title: "RRB Group D 10 year + PYQ",
-      button: "Start",
-      link: "/group-d"
-    },
-    {
-      id: 6,
-      title: "SSC GD 10 year + PYQ Hindi",
-      button: "Start",
-      link: "/ssc-gd-hindi"
-    },
-    {
-      id: 6,
-      title: "SSC GD 10 year + PYQ English",
-      button: "Start",
-      link: "/ssc-gd"
-    },
-    {
-      id: 3,
-      title: "BSEB 10th + 12th Class all Mock Tests",
-      button: "Start",
-      link: "/bseb-10-12"
-    },
-    {
-      id: 7,
-      title: "CBSE 10th + 12th Class all Mock Tests",
-      button: "Start",
-      link: "/cbse-10-12"
-    }
+    { id: 2, title: "Bihar All Exam Mock Tests", button: "Start", link: "/bihar-exam" },
+    { id: 1, title: "Daily Current Affairs", button: "Start", link: "/daily-current-affairs" },
+    { id: 4, title: "Current Affairs 2026", button: "Start", link: "/current-affairs-2026" },
+    { id: 8, title: "SSC CHSL PYQ", button: "Start", link: "/sscchsl" },
+    { id: 9, title: "SSC CGL PYQ", button: "Start", link: "/ssccgl" },
+    { id: 10, title: "SSC MTS PYQ", button: "Start", link: "/sscmts" },
+    { id: 11, title: "NEET 10YEAR+ PYQ", button: "Start", link: "/neet" },
+    { id: 12, title: "UPSC 10 YEAR+ PYQ", button: "Start", link: "/upsc" },
+    { id: 5, title: "RRB Group D 10 year + PYQ", button: "Start", link: "/group-d" },
+    { id: 6, title: "SSC GD 10 year + PYQ Hindi", button: "Start", link: "/ssc-gd-hindi" },
+    { id: 6, title: "SSC GD 10 year + PYQ English", button: "Start", link: "/ssc-gd" },
+    { id: 3, title: "BSEB 10th + 12th Class all Mock Tests", button: "Start", link: "/bseb-10-12" },
+    { id: 7, title: "CBSE 10th + 12th Class all Mock Tests", button: "Start", link: "/cbse-10-12" }
   ];
 
   const filteredTests = tests.filter((test) =>
@@ -120,33 +55,14 @@ const MyCourses = () => {
               className="search-input"
             />
             {search && (
-              <button
-                onClick={() => setSearch("")}
-                className="clear-btn"
-              >
+              <button onClick={() => setSearch("")} className="clear-btn">
                 ✕
               </button>
             )}
           </div>
         </div>
 
-        {/* Stats Bar */}
-        <div className="stats-bar">
-          <div className="stat-item">
-            <span className="stat-number">{filteredTests.length}</span>
-            <span className="stat-label">Tests Found</span>
-          </div>
-          <div className="stat-divider"></div>
-          <div className="stat-item">
-            <span className="stat-number">{tests.length}</span>
-            <span className="stat-label">Total Tests</span>
-          </div>
-          <div className="stat-divider"></div>
-          <div className="stat-item">
-            <span className="stat-number">⭐ 4.8</span>
-            <span className="stat-label">Avg Rating</span>
-          </div>
-        </div>
+      
 
         {/* Cards Grid */}
         <div className="courses-grid">
@@ -180,10 +96,7 @@ const MyCourses = () => {
             <p className="empty-text">
               We couldn't find any mock tests matching your search.
             </p>
-            <button
-              onClick={() => setSearch("")}
-              className="empty-btn"
-            >
+            <button onClick={() => setSearch("")} className="empty-btn">
               Clear Search
             </button>
           </div>
@@ -340,7 +253,7 @@ const MyCourses = () => {
           color: #1a3a5c;
         }
 
-        /* Stats Bar */
+        /* Stats Bar - Divider styles removed */
         .stats-bar {
           display: flex;
           align-items: center;
@@ -367,12 +280,6 @@ const MyCourses = () => {
         .stat-label {
           font-size: 0.8rem;
           color: #94a3b8;
-        }
-
-        .stat-divider {
-          width: 2px;
-          height: 35px;
-          background: #e8f0fe;
         }
 
         /* Grid */
@@ -608,10 +515,6 @@ const MyCourses = () => {
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
-          }
-
-          .stat-divider {
-            display: none;
           }
 
           .stat-item {
