@@ -12,6 +12,10 @@ const Home = () => {
     navigate('/my-courses');
   };
 
+  const handleBSEBClick = () => {
+    navigate('/bseb-10-12');
+  };
+
   return (
     <div className="home-page">
       <div className="home-container">
@@ -44,6 +48,9 @@ const Home = () => {
               <button className="btn-secondary" onClick={handleDailyAffairsClick}>
                 Daily Affairs
               </button>
+              <button className="btn-bseb" onClick={handleBSEBClick}>
+                📚 BSEB 10 & 12 Mock Test
+              </button>
             </div>
             <div className="hero-stats">
               <div className="stat">
@@ -62,12 +69,20 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="hero-visual">
-            <div className="floating-element el1">📚</div>
-            <div className="floating-element el2">🏆</div>
-            <div className="floating-element el3">⭐</div>
-            <div className="floating-element el4">🎯</div>
-            <div className="hero-circle"></div>
+         
+        </div>
+
+        {/* BSEB Featured Banner Section */}
+        <div className="bseb-banner" onClick={handleBSEBClick}>
+          <div className="bseb-banner-content">
+            <div className="bseb-icon">📚</div>
+            <div className="bseb-text">
+              <h3>BSEB 10th & 12th Class All Mock Tests</h3>
+              <p>Free practice tests for Bihar Board students - Start now!</p>
+            </div>
+            <button className="bseb-banner-btn">
+              Start Free Practice →
+            </button>
           </div>
         </div>
 
@@ -90,6 +105,8 @@ const Home = () => {
                 <option>UPSC</option>
                 <option>Bihar Police</option>
                 <option>SSC GD</option>
+                <option>BSEB 10th</option>
+                <option>BSEB 12th</option>
               </select>
               <select className="filter-select">
                 <option>All Levels</option>
@@ -266,6 +283,9 @@ const Home = () => {
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
               </button>
+              <button className="cta-bseb" onClick={handleBSEBClick}>
+                📚 BSEB 10 & 12 Mock Test
+              </button>
               <button className="cta-secondary" onClick={handleDailyAffairsClick}>
                 Explore Daily Affairs
               </button>
@@ -421,72 +441,112 @@ const Home = () => {
           transform: translateY(-3px);
         }
 
-        .hero-stats {
+        /* NEW: BSEB Button in Hero */
+        .btn-bseb {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 30px;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          border: none;
+          border-radius: 50px;
+          color: white;
+          font-size: 1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .btn-bseb:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 30px rgba(34, 197, 94, 0.6);
+          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        }
+
+        /* NEW: BSEB Featured Banner */
+        .bseb-banner {
+          background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+          border: 2px solid #22c55e;
+          border-radius: 20px;
+          padding: 25px 30px;
+          margin-bottom: 30px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .bseb-banner::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+          transition: left 0.5s ease;
+        }
+
+        .bseb-banner:hover::before {
+          left: 100%;
+        }
+
+        .bseb-banner:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 12px 40px rgba(34, 197, 94, 0.2);
+          border-color: #16a34a;
+        }
+
+        .bseb-banner-content {
           display: flex;
           align-items: center;
-          gap: 30px;
-        }
-
-        .stat {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .stat-number {
-          font-size: 1.8rem;
-          font-weight: 800;
-          color: #93c5fd;
-        }
-
-        .stat-label {
-          font-size: 0.85rem;
-          opacity: 0.7;
-        }
-
-        .stat-divider {
-          width: 2px;
-          height: 40px;
-          background: rgba(255,255,255,0.2);
-        }
-
-        /* Hero Visual */
-        .hero-visual {
+          gap: 20px;
+          flex-wrap: wrap;
           position: relative;
           z-index: 2;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          height: 300px;
         }
 
-        .hero-circle {
-          width: 200px;
-          height: 200px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-          border: 2px solid rgba(255,255,255,0.1);
-          animation: spin 20s linear infinite;
+        .bseb-icon {
+          font-size: 3rem;
+          flex-shrink: 0;
         }
 
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        .bseb-text {
+          flex: 1;
+          min-width: 200px;
         }
 
-        .floating-element {
-          position: absolute;
-          font-size: 2.5rem;
-          animation: float 6s ease-in-out infinite;
+        .bseb-text h3 {
+          font-size: 1.3rem;
+          color: #166534;
+          margin-bottom: 5px;
+          font-weight: 800;
         }
 
-        .el1 { top: 10%; left: 10%; animation-delay: 0s; }
-        .el2 { top: 10%; right: 10%; animation-delay: 1s; }
-        .el3 { bottom: 10%; left: 15%; animation-delay: 2s; }
-        .el4 { bottom: 10%; right: 15%; animation-delay: 3s; }
+        .bseb-text p {
+          color: #15803d;
+          font-size: 0.95rem;
+          margin: 0;
+        }
 
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-15px) scale(1.1); }
+        .bseb-banner-btn {
+          padding: 12px 30px;
+          background: #22c55e;
+          color: white;
+          border: none;
+          border-radius: 50px;
+          font-size: 0.95rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+        }
+
+        .bseb-banner-btn:hover {
+          background: #16a34a;
+          transform: scale(1.05);
+          box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
         }
 
         /* Search Section */
@@ -869,6 +929,29 @@ const Home = () => {
           box-shadow: 0 8px 30px rgba(0,0,0,0.2);
         }
 
+        /* NEW: CTA BSEB Button */
+        .cta-bseb {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 14px 30px;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          border: none;
+          border-radius: 50px;
+          color: white;
+          font-size: 1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .cta-bseb:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 30px rgba(34, 197, 94, 0.6);
+          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        }
+
         .cta-secondary {
           padding: 14px 30px;
           background: transparent;
@@ -926,6 +1009,15 @@ const Home = () => {
             font-size: 2.2rem;
           }
 
+          .bseb-banner-content {
+            flex-direction: column;
+            text-align: center;
+          }
+
+          .bseb-banner-btn {
+            width: 100%;
+          }
+
           .search-box {
             flex-direction: column;
             align-items: stretch;
@@ -970,7 +1062,7 @@ const Home = () => {
             align-items: center;
           }
 
-          .cta-primary, .cta-secondary {
+          .cta-primary, .cta-secondary, .cta-bseb {
             width: 100%;
             max-width: 300px;
             justify-content: center;
@@ -1000,7 +1092,7 @@ const Home = () => {
             align-items: center;
           }
 
-          .btn-primary, .btn-secondary {
+          .btn-primary, .btn-secondary, .btn-bseb {
             width: 100%;
             max-width: 280px;
             justify-content: center;
