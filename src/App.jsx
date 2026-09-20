@@ -53,6 +53,11 @@ import B12Physic from "./components/B12physic";
 import B12Political from "./components/B12plotical";
 import B12Psychology from "./components/B12psychology";
 import B12Sociology from "./components/B12sociology";
+import SSCMTS from "./components/sscmts";
+import SSCCGL from "./components/ssccgl";
+import SSCCHSL from "./components/sscchsl";
+import UPSC from "./components/upsc";
+import NEET from "./components/neet";
 
 function App() {
   return (
@@ -85,6 +90,11 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/my-courses" element={<MyCourses />} />
+            <Route path="/sscmts" element={<SSCMTS />} />
+      <Route path="/ssccgl" element={<SSCCGL />} />
+      <Route path="/sscchsl" element={<SSCCHSL />} />
+      <Route path="/upsc" element={<UPSC />} />
+      <Route path="/neet" element={<NEET />} />
 
             {/* Competitive Exams */}
             <Route path="/bihar-daroga" element={<BiharDaroga />} />
