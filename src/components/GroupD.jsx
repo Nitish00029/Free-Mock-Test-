@@ -1,283 +1,11560 @@
 // RRBGroupDMockTest.jsx
 import React, { useState, useEffect } from "react";
+import { InlineMath } from "react-katex";
+import "katex/dist/katex.min.css";
 
-// --- Hindi Question Banks ---
+// =====================================================
+// MATH + LINE BREAK RENDERER
+// =====================================================
+function renderInlineMath(text) {
+  if (text === null || text === undefined) return null;
 
-// Mathematics (25 questions) - Hindi
-const mathQuestions = [
-  { question: "25 + 37 क्या है?", options: ["52", "62", "72", "82"], answer: "62" },
-  { question: "15 × 6 क्या है?", options: ["80", "85", "90", "95"], answer: "90" },
-  { question: "144 का वर्गमूल क्या है?", options: ["10", "11", "12", "13"], answer: "12" },
-  { question: "100 ÷ 4 क्या है?", options: ["20", "25", "30", "35"], answer: "25" },
-  { question: "3⁴ क्या है?", options: ["27", "54", "81", "108"], answer: "81" },
-  { question: "7 × 8 क्या है?", options: ["48", "54", "56", "64"], answer: "56" },
-  { question: "45 + 56 क्या है?", options: ["99", "100", "101", "102"], answer: "101" },
-  { question: "12 × 12 क्या है?", options: ["124", "134", "144", "154"], answer: "144" },
-  { question: "π (पाई) का अनुमानित मान क्या है?", options: ["3.14", "3.41", "3.13", "3.11"], answer: "3.14" },
-  { question: "1/2 + 1/2 क्या है?", options: ["1/4", "1/2", "1", "2"], answer: "1" },
-  { question: "5! (फैक्टोरियल) क्या है?", options: ["20", "60", "120", "240"], answer: "120" },
-  { question: "200 का 25% क्या है?", options: ["25", "50", "75", "100"], answer: "50" },
-  { question: "5, 10, 15 का औसत क्या है?", options: ["8", "10", "12", "15"], answer: "10" },
-  { question: "18 × 5 क्या है?", options: ["80", "85", "90", "95"], answer: "90" },
-  { question: "144 ÷ 12 क्या है?", options: ["10", "11", "12", "13"], answer: "12" },
-  { question: "2⁶ क्या है?", options: ["32", "48", "64", "72"], answer: "64" },
-  { question: "9 × 9 क्या है?", options: ["71", "81", "91", "99"], answer: "81" },
-  { question: "150 + 250 क्या है?", options: ["300", "350", "400", "450"], answer: "400" },
-  { question: "500 का 20% क्या है?", options: ["50", "80", "100", "120"], answer: "100" },
-  { question: "12 और 18 का लघुत्तम समापवर्त्य (LCM) क्या है?", options: ["24", "36", "48", "72"], answer: "36" },
-  { question: "11 × 11 क्या है?", options: ["111", "121", "131", "141"], answer: "121" },
-  { question: "72 ÷ 8 क्या है?", options: ["7", "8", "9", "10"], answer: "9" },
-  { question: "300 का 30% क्या है?", options: ["60", "70", "80", "90"], answer: "90" },
-  { question: "24 और 36 का महत्तम समापवर्तक (HCF) क्या है?", options: ["6", "8", "10", "12"], answer: "12" },
-  { question: "0.5 × 0.5 क्या है?", options: ["0.25", "0.5", "0.75", "1.0"], answer: "0.25" },
-];
+  const regex = /(\$[^\$]+\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\])/g;
+  const parts = String(text).split(regex);
 
-// Reasoning (30 questions) - Hindi
-const reasoningQuestions = [
-  { question: "विषम को खोजें: 2, 4, 6, 9", options: ["2", "4", "6", "9"], answer: "9" },
-  { question: "यदि 'APPLE' को 'BQQMF' लिखा जाता है, तो 'MANGO' को क्या लिखा जाएगा?", options: ["NBOF", "NBPH", "NBOH", "NBOI"], answer: "NBOH" },
-  { question: "अगली संख्या ज्ञात करें: 2, 6, 12, 20, ?", options: ["28", "30", "32", "34"], answer: "30" },
-  { question: "कौन सा शब्द भिन्न है? सेब, आम, गाजर, केला", options: ["सेब", "आम", "गाजर", "केला"], answer: "गाजर" },
-  { question: "अगला अक्षर क्या होगा: A, C, E, G, ?", options: ["H", "I", "J", "K"], answer: "I" },
-  { question: "यदि 2=5, 3=10, 4=17, तो 5=?", options: ["22", "24", "26", "28"], answer: "26" },
-  { question: "लुप्त संख्या ज्ञात करें: 2, 5, 10, 17, ?", options: ["24", "25", "26", "27"], answer: "26" },
-  { question: "विषम शब्द चुनें: मेज, कुर्सी, स्टूल, किताब", options: ["मेज", "कुर्सी", "स्टूल", "किताब"], answer: "किताब" },
-  { question: "यदि 'PEN' को 'QFO' लिखा जाता है, तो 'BOOK' को क्या लिखा जाएगा?", options: ["CPPL", "CQPL", "CPQL", "CQOL"], answer: "CPPL" },
-  { question: "अगली संख्या क्या है: 1, 4, 9, 16, ?", options: ["20", "22", "25", "30"], answer: "25" },
-  { question: "विषम को खोजें: कार, बस, बाइक, हवाई जहाज", options: ["कार", "बस", "बाइक", "हवाई जहाज"], answer: "हवाई जहाज" },
-  { question: "यदि 'A' = 1, 'B' = 2, तो 'Z' = ?", options: ["24", "25", "26", "27"], answer: "26" },
-  { question: "अगला क्या आएगा: 3, 8, 13, 18, ?", options: ["21", "22", "23", "24"], answer: "23" },
-  { question: "विषम संख्या चुनें: 3, 6, 9, 12, 15", options: ["3", "6", "9", "12", "15"], answer: "12" },
-  { question: "यदि 'CAT' को 'DBU' लिखा जाता है, तो 'DOG' को क्या लिखा जाएगा?", options: ["EPH", "EPI", "EQH", "EPG"], answer: "EPH" },
-  { question: "अगला क्या आएगा: Z, X, V, T, ?", options: ["R", "S", "Q", "P"], answer: "R" },
-  { question: "लुप्त संख्या ज्ञात करें: 7, 14, 28, 56, ?", options: ["84", "96", "102", "112"], answer: "112" },
-  { question: "विषम शब्द चुनें: पेन, पेंसिल, रबर, किताब, मेज", options: ["पेन", "पेंसिल", "रबर", "किताब", "मेज"], answer: "मेज" },
-  { question: "यदि 3=7, 4=13, 5=21, तो 6=?", options: ["27", "29", "31", "33"], answer: "31" },
-  { question: "अगली संख्या क्या है: 2, 3, 5, 7, 11, ?", options: ["12", "13", "14", "15"], answer: "13" },
-  { question: "विषम को खोजें: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100", options: ["25", "36", "49", "64"], answer: "64" },
-  { question: "यदि 'BALL' को 'CBNM' लिखा जाता है, तो 'GOAL' को क्या लिखा जाएगा?", options: ["HPBM", "HPBN", "HPBO", "HPBL"], answer: "HPBM" },
-  { question: "अगला क्या आएगा: 2, 4, 8, 16, 32, ?", options: ["48", "56", "64", "72"], answer: "64" },
-  { question: "लुप्त संख्या ज्ञात करें: 9, 16, 25, 36, ?", options: ["49", "50", "52", "54"], answer: "49" },
-  { question: "विषम शब्द चुनें: पृथ्वी, मंगल, बृहस्पति, सूर्य, शुक्र", options: ["पृथ्वी", "मंगल", "बृहस्पति", "सूर्य", "शुक्र"], answer: "सूर्य" },
-  { question: "यदि 'A' = 1, 'B' = 2, तो 'M' = ?", options: ["11", "12", "13", "14"], answer: "13" },
-  { question: "अगला क्या आएगा: 1, 3, 6, 10, 15, ?", options: ["18", "20", "21", "22"], answer: "21" },
-  { question: "विषम को खोजें: 2, 5, 10, 17, 26, 37, 50, 65, 82, 101", options: ["26", "37", "50", "65"], answer: "50" },
-  { question: "यदि 'TIGER' को 'UJHFS' लिखा जाता है, तो 'LION' को क्या लिखा जाएगा?", options: ["MJPO", "MJPP", "MKPO", "MJPN"], answer: "MJPO" },
-  { question: "अगली संख्या क्या है: 0, 1, 1, 2, 3, 5, 8, 13, ?", options: ["18", "20", "21", "22"], answer: "21" },
-];
+  return parts.map((part, index) => {
+    if (!part) return null;
 
-// Science (25 questions) - Hindi
-const scienceQuestions = [
-  { question: "पानी का रासायनिक सूत्र क्या है?", options: ["H2O", "CO2", "NaCl", "HCl"], answer: "H2O" },
-  { question: "किस ग्रह को 'लाल ग्रह' कहा जाता है?", options: ["शुक्र", "मंगल", "बृहस्पति", "शनि"], answer: "मंगल" },
-  { question: "मानव शरीर का सबसे बड़ा अंग कौन सा है?", options: ["यकृत", "हृदय", "त्वचा", "मस्तिष्क"], answer: "त्वचा" },
-  { question: "सोने का रासायनिक प्रतीक क्या है?", options: ["Au", "Ag", "Fe", "Cu"], answer: "Au" },
-  { question: "पौधे वातावरण से कौन सी गैस अवशोषित करते हैं?", options: ["ऑक्सीजन", "कार्बन डाइऑक्साइड", "नाइट्रोजन", "हाइड्रोजन"], answer: "कार्बन डाइऑक्साइड" },
-  { question: "सबसे कठोर प्राकृतिक पदार्थ कौन सा है?", options: ["सोना", "लोहा", "हीरा", "प्लैटिनम"], answer: "हीरा" },
-  { question: "प्रकाश की गति लगभग कितनी है?", options: ["3 × 10⁸ m/s", "3 × 10⁹ m/s", "3 × 10⁷ m/s", "3 × 10⁶ m/s"], answer: "3 × 10⁸ m/s" },
-  { question: "सामान्य नमक का रासायनिक सूत्र क्या है?", options: ["NaCl", "NaOH", "HCl", "KCl"], answer: "NaCl" },
-  { question: "मानव शरीर में कौन सा अंग रक्त पंप करता है?", options: ["मस्तिष्क", "यकृत", "हृदय", "फेफड़े"], answer: "हृदय" },
-  { question: "लोहे का रासायनिक प्रतीक क्या है?", options: ["Fe", "Ir", "In", "I"], answer: "Fe" },
-  { question: "पृथ्वी के वायुमंडल में सबसे प्रचुर गैस कौन सी है?", options: ["ऑक्सीजन", "कार्बन डाइऑक्साइड", "नाइट्रोजन", "आर्गन"], answer: "नाइट्रोजन" },
-  { question: "पानी का क्वथनांक क्या है?", options: ["90°C", "95°C", "100°C", "105°C"], answer: "100°C" },
-  { question: "मीथेन का रासायनिक सूत्र क्या है?", options: ["CH4", "C2H6", "C3H8", "C4H10"], answer: "CH4" },
-  { question: "सूर्य के सबसे निकट कौन सा ग्रह है?", options: ["शुक्र", "बुध", "मंगल", "पृथ्वी"], answer: "बुध" },
-  { question: "लाल रक्त कोशिकाओं का मुख्य कार्य क्या है?", options: ["संक्रमण से लड़ना", "ऑक्सीजन ले जाना", "रक्त का थक्का बनाना", "भोजन पचाना"], answer: "ऑक्सीजन ले जाना" },
-  { question: "चांदी का रासायनिक प्रतीक क्या है?", options: ["Si", "Ag", "Au", "Fe"], answer: "Ag" },
-  { question: "पौधों द्वारा भोजन बनाने की प्रक्रिया को क्या कहते हैं?", options: ["श्वसन", "प्रकाश संश्लेषण", "किण्वन", "पाचन"], answer: "प्रकाश संश्लेषण" },
-  { question: "हमारे सौर मंडल का सबसे बड़ा ग्रह कौन सा है?", options: ["शनि", "बृहस्पति", "नेपच्यून", "यूरेनस"], answer: "बृहस्पति" },
-  { question: "कार्बन डाइऑक्साइड का रासायनिक सूत्र क्या है?", options: ["CO", "CO2", "C2O", "C2O2"], answer: "CO2" },
-  { question: "पानी का हिमांक क्या है?", options: ["-5°C", "0°C", "5°C", "10°C"], answer: "0°C" },
-  { question: "बल की इकाई क्या है?", options: ["न्यूटन", "जूल", "वाट", "पास्कल"], answer: "न्यूटन" },
-  { question: "कौन सा विटामिन सूर्य के प्रकाश से बनता है?", options: ["विटामिन A", "विटामिन B", "विटामिन C", "विटामिन D"], answer: "विटामिन D" },
-  { question: "ऑक्सीजन का रासायनिक प्रतीक क्या है?", options: ["O", "O2", "Ox", "Om"], answer: "O" },
-  { question: "जीवित जीवों के अध्ययन को क्या कहते हैं?", options: ["भौतिकी", "जीव विज्ञान", "रसायन विज्ञान", "भूविज्ञान"], answer: "जीव विज्ञान" },
-  { question: "किस ग्रह के सबसे अधिक चंद्रमा हैं?", options: ["बृहस्पति", "शनि", "यूरेनस", "नेपच्यून"], answer: "शनि" },
-];
+    if (part.startsWith("$") && part.endsWith("$") && part.length > 2) {
+      return <InlineMath key={index} math={part.slice(1, -1)} />;
+    }
+    if (part.startsWith("\\(") && part.endsWith("\\)") && part.length > 4) {
+      return <InlineMath key={index} math={part.slice(2, -2)} />;
+    }
+    if (part.startsWith("\\[") && part.endsWith("\\]") && part.length > 4) {
+      return <InlineMath key={index} math={part.slice(2, -2)} />;
+    }
+    return <React.Fragment key={index}>{part}</React.Fragment>;
+  });
+}
 
-// Current Affairs (20 questions) - Hindi
-const currentAffairsQuestions = [
-  { question: "भारत के वर्तमान प्रधानमंत्री कौन हैं?", options: ["नरेंद्र मोदी", "राहुल गांधी", "अमित शाह", "अरविंद केजरीवाल"], answer: "नरेंद्र मोदी" },
-  { question: "भारत की राजधानी क्या है?", options: ["मुंबई", "नई दिल्ली", "कोलकाता", "चेन्नई"], answer: "नई दिल्ली" },
-  { question: "2026 में भारत के राष्ट्रपति कौन हैं?", options: ["द्रौपदी मुर्मू", "राम नाथ कोविंद", "प्रणब मुखर्जी", "एपीजे अब्दुल कलाम"], answer: "द्रौपदी मुर्मू" },
-  { question: "2023 में G20 शिखर सम्मेलन की मेजबानी किस देश ने की?", options: ["भारत", "USA", "UK", "चीन"], answer: "भारत" },
-  { question: "भारत का पहला AI-संचालित स्कूल कौन सा है?", options: ["AI Academy", "Coding School", "नालंदा AI स्कूल", "डिजिटल स्कूल"], answer: "नालंदा AI स्कूल" },
-  { question: "भारत के किस राज्य की जनसंख्या सबसे अधिक है?", options: ["उत्तर प्रदेश", "महाराष्ट्र", "बिहार", "पश्चिम बंगाल"], answer: "उत्तर प्रदेश" },
-  { question: "भारत की मुद्रा क्या है?", options: ["रुपया", "डॉलर", "पाउंड", "येन"], answer: "रुपया" },
-  { question: "दिल्ली के मुख्यमंत्री कौन हैं?", options: ["अरविंद केजरीवाल", "मनीष सिसोदिया", "अमित शाह", "राहुल गांधी"], answer: "अरविंद केजरीवाल" },
-  { question: "भारत का राष्ट्रीय खेल क्या है?", options: ["क्रिकेट", "हॉकी", "फुटबॉल", "बैडमिंटन"], answer: "हॉकी" },
-  { question: "किस नदी को 'दक्षिण की गंगा' कहा जाता है?", options: ["गोदावरी", "कृष्णा", "कावेरी", "नर्मदा"], answer: "कावेरी" },
-  { question: "ISRO का पूर्ण रूप क्या है?", options: ["भारतीय अंतरिक्ष अनुसंधान संगठन", "अंतर्राष्ट्रीय अंतरिक्ष अनुसंधान संगठन", "भारतीय अंतरिक्ष अनुसंधान कार्यालय", "अंतर्राष्ट्रीय अंतरिक्ष अनुसंधान कार्यालय"], answer: "भारतीय अंतरिक्ष अनुसंधान संगठन" },
-  { question: "किस शहर को भारत का सिलिकॉन वैली कहा जाता है?", options: ["मुंबई", "दिल्ली", "बेंगलुरु", "चेन्नई"], answer: "बेंगलुरु" },
-  { question: "भारतीय राष्ट्रीय गान किसने लिखा?", options: ["रवींद्रनाथ टैगोर", "बंकिम चंद्र चट्टोपाध्याय", "महात्मा गांधी", "सुभाष चंद्र बोस"], answer: "रवींद्रनाथ टैगोर" },
-  { question: "भारत का राष्ट्रीय पशु क्या है?", options: ["शेर", "बाघ", "हाथी", "मोर"], answer: "बाघ" },
-  { question: "किस राज्य की साक्षरता दर सबसे अधिक है?", options: ["केरल", "तमिलनाडु", "महाराष्ट्र", "गुजरात"], answer: "केरल" },
-  { question: "भारत की पहली बुलेट ट्रेन परियोजना का नाम क्या है?", options: ["बुलेट इंडिया", "हाई-स्पीड रेल", "मुंबई-अहमदाबाद", "दिल्ली-मुंबई"], answer: "मुंबई-अहमदाबाद" },
-  { question: "भारत के वर्तमान उपराष्ट्रपति कौन हैं?", options: ["जगदीप धनखड़", "वेंकैया नायडू", "हामिद अंसारी", "प्रणब मुखर्जी"], answer: "जगदीप धनखड़" },
-  { question: "भारत का राष्ट्रीय पुष्प क्या है?", options: ["कमल", "गुलाब", "सूरजमुखी", "गेंदा"], answer: "कमल" },
-  { question: "किस भारतीय राज्य में सबसे अधिक यूनेस्को विश्व धरोहर स्थल हैं?", options: ["तमिलनाडु", "उत्तर प्रदेश", "महाराष्ट्र", "राजस्थान"], answer: "राजस्थान" },
-  { question: "भारत की पहली परमाणु पनडुब्बी का नाम क्या है?", options: ["INS अरिहंत", "INS विक्रांत", "INS कलवरी", "INS चक्र"], answer: "INS अरिहंत" },
-];
+function MathText({ text }) {
+  if (text === null || text === undefined) return null;
 
-// --- English Question Banks (Translated) ---
+  const normalized = String(text)
+    .replace(/\\\(/g, "$")
+    .replace(/\\\)/g, "$")
+    .replace(/\\\[/g, "$")
+    .replace(/\\\]/g, "$");
 
-// Mathematics (25 questions) - English
-const mathQuestionsEnglish = [
-  { question: "What is 25 + 37?", options: ["52", "62", "72", "82"], answer: "62" },
-  { question: "What is 15 × 6?", options: ["80", "85", "90", "95"], answer: "90" },
-  { question: "What is the square root of 144?", options: ["10", "11", "12", "13"], answer: "12" },
-  { question: "What is 100 ÷ 4?", options: ["20", "25", "30", "35"], answer: "25" },
-  { question: "What is 3⁴?", options: ["27", "54", "81", "108"], answer: "81" },
-  { question: "What is 7 × 8?", options: ["48", "54", "56", "64"], answer: "56" },
-  { question: "What is 45 + 56?", options: ["99", "100", "101", "102"], answer: "101" },
-  { question: "What is 12 × 12?", options: ["124", "134", "144", "154"], answer: "144" },
-  { question: "What is the approximate value of π (pi)?", options: ["3.14", "3.41", "3.13", "3.11"], answer: "3.14" },
-  { question: "What is 1/2 + 1/2?", options: ["1/4", "1/2", "1", "2"], answer: "1" },
-  { question: "What is 5! (factorial)?", options: ["20", "60", "120", "240"], answer: "120" },
-  { question: "What is 25% of 200?", options: ["25", "50", "75", "100"], answer: "50" },
-  { question: "What is the average of 5, 10, 15?", options: ["8", "10", "12", "15"], answer: "10" },
-  { question: "What is 18 × 5?", options: ["80", "85", "90", "95"], answer: "90" },
-  { question: "What is 144 ÷ 12?", options: ["10", "11", "12", "13"], answer: "12" },
-  { question: "What is 2⁶?", options: ["32", "48", "64", "72"], answer: "64" },
-  { question: "What is 9 × 9?", options: ["71", "81", "91", "99"], answer: "81" },
-  { question: "What is 150 + 250?", options: ["300", "350", "400", "450"], answer: "400" },
-  { question: "What is 20% of 500?", options: ["50", "80", "100", "120"], answer: "100" },
-  { question: "What is the LCM of 12 and 18?", options: ["24", "36", "48", "72"], answer: "36" },
-  { question: "What is 11 × 11?", options: ["111", "121", "131", "141"], answer: "121" },
-  { question: "What is 72 ÷ 8?", options: ["7", "8", "9", "10"], answer: "9" },
-  { question: "What is 30% of 300?", options: ["60", "70", "80", "90"], answer: "90" },
-  { question: "What is the HCF of 24 and 36?", options: ["6", "8", "10", "12"], answer: "12" },
-  { question: "What is 0.5 × 0.5?", options: ["0.25", "0.5", "0.75", "1.0"], answer: "0.25" },
-];
+  const lines = normalized.split("\n");
 
-// Reasoning (30 questions) - English
-const reasoningQuestionsEnglish = [
-  { question: "Find the odd one out: 2, 4, 6, 9", options: ["2", "4", "6", "9"], answer: "9" },
-  { question: "If 'APPLE' is coded as 'BQQMF', what is 'MANGO' coded as?", options: ["NBOF", "NBPH", "NBOH", "NBOI"], answer: "NBOH" },
-  { question: "Find the next number: 2, 6, 12, 20, ?", options: ["28", "30", "32", "34"], answer: "30" },
-  { question: "Which word does not belong? Apple, Mango, Carrot, Banana", options: ["Apple", "Mango", "Carrot", "Banana"], answer: "Carrot" },
-  { question: "What comes next: A, C, E, G, ?", options: ["H", "I", "J", "K"], answer: "I" },
-  { question: "If 2=5, 3=10, 4=17, then 5=?", options: ["22", "24", "26", "28"], answer: "26" },
-  { question: "Find the missing number: 2, 5, 10, 17, ?", options: ["24", "25", "26", "27"], answer: "26" },
-  { question: "Choose the odd word: Table, Chair, Stool, Book", options: ["Table", "Chair", "Stool", "Book"], answer: "Book" },
-  { question: "If 'PEN' is coded as 'QFO', what is 'BOOK' coded as?", options: ["CPPL", "CQPL", "CPQL", "CQOL"], answer: "CPPL" },
-  { question: "What is the next number: 1, 4, 9, 16, ?", options: ["20", "22", "25", "30"], answer: "25" },
-  { question: "Find the odd one out: Car, Bus, Bike, Airplane", options: ["Car", "Bus", "Bike", "Airplane"], answer: "Airplane" },
-  { question: "If 'A' = 1, 'B' = 2, then 'Z' = ?", options: ["24", "25", "26", "27"], answer: "26" },
-  { question: "What comes next: 3, 8, 13, 18, ?", options: ["21", "22", "23", "24"], answer: "23" },
-  { question: "Find the odd one out: 3, 6, 9, 12, 15", options: ["3", "6", "9", "12", "15"], answer: "12" },
-  { question: "If 'CAT' is coded as 'DBU', then 'DOG' is coded as?", options: ["EPH", "EPI", "EQH", "EPG"], answer: "EPH" },
-  { question: "What comes next: Z, X, V, T, ?", options: ["R", "S", "Q", "P"], answer: "R" },
-  { question: "Find the missing number: 7, 14, 28, 56, ?", options: ["84", "96", "102", "112"], answer: "112" },
-  { question: "Choose the odd word: Pen, Pencil, Eraser, Book, Table", options: ["Pen", "Pencil", "Eraser", "Book", "Table"], answer: "Table" },
-  { question: "If 3=7, 4=13, 5=21, then 6=?", options: ["27", "29", "31", "33"], answer: "31" },
-  { question: "What is the next number: 2, 3, 5, 7, 11, ?", options: ["12", "13", "14", "15"], answer: "13" },
-  { question: "Find the odd one out: 1, 4, 9, 16, 25, 36, 49, 64, 81, 100", options: ["25", "36", "49", "64"], answer: "64" },
-  { question: "If 'BALL' is coded as 'CBNM', what is 'GOAL' coded as?", options: ["HPBM", "HPBN", "HPBO", "HPBL"], answer: "HPBM" },
-  { question: "What comes next: 2, 4, 8, 16, 32, ?", options: ["48", "56", "64", "72"], answer: "64" },
-  { question: "Find the missing number: 9, 16, 25, 36, ?", options: ["49", "50", "52", "54"], answer: "49" },
-  { question: "Choose the odd word: Earth, Mars, Jupiter, Sun, Venus", options: ["Earth", "Mars", "Jupiter", "Sun", "Venus"], answer: "Sun" },
-  { question: "If 'A' = 1, 'B' = 2, then 'M' = ?", options: ["11", "12", "13", "14"], answer: "13" },
-  { question: "What comes next: 1, 3, 6, 10, 15, ?", options: ["18", "20", "21", "22"], answer: "21" },
-  { question: "Find the odd one out: 2, 5, 10, 17, 26, 37, 50, 65, 82, 101", options: ["26", "37", "50", "65"], answer: "50" },
-  { question: "If 'TIGER' is coded as 'UJHFS', what is 'LION' coded as?", options: ["MJPO", "MJPP", "MKPO", "MJPN"], answer: "MJPO" },
-  { question: "What is the next number: 0, 1, 1, 2, 3, 5, 8, 13, ?", options: ["18", "20", "21", "22"], answer: "21" },
-];
+  return (
+    <span className="math-text">
+      {lines.map((line, index) => (
+        <React.Fragment key={index}>
+          {renderInlineMath(line)}
+          {index < lines.length - 1 && <br />}
+        </React.Fragment>
+      ))}
+    </span>
+  );
+}
 
-// Science (25 questions) - English
-const scienceQuestionsEnglish = [
-  { question: "What is the chemical symbol for water?", options: ["H2O", "CO2", "NaCl", "HCl"], answer: "H2O" },
-  { question: "Which planet is known as the Red Planet?", options: ["Venus", "Mars", "Jupiter", "Saturn"], answer: "Mars" },
-  { question: "What is the largest organ in the human body?", options: ["Liver", "Heart", "Skin", "Brain"], answer: "Skin" },
-  { question: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Fe", "Cu"], answer: "Au" },
-  { question: "Which gas do plants absorb from the atmosphere?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], answer: "Carbon Dioxide" },
-  { question: "What is the hardest natural substance?", options: ["Gold", "Iron", "Diamond", "Platinum"], answer: "Diamond" },
-  { question: "What is the speed of light approximately?", options: ["3 × 10⁸ m/s", "3 × 10⁹ m/s", "3 × 10⁷ m/s", "3 × 10⁶ m/s"], answer: "3 × 10⁸ m/s" },
-  { question: "What is the chemical formula of common salt?", options: ["NaCl", "NaOH", "HCl", "KCl"], answer: "NaCl" },
-  { question: "Which organ pumps blood in the human body?", options: ["Brain", "Liver", "Heart", "Lungs"], answer: "Heart" },
-  { question: "What is the chemical symbol for iron?", options: ["Fe", "Ir", "In", "I"], answer: "Fe" },
-  { question: "Which gas is most abundant in Earth's atmosphere?", options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"], answer: "Nitrogen" },
-  { question: "What is the boiling point of water?", options: ["90°C", "95°C", "100°C", "105°C"], answer: "100°C" },
-  { question: "What is the chemical formula for methane?", options: ["CH4", "C2H6", "C3H8", "C4H10"], answer: "CH4" },
-  { question: "Which planet is closest to the Sun?", options: ["Venus", "Mercury", "Mars", "Earth"], answer: "Mercury" },
-  { question: "What is the main function of red blood cells?", options: ["Fight infections", "Carry oxygen", "Clot blood", "Digest food"], answer: "Carry oxygen" },
-  { question: "What is the chemical symbol for silver?", options: ["Si", "Ag", "Au", "Fe"], answer: "Ag" },
-  { question: "What is the process of plants making food called?", options: ["Respiration", "Photosynthesis", "Fermentation", "Digestion"], answer: "Photosynthesis" },
-  { question: "What is the largest planet in our solar system?", options: ["Saturn", "Jupiter", "Neptune", "Uranus"], answer: "Jupiter" },
-  { question: "What is the chemical formula for carbon dioxide?", options: ["CO", "CO2", "C2O", "C2O2"], answer: "CO2" },
-  { question: "What is the freezing point of water?", options: ["-5°C", "0°C", "5°C", "10°C"], answer: "0°C" },
-  { question: "What is the unit of force?", options: ["Newton", "Joule", "Watt", "Pascal"], answer: "Newton" },
-  { question: "Which vitamin is produced by sunlight?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], answer: "Vitamin D" },
-  { question: "What is the chemical symbol for oxygen?", options: ["O", "O2", "Ox", "Om"], answer: "O" },
-  { question: "What is the study of living organisms called?", options: ["Physics", "Biology", "Chemistry", "Geology"], answer: "Biology" },
-  { question: "Which planet has the most moons?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], answer: "Saturn" },
-];
+function QuestionText({ text }) {
+  if (!text) return null;
 
-// Current Affairs (20 questions) - English
-const currentAffairsQuestionsEnglish = [
-  { question: "Who is the current Prime Minister of India?", options: ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Arvind Kejriwal"], answer: "Narendra Modi" },
-  { question: "What is the capital of India?", options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"], answer: "New Delhi" },
-  { question: "Who is the President of India in 2026?", options: ["Droupadi Murmu", "Ram Nath Kovind", "Pranab Mukherjee", "APJ Abdul Kalam"], answer: "Droupadi Murmu" },
-  { question: "Which country hosted the G20 Summit 2023?", options: ["India", "USA", "UK", "China"], answer: "India" },
-  { question: "What is the name of India's first AI-powered school?", options: ["AI Academy", "Coding School", "Nalanda AI School", "Digital School"], answer: "Nalanda AI School" },
-  { question: "Which state has the highest population in India?", options: ["Uttar Pradesh", "Maharashtra", "Bihar", "West Bengal"], answer: "Uttar Pradesh" },
-  { question: "What is the currency of India?", options: ["Rupee", "Dollar", "Pound", "Yen"], answer: "Rupee" },
-  { question: "Who is the Chief Minister of Delhi?", options: ["Arvind Kejriwal", "Manish Sisodia", "Amit Shah", "Rahul Gandhi"], answer: "Arvind Kejriwal" },
-  { question: "What is the national sport of India?", options: ["Cricket", "Hockey", "Football", "Badminton"], answer: "Hockey" },
-  { question: "Which river is known as the Ganga of the South?", options: ["Godavari", "Krishna", "Kaveri", "Narmada"], answer: "Kaveri" },
-  { question: "What is the full form of ISRO?", options: ["Indian Space Research Organisation", "International Space Research Organisation", "Indian Space Research Office", "International Space Research Office"], answer: "Indian Space Research Organisation" },
-  { question: "Which city is known as the Silicon Valley of India?", options: ["Mumbai", "Delhi", "Bangalore", "Chennai"], answer: "Bangalore" },
-  { question: "Who wrote the Indian National Anthem?", options: ["Rabindranath Tagore", "Bankim Chandra Chatterjee", "Mahatma Gandhi", "Subhash Chandra Bose"], answer: "Rabindranath Tagore" },
-  { question: "What is the national animal of India?", options: ["Lion", "Tiger", "Elephant", "Peacock"], answer: "Tiger" },
-  { question: "Which state has the highest literacy rate?", options: ["Kerala", "Tamil Nadu", "Maharashtra", "Gujarat"], answer: "Kerala" },
-  { question: "What is the name of India's first bullet train project?", options: ["Bullet India", "High-Speed Rail", "Mumbai-Ahmedabad", "Delhi-Mumbai"], answer: "Mumbai-Ahmedabad" },
-  { question: "Who is the current Vice President of India?", options: ["Jagdeep Dhankhar", "Venkaiah Naidu", "Hamid Ansari", "Pranab Mukherjee"], answer: "Jagdeep Dhankhar" },
-  { question: "What is the national flower of India?", options: ["Lotus", "Rose", "Sunflower", "Marigold"], answer: "Lotus" },
-  { question: "Which Indian state has the highest number of UNESCO World Heritage Sites?", options: ["Tamil Nadu", "Uttar Pradesh", "Maharashtra", "Rajasthan"], answer: "Rajasthan" },
-  { question: "What is the name of India's first nuclear submarine?", options: ["INS Arihant", "INS Vikrant", "INS Kalvari", "INS Chakra"], answer: "INS Arihant" },
-];
+  const marker = "Read the following passage";
+  const idx = text.indexOf(marker);
 
-// --- Helper: Get random questions from a category ---
-const getRandomQuestions = (category, count) => {
-  const shuffled = [...category].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-};
-
-// --- Build the complete question paper (100 questions) ---
-const buildQuestionPaper = (lang) => {
-  let math, reasoning, science, currentAffairs;
-  
-  if (lang === 'hi') {
-    math = mathQuestions;
-    reasoning = reasoningQuestions;
-    science = scienceQuestions;
-    currentAffairs = currentAffairsQuestions;
-  } else {
-    math = mathQuestionsEnglish;
-    reasoning = reasoningQuestionsEnglish;
-    science = scienceQuestionsEnglish;
-    currentAffairs = currentAffairsQuestionsEnglish;
+  if (idx === -1) {
+    return <MathText text={text} />;
   }
-  
-  const paper = [
-    ...getRandomQuestions(math, 25),
-    ...getRandomQuestions(reasoning, 30),
-    ...getRandomQuestions(science, 25),
-    ...getRandomQuestions(currentAffairs, 20),
-  ];
-  return paper.sort(() => Math.random() - 0.5);
+
+  const questionPart = text.slice(0, idx).trim();
+  const passagePart = text.slice(idx).trim();
+
+  return (
+    <>
+      {questionPart && (
+        <div style={{ marginBottom: "12px", fontWeight: "600" }}>
+          <MathText text={questionPart} />
+        </div>
+      )}
+      <div
+        style={{
+          background: "#fffbeb",
+          borderLeft: "4px solid #f59e0b",
+          padding: "12px 14px",
+          borderRadius: "8px",
+          fontStyle: "italic",
+          color: "#4a3f1e",
+          fontSize: "14px",
+          lineHeight: "1.8",
+          fontWeight: "400",
+        }}
+      >
+        <MathText text={passagePart} />
+      </div>
+    </>
+  );
+}
+
+// =====================================================
+// --- Hindi Question Banks ---
+// =====================================================
+
+// Mathematics (25) - Hindi
+const mathQuestionsHi = [
+{
+    question: "यदि किसी संख्या का तीन-पाँचवाँ (3/5) भाग उस संख्या के आधे से 4 अधिक है, तो वह संख्या कौन-सी है?",
+    option: [
+        "45",
+        "40",
+        "30",
+        "35"
+    ],
+    answer: "40"
+},
+{
+    question: "एक आदमी को प्रत्येक माह ₹1,890 का वेतन प्राप्त होता है। वह प्रत्येक माह अपने वेतन के 30% की बचत करता है। उसका मासिक खर्च ज्ञात कीजिए।",
+    option: [
+        "₹1,323",
+        "₹1,269",
+        "₹1,418",
+        "₹1,336"
+    ],
+    answer: "₹1,323"
+},
+{
+    question: "A और B किसी कार्य को 6 2/5 दिन में पूरा कर सकते हैं, B और C इसे 7 1/9 दिन में पूरा कर सकते हैं तथा A और C इसे 5 1/3 दिन में पूरा कर सकते हैं। यदि A, B और C मिलकर कार्य करें, तो वे उस कार्य को कितने दिनों में पूरा कर सकते हैं?",
+    option: [
+        "5 2/31",
+        "6 3/31",
+        "4 4/31",
+        "8 1/21"
+    ],
+    answer: "4 4/31"
+},
+{
+    question: "एक वस्तु को 36% और 10% की दो क्रमिक छूट के बाद ₹7,200 में बेचा जाता है। वस्तु का अंकित मूल्य (₹ में) कितना है?",
+    option: [
+        "12,500",
+        "12,561",
+        "12,596",
+        "12,594"
+    ],
+    answer: "12,500"
+},
+{
+    question: "एक कार 70 km की दूरी 60 km/hr की चाल से, फिर 80 km की दूरी 80 km/hr की चाल से और अंत में 50 km की दूरी 40 km/hr की चाल से तय करती है। पूरी यात्रा की औसत चाल कितनी है? (उत्तर को 2 दशमलव स्थानों तक पूर्णांकित करें)",
+    option: [
+        "58.54 km/hr",
+        "50.45 km/hr",
+        "65.75 km/hr",
+        "55.63 km/hr"
+    ],
+    answer: "58.54 km/hr"
+},
+{
+    question: "यदि दो संख्याओं का HCF, 12 है और उनका गुणनफल 2160 है, तो दोनों संख्याओं का LCM कितना है?",
+    option: [
+        "180",
+        "200",
+        "190",
+        "184"
+    ],
+    answer: "180"
+},
+{
+    question: "एक व्यक्ति एक खिलौने के अंकित मूल्य पर नकद भुगतान के लिए 10% की छूट देता है और फिर भी उसे 10% का लाभ होता है। उस खिलौने का क्रय मूल्य कितना है जिसका अंकित मूल्य ₹880 है?",
+    option: [
+        "₹720",
+        "₹620",
+        "₹420",
+        "₹520"
+    ],
+    answer: "₹720"
+},
+{
+    question: "P और Q मिलकर एक टंकी को 15 घंटे में पानी से भर सकते हैं। यदि P अकेले उसी टंकी को 24 घंटे में पानी से भर सकता है, तो Q अकेले उसी टंकी के एक-चौथाई भाग को कितने घंटे में पानी से भरेगा?",
+    option: [
+        "10",
+        "11",
+        "20",
+        "21"
+    ],
+    answer: "10"
+},
+{
+    question: "△ABC में, D पर BD ⟂ AC है और ∠DBC = 21° है। E, BC पर एक बिंदु इस प्रकार से है कि ∠CAE = 27° है। ∠AEB की माप ज्ञात कीजिए।",
+    option: [
+        "104°",
+        "81°",
+        "97°",
+        "96°"
+    ],
+    answer: "96°"
+},
+{
+    question: "√(144 × 49) + √(64 × 25) − √(100 × 36) को सरल करें।",
+    option: [
+        "64",
+        "48",
+        "50",
+        "32"
+    ],
+    answer: "64"
+},
+{
+    question: "60 से 70 के बीच अभाज्य संख्याओं के औसत तथा 50 से 58 के बीच 4 के गुणजों के औसत में अंतर ज्ञात कीजिए।",
+    option: [
+        "9",
+        "1",
+        "11",
+        "10"
+    ],
+    answer: "10"
+},
+{
+    question: "3.5 gm/cm³ घनत्व वाली धातु की एक गोलाकार गेंद का कुल द्रव्यमान 3.168 kg है। गेंद को ₹5.6 प्रति cm² की दर से पेंट करने का खर्च ज्ञात करें। (π = 22/7 का उपयोग कीजिए)",
+    option: [
+        "₹3,235.20",
+        "₹2,534.40",
+        "₹3,534.70",
+        "₹2,830.60"
+    ],
+    answer: "₹2,534.40"
+},
+{
+    question: "496 m और 490 m लंबी दो ट्रेनें A और B क्रमशः 12 m/s और 22 m/s की चाल से समानांतर पटरियों पर एक-दूसरे की ओर आ रही हैं। वे एक-दूसरे को कितने समय में पार करेंगी?",
+    option: [
+        "26 सेकंड",
+        "22 सेकंड",
+        "30 सेकंड",
+        "29 सेकंड"
+    ],
+    answer: "29 सेकंड"
+},
+{
+    question: "एक व्यक्ति अपनी आय का 60% बचत करता है। यदि उसका व्यय ₹560 है, तो उसकी आय (₹ में) कितनी है?",
+    option: [
+        "1,400",
+        "1,336",
+        "1,224",
+        "1,440"
+    ],
+    answer: "1,400"
+},
+{
+    question: "9 फरवरी 2023 से 23 अप्रैल 2023 तक की अवधि के लिए ₹2,000 पर 7% वार्षिक ब्याज दर से साधारण ब्याज (₹ में) ज्ञात कीजिए।",
+    option: [
+        "28",
+        "29",
+        "26",
+        "27"
+    ],
+    answer: "28"
+},
+{
+    question: "469 से 474 के बीच कितनी अभाज्य संख्याएँ हैं?",
+    option: [
+        "0",
+        "3",
+        "2",
+        "1"
+    ],
+    answer: "0"
+},
+{
+    question: "एक चुनाव में, कुल मतदाताओं में से 60% ने मतदान किया। इनमें से 75% ने उम्मीदवार A को और शेष ने उम्मीदवार B को वोट दिया। यदि उम्मीदवार B को 7500 वोट मिले, तो पंजीकृत मतदाताओं की कुल संख्या ज्ञात कीजिए।",
+    option: [
+        "45,000",
+        "60,000",
+        "50,000",
+        "40,000"
+    ],
+    answer: "50,000"
+},
+{
+    question: "आठ वर्ष पहले, अमन की आयु और रिया की आयु का अनुपात 4 : 3 था। अब से आठ वर्ष बाद, उनकी आयु का अनुपात 5 : 4 होगा। अमन की वर्तमान आयु कितनी है?",
+    option: [
+        "76 वर्ष",
+        "70 वर्ष",
+        "56 वर्ष",
+        "72 वर्ष"
+    ],
+    answer: "72 वर्ष"
+},
+{
+    question: "यदि a + 1/a = 6 है, तो a² + 1/a² का मान ज्ञात कीजिए।",
+    option: [
+        "38",
+        "36",
+        "40",
+        "34"
+    ],
+    answer: "34"
+},
+{
+    question: "एक खुदरा विक्रेता खरीदारों के लिए किसी वस्तु पर निम्नलिखित छूट स्कीम प्रदान करता है।\n\nI. 14% की दो क्रमिक छूट\nII. 22% की छूट के बाद 29% की छूट\nIII. 22% और 7% की क्रमिक छूट\nIV. 14% की छूट के बाद 6% की छूट\n\nकौन-सी स्कीम के तहत, अधिकतम विक्रय मूल्य प्राप्त होगा?",
+    option: [
+        "IV",
+        "I",
+        "II",
+        "III"
+    ],
+    answer: "IV"
+},
+{
+    question: "यदि निम्नलिखित व्यंजक का मान ज्ञात कीजिए:\n\n(2√(cosec²A − 1) / (1 + tan²A)) × (√(1 − cos²A) / (3√(1 − sin²A)))",
+    option: [
+        "2cosA/3",
+        "cosA/(2sinA)",
+        "2sinA/3",
+        "2/3"
+    ],
+    answer: "2cosA/3"
+},
+{
+    question: "किसी गोले का पृष्ठीय क्षेत्रफल 144π वर्ग इकाई है। गोले की त्रिज्या कितनी होगी?",
+    option: [
+        "6 इकाई",
+        "10 इकाई",
+        "8 इकाई",
+        "5 इकाई"
+    ],
+    answer: "6 इकाई"
+},
+{
+    question: "प्रेक्षणों 47, 71, 82, 59, 22, 43, 46, 96 और 56 का समांतर माध्य कितना है?",
+    option: [
+        "58",
+        "64",
+        "66",
+        "60"
+    ],
+    answer: "58"
+},
+{
+    question: "यदि x और 147 का माध्यानुपाती 63 है, तो x का मान ज्ञात कीजिए।",
+    option: [
+        "28",
+        "25",
+        "27",
+        "29"
+    ],
+    answer: "27"
+},
+{
+    question: "यदि 241 केले तीन बंदरों में 7/9 : 3/2 : 2/5 के अनुपात में वितरित किए गए, तो तीसरे बंदर को कितने केले मिले?",
+    option: [
+        "36",
+        "38",
+        "34",
+        "35"
+    ],
+    answer: "36"
+},
+
+{
+    question: "निम्नलिखित में से कौन-सी संख्या, 45 से विभाज्य है?",
+    option: [
+        "555555",
+        "20475",
+        "306999",
+        "25436"
+    ],
+    answer: "20475"
+},
+{
+    question: "एक व्यक्ति को 40 km की दूरी 5 घंटे में तय करनी है। यदि वह एक-चौथाई दूरी, कुल समय के एक-तिहाई समय में तय करता है, तो उसे ठीक समय पर अपने गंतव्य तक पहुंचने के लिए शेष दूरी को शेष समय में किस चाल (km/h में) से तय करनी होगी?",
+    option: [
+        "13",
+        "9",
+        "4",
+        "6"
+    ],
+    answer: "9"
+},
+{
+    question: "एक स्कूल में 8 am पर दो घंटियाँ बजती हैं। एक घंटी हर 30 मिनट के बाद बजती है और दूसरी घंटी हर 40 मिनट के बाद बजती है। यदि स्कूल 2 pm पर बंद होता है, तो दिन में कितनी बार घंटियाँ एक साथ बजती हैं?",
+    option: [
+        "3",
+        "2",
+        "4",
+        "5"
+    ],
+    answer: "4"
+},
+{
+    question: "टॉम एक नई बाइक के लिए पैसे बचा रहा है और उसके बचत खाते में ₹12,000 हैं। वह हर हफ्ते ₹1,500 और बचाने का फैसला करता है। टॉम को कुल ₹21,000 जमा करने में कितने हफ्ते लगेंगे?",
+    option: [
+        "8 सप्ताह",
+        "6 सप्ताह",
+        "5 सप्ताह",
+        "7 सप्ताह"
+    ],
+    answer: "6 सप्ताह"
+},
+{
+    question: "एक दुकानदार किसी वस्तु पर ₹x अंकित करता है और अंकित मूल्य पर 63% की छूट देता है। वह छूट के बाद 25% वैट लगाकर वस्तु को ₹481 में बेचता है। x का मान कितना है?",
+    option: [
+        "1,040",
+        "1,100",
+        "1,300",
+        "1,200"
+    ],
+    answer: "1,040"
+},
+{
+    question: "A और B की वर्तमान आयु का अनुपात 5 : 1 है। अब से पाँच वर्ष पूर्व, यह अनुपात 6 : 1 था। B की वर्तमान आयु ज्ञात कीजिए।",
+    option: [
+        "30 वर्ष",
+        "25 वर्ष",
+        "20 वर्ष",
+        "35 वर्ष"
+    ],
+    answer: "25 वर्ष"
+},
+{
+    question: "एक चुनाव में, तीन उम्मीदवार A, B और C हैं। A को 18% वोट मिले और B को 43% वोट मिले, जबकि C दूसरे स्थान पर रहा। यदि B ने 6,996 वोटों से चुनाव जीता, तो कुल वोटों की संख्या ज्ञात कीजिए।",
+    option: [
+        "1,61,230",
+        "1,57,980",
+        "1,55,545",
+        "1,74,900"
+    ],
+    answer: "1,74,900"
+},
+{
+    question: "रत्नेश की मासिक आय और व्यय का अनुपात 12 : 7 है। उसकी आय में 40% वृद्धि हुई और व्यय में 50% की वृद्धि हुई। उसकी आय और व्यय का नया अनुपात कितना है?",
+    option: [
+        "11 : 6",
+        "4 : 3",
+        "10 : 7",
+        "8 : 5"
+    ],
+    answer: "8 : 5"
+},
+{
+    question: "एक बहुभुज के सभी आंतरिक कोणों का योग 4500° है। बहुभुज में कितनी भुजाएँ होंगी?",
+    option: [
+        "26",
+        "24",
+        "25",
+        "27"
+    ],
+    answer: "27"
+},
+{
+    question: "tan⁴ θ + tan² θ को सरल कीजिए।",
+    option: [
+        "sec⁴ θ + 2sec² θ",
+        "sec⁴ θ + sec² θ",
+        "sec⁴ θ − 2sec² θ",
+        "sec⁴ θ − sec² θ"
+    ],
+    answer: "sec⁴ θ − sec² θ"
+},
+{
+    question: "₹6,200 के मूलधन पर वार्षिक रूप से संयोजित होने वाले 20% वार्षिक चक्रवृद्धि ब्याज की दर से 2 वर्षों में प्राप्त मिश्रधन ज्ञात कीजिए।",
+    option: [
+        "₹8,036",
+        "₹8,928",
+        "₹8,670",
+        "₹9,928"
+    ],
+    answer: "₹8,928"
+},
+{
+    question: "पाइप A और पाइप B मिलकर एक टंकी को 8 घंटे में भर सकते हैं। पाइप B, पाइप A से 25% अधिक कार्यक्षम है। यदि पाइप A, टंकी को 5 लीटर प्रति मिनट की दर से भरता है, तो टंकी की धारिता ज्ञात कीजिए।",
+    option: [
+        "5400 लीटर",
+        "7000 लीटर",
+        "4200 लीटर",
+        "8240 लीटर"
+    ],
+    answer: "5400 लीटर"
+},
+{
+    question: "एक कार, शहर X से शहर Y तक की यात्रा करती है, जिसमें पहले 120 km की दूरी 50 km/h की चाल से और शेष 180 km की दूरी 80 km/h की चाल से तय करती है। संपूर्ण यात्रा के लिए औसत चाल की गणना कीजिए। (अपने उत्तर को दशमलव के दो स्थानों तक पूर्णांकित कीजिए)।",
+    option: [
+        "63.52 km/h",
+        "64.52 km/h",
+        "64.12 km/h",
+        "64.92 km/h"
+    ],
+    answer: "64.52 km/h"
+},
+{
+    question: "29% और 28% की दो क्रमिक छूट के बराबर एकल छूट ज्ञात कीजिए।",
+    option: [
+        "46.03%",
+        "48.88%",
+        "47.39%",
+        "51.29%"
+    ],
+    answer: "48.88%"
+},
+{
+    question: "केशव ने एक दुकान से ₹1,120 में 52 पुस्तकें और एक अन्य दुकान से ₹915 में 47 पुस्तकें खरीदीं। उसके द्वारा भुगतान किया गया प्रति पुस्तक औसत मूल्य (₹ में, दो दशमलव स्थानों तक पूर्णांकित) ज्ञात कीजिए।",
+    option: [
+        "21.56",
+        "23.56",
+        "22.56",
+        "20.56"
+    ],
+    answer: "20.56"
+},
+{
+    question: "(x − 2)² निम्नलिखित में से किसके बराबर है?",
+    option: [
+        "x² − 4x + 2",
+        "x² − 2x + 4",
+        "x² − 4x + 4",
+        "x² + 4x + 4"
+    ],
+    answer: "x² − 4x + 4"
+},
+{
+    question: "एक दुकानदार किसी वस्तु का मूल्य ₹2,000 अंकित करता है और उस पर 10% की छूट देता है। वस्तु का विक्रय मूल्य ज्ञात कीजिए।",
+    option: [
+        "₹1,950",
+        "₹1,850",
+        "₹1,900",
+        "₹1,800"
+    ],
+    answer: "₹1,800"
+},
+{
+    question: "एक चुनाव में, 8640 लोगों या पात्र मतदाताओं में से 72% मतदाताओं ने अपना मत डाला। यदि अगले वर्ष पात्र मतदाताओं की संख्या में 8% की वृद्धि होती है, तो अगले वर्ष कुल पात्र मतदाताओं की संख्या कितनी होगी?",
+    option: [
+        "12,960",
+        "12,860",
+        "13,860",
+        "13,960"
+    ],
+    answer: "12,960"
+},
+{
+    question: "एक धात्विक बेलनाकार पाइप की बाहरी त्रिज्या 7 cm, आंतरिक त्रिज्या 5 cm और लंबाई 14 cm है। पाइप में प्रयुक्त धातु का आयतन ज्ञात कीजिए।",
+    option: [
+        "342π cm³",
+        "336π cm³",
+        "346π cm³",
+        "352π cm³"
+    ],
+    answer: "336π cm³"
+},
+{
+    question: "कोई कंपनी लाभ अर्जित करती है जिसे कंपनी के तीन साझेदारों के बीच 7 : 13 : 9 के अनुपात में वितरित किया जाता है। यदि न्यूनतम और अधिकतम शेयर का अंतर ₹58,326 है, तो कंपनी का कुल लाभ कितना है?",
+    option: [
+        "2,81,811",
+        "2,81,955",
+        "2,81,909",
+        "2,81,934"
+    ],
+    answer: "2,81,909"
+},
+{
+    question: "√2061 − √1268 + √850 − 66 का मान ज्ञात कीजिए।",
+    option: [
+        "44",
+        "46",
+        "45",
+        "47"
+    ],
+    answer: "45"
+},
+{
+    question: "एक पाइप किसी टैंक को 6 मिनट में भर सकता है, जबकि दूसरा पाइप पूरी तरह से भरे टैंक को 24 मिनट में खाली कर सकता है। यदि टैंक खाली होने पर दोनों पाइप एक साथ खोल दिए जाएँ, तो टैंक का आधा हिस्सा भरने में कितने मिनट लगेंगे?",
+    option: [
+        "4",
+        "5",
+        "8",
+        "9"
+    ],
+    answer: "4"
+},
+{
+    question: "एक समलंब की समांतर भुजाओं की लंबाइयाँ क्रमशः 20 cm और 10 cm हैं। दो असमांतर भुजाओं में से प्रत्येक की लंबाई 13 cm है। समलंब का क्षेत्रफल (cm² में) ज्ञात कीजिए।",
+    option: [
+        "140",
+        "120",
+        "180",
+        "160"
+    ],
+    answer: "180"
+},
+{
+    question: "प्रथम 14 विषम प्राकृतिक संख्याओं का औसत ज्ञात कीजिए।",
+    option: [
+        "13.5",
+        "14",
+        "15",
+        "14.5"
+    ],
+    answer: "14"
+},
+{
+    question: "यदि P = 5 : 2 और Q = 3 : 7 है, तो P और Q की तुलना कीजिए।",
+    option: [
+        "P = Q",
+        "P > Q",
+        "P = 2Q",
+        "P < Q"
+    ],
+    answer: "P > Q"
+},
+{
+    question: "एक क्रिकेटर का 7 पारियों में औसत 90 रन है। 8वीं पारी में उसने 176 रन बनाए। उसके औसत स्कोर में ______ की वृद्धि हुई। (अपने उत्तर को निकटतम पूर्णांक तक पूर्णांकित करें।)",
+    option: [
+        "20",
+        "7",
+        "11",
+        "14"
+    ],
+    answer: "11"
+},
+
+{
+    question: "दो रेखाएँ इस प्रकार खींची गई हैं कि उनके पथों को निरूपित करने वाले समीकरण: (k−4)x + 2y = 6 और 2x + y = 4 हैं। यदि रेखाओं की एक-दूसरे के समानांतर रचना की जानी है, तो k का कौन-सा मान यह सुनिश्चित करेगा?",
+    option: [
+        "8",
+        "10",
+        "7",
+        "6"
+    ],
+    answer: "8"
+},
+
+{
+    question: "₹5,500 की राशि पर साधारण ब्याज कितना होगा, यदि पहले 4 वर्षों के लिए ब्याज दर 6% वार्षिक है तथा अंतिम 2 वर्षों के लिए 5% वार्षिक है?",
+    option: [
+        "₹1,660",
+        "₹1,750",
+        "₹1,920",
+        "₹1,870"
+    ],
+    answer: "₹1,870"
+},
+
+{
+    question: "एक विक्रेता ₹12,000 में एक वॉशिंग मशीन खरीदता है। वह इसे एक खुदरा विक्रेता को 10% के लाभ पर बेचता है, और खुदरा विक्रेता इसे एक ग्राहक को 15% की हानि पर बेचता है। अंतिम विक्रय मूल्य कितना है?",
+    option: [
+        "₹11,420",
+        "₹11,220",
+        "₹11,620",
+        "₹11,000"
+    ],
+    answer: "₹11,220"
+},
+
+{
+    question: "ईंधन की कीमत तीन क्रमागत महीनों में 10%, 50% और 10% कम हो जाती है, लेकिन चौथे महीने में 45% बढ़ जाती है। चौथे महीने में ईंधन की कीमत में उसकी मूल कीमत की तुलना में कितने प्रतिशत की वृद्धि/कमी हुई? (अपने उत्तर को दशमलव के दो स्थानों तक पूर्णांकित करें।)",
+    option: [
+        "42.91% की वृद्धि",
+        "46.86% की वृद्धि",
+        "44.56% की कमी",
+        "41.28% की कमी"
+    ],
+    answer: "41.28% की कमी"
+},
+
+{
+    question: "एक वर्ग का परिमाप एक ऐसे वृत्त की त्रिज्या के आधे के बराबर है जिसका क्षेत्रफल 39424 cm² है। वर्ग का क्षेत्रफल ज्ञात कीजिए। (π = 22/7 मानिए)",
+    option: [
+        "169 cm²",
+        "196 cm²",
+        "204 cm²",
+        "135 cm²"
+    ],
+    answer: "196 cm²"
+},
+
+{
+    question: "अभिषेक अपने घर से अपनी सामान्य चाल की 3/4 चाल से चलकर अपने कार्यालय जाता है, तो उसे पहुँचने में 11 मिनट का विलंब हो जाता है। उसके द्वारा अपने घर और कार्यालय के बीच की दूरी तय करने में लगने वाला सामान्य समय कितना है?",
+    option: [
+        "32 मिनट",
+        "29 मिनट",
+        "33 मिनट",
+        "26 मिनट"
+    ],
+    answer: "33 मिनट"
+},
+
+{
+    question: "पूर्णांक 80 वाली एक परीक्षा में, B को 50 अंक मिले जबकि A को 75 अंक मिले। B के अंक A के अंकों का कितना प्रतिशत था? (उत्तर को दो दशमलव स्थानों तक पूर्णांकित करें।)",
+    option: [
+        "66.67%",
+        "93.75%",
+        "150.46%",
+        "80.33%"
+    ],
+    answer: "66.67%"
+},
+
+{
+    question: "किसी सम पंचभुज के प्रत्येक आंतरिक कोण का माप कितना होगा?",
+    option: [
+        "108°",
+        "78°",
+        "118°",
+        "128°"
+    ],
+    answer: "108°"
+},
+
+{
+    question: "₹13,403 को S, B और C के बीच इस प्रकार विभाजित किया जाता है कि यदि उनके क्रमशः ₹40, ₹83 और ₹68 काट लिए जाएँ, तो उनके पास 21:11:4 के अनुपात में धनराशि बचती है। B और C के मूल शेयरों के बीच अंतर ज्ञात कीजिए।",
+    option: [
+        "₹2,584",
+        "₹2,719",
+        "₹2,519",
+        "₹2,669"
+    ],
+    answer: "₹2,584"
+},
+
+{
+    question: "A, बिंदु X से 9:00 AM पर निकलता है और बिंदु Y पर 1:00 PM पर पहुँचता है। B, बिंदु Y से 9:00 AM पर निकलता है और बिंदु X पर 3:00 PM पर पहुँचता है। वे किस समय पर मिलेंगे?",
+    option: [
+        "10:24 AM",
+        "12:36 PM",
+        "1:24 PM",
+        "11:24 AM"
+    ],
+    answer: "11:24 AM"
+},
+
+{
+    question: "संख्या 8,33,525 निम्नलिखित में से किससे विभाज्य नहीं है?",
+    option: [
+        "35",
+        "15",
+        "25",
+        "55"
+    ],
+    answer: "15"
+},
+
+{
+    question: "एक गोल खोल का आयतन (cm³ में, 1 दशमलव स्थान तक पूर्णांकित) कितना होगा जिसका आंतरिक और बाहरी व्यास क्रमशः 10 cm और 12 cm है? (π = 22/7 लीजिए)",
+    option: [
+        "401.5",
+        "323.9",
+        "381.3",
+        "345.7"
+    ],
+    answer: "381.3"
+},
+
+{
+    question: "एक पंसारी ने अपनी वस्तुओं को क्रय मूल्य से 50% अधिक मूल्य पर अंकित किया और उन्हें X% की छूट पर बेचा। यदि उसे 35% लाभ हुआ, तो X का मान ज्ञात कीजिए।",
+    option: [
+        "11",
+        "12",
+        "10",
+        "9"
+    ],
+    answer: "10"
+},
+
+{
+    question: "निम्नलिखित व्यंजक में x का मान ज्ञात कीजिए।",
+    option: [
+        "2",
+        "1",
+        "3",
+        "4"
+    ],
+    answer: "2"
+},
+
+{
+    question: "एक पाइप किसी टंकी को 7 मिनट में भर सकता है, जबकि दूसरा पाइप पूरी तरह से भरी हुई टंकी को 56 मिनट में खाली कर सकता है। यदि टंकी खाली होने पर दोनों पाइप एक साथ खोल दिए जाएँ, तो टंकी को आधा भरने में कितने मिनट लगेंगे?",
+    option: [
+        "4",
+        "5",
+        "9",
+        "8"
+    ],
+    answer: "4"
+},
+
+{
+    question: "यदि किसी संख्या के 20% को 66 में जोड़ा जाए, तो परिणाम वही संख्या होगी। उसी संख्या का 60% कितना है?",
+    option: [
+        "59.5",
+        "79.5",
+        "49.5",
+        "69.5"
+    ],
+    answer: "49.5"
+},
+
+{
+    question: "दो संख्याओं का महत्तम समापवर्तक (HCF) ज्ञात करने के लिए निम्नलिखित में से कौन-सा मॉडल सही है?",
+    option: [
+        "घटाव मॉडल: दोनों संख्याओं को घटाएँ और उभयनिष्ठ गुणनखंड की जाँच करें।",
+        "विभाजन मॉडल: उच्चतम गुणनखंड ज्ञात करने के लिए दोनों संख्याओं को एक समान संख्या से विभाजित करें।",
+        "अभाज्य गुणनखंड मॉडल: दोनों संख्याओं का अभाज्य गुणनखंड ज्ञात करें, फिर न्यूनतम घातों वाले उभयनिष्ठ अभाज्य गुणनखंडों को गुणा करें।",
+        "जोड़ मॉडल: दो संख्याओं को जोड़ें और योग के उभयनिष्ठ गुणनखंडों की जाँच करें।"
+    ],
+    answer: "अभाज्य गुणनखंड मॉडल: दोनों संख्याओं का अभाज्य गुणनखंड ज्ञात करें, फिर न्यूनतम घातों वाले उभयनिष्ठ अभाज्य गुणनखंडों को गुणा करें।"
+},
+
+{
+    question: "रेणु और कशिश की आयु का अनुपात 9:8 है। 5 वर्ष बाद उनकी आयु का अनुपात 10:9 होगा। उनकी वर्तमान आयु के बीच का अंतर ज्ञात कीजिए।",
+    option: [
+        "6 वर्ष",
+        "4 वर्ष",
+        "7 वर्ष",
+        "5 वर्ष"
+    ],
+    answer: "5 वर्ष"
+},
+
+{
+    question: "यदि 75 और Z का तृतीयानुपाती 12 है, तो Z का मान ज्ञात कीजिए।",
+    option: [
+        "30",
+        "27",
+        "32",
+        "28"
+    ],
+    answer: "30"
+},
+
+{
+    question: "यदि 2x + 2/x = 3 है, तो x² + 1/x² का मान ज्ञात कीजिए।",
+    option: [
+        "1",
+        "1/4",
+        "1/3",
+        "1/2"
+    ],
+    answer: "1/4"
+},
+
+{
+    question: "दो पाइप, P और Q, एक टंकी को क्रमशः 30 घंटे और 40 घंटे में भर सकते हैं। यदि पाइप P को अकेले 15 घंटे के लिए खोला जाता है और फिर बंद कर दिया जाता है, जिसके बाद पाइप Q टंकी को पूरा भरता है, तो पाइप Q द्वारा भरे गए भाग के सापेक्ष पाइप P द्वारा टंकी का कितना प्रतिशत भरा गया है?",
+    option: [
+        "120%",
+        "150%",
+        "100%",
+        "50%"
+    ],
+    answer: "100%"
+},
+
+{
+    question: "एक कक्षा के 24 विद्यार्थियों की औसत आयु 17 वर्ष है। यदि शिक्षक की आयु भी शामिल कर ली जाए, तो पूरे समूह की औसत आयु 18 वर्ष हो जाती है। शिक्षक की आयु (वर्षों में) कितनी है?",
+    option: [
+        "42",
+        "43",
+        "44",
+        "45"
+    ],
+    answer: "42"
+},
+
+{
+    question: "यदि sin²x + K = 1 है, तो निम्न में से कौन-सा K के बराबर है?",
+    option: [
+        "cot²x",
+        "sec²x",
+        "tan²x",
+        "cos²x"
+    ],
+    answer: "cos²x"
+},
+
+{
+    question: "एक विक्रेता ने किसी वस्तु पर 77% की छूट दी और फिर भी उसे 49% का लाभ प्राप्त हुआ। क्रय मूल्य और अंकित मूल्य का अनुपात ज्ञात कीजिए।",
+    option: [
+        "20 : 150",
+        "23 : 149",
+        "26 : 152",
+        "25 : 154"
+    ],
+    answer: "23 : 149"
+},
+{
+    question: "एक वर्ग का क्षेत्रफल 15.21 cm² है। इस वर्ग का परिमाप (cm में) ज्ञात कीजिए।",
+    option: [
+        "13.8",
+        "15.6",
+        "12.4",
+        "16.5"
+    ],
+    answer: "15.6"
+},
+{
+    question: "एक चुनाव में, कुल मतदाताओं में से 70% मतदाताओं ने मतदान किया। इनमें से, 60% मतदाताओं ने उम्मीदवार X को, और शेष मतदाताओं ने उम्मीदवार Y को अपना मत दिया। यदि उम्मीदवार Y को 8400 मत मिले, तो पंजीकृत मतदाताओं की कुल संख्या ज्ञात कीजिए।",
+    option: [
+        "25,000",
+        "40,000",
+        "30,000",
+        "32,000"
+    ],
+    answer: "30,000"
+},
+{
+    question: "वह सबसे बड़ी संख्या ज्ञात कीजिए जिससे 1005, 244 और 1343 को विभाजित करने पर क्रमशः 5, 4 और 3 शेषफल प्राप्त होता है।",
+    option: [
+        "25",
+        "20",
+        "30",
+        "15"
+    ],
+    answer: "20"
+},
+{
+    question: "एक खुदरा विक्रेता खरीदारों को एक वस्तु पर दी गई छूट स्कीमें प्रदान करता है। निम्नलिखित में से कौन-सी स्कीम ग्राहक के लिए सबसे कम लाभदायक होगी?\ni. 34% की छूट\nii. 37% की छूट के बाद 8% की छूट\niii. 7% और 27% की क्रमिक छूटें",
+    option: [
+        "स्कीम ii",
+        "स्कीम ii और स्कीम iii दोनों",
+        "स्कीम i",
+        "स्कीम iii"
+    ],
+    answer: "स्कीम iii"
+},
+{
+    question: "P और Q मिलकर किसी टंकी को 6 घंटे में पानी से भर सकते हैं। यदि P अकेले उसी टंकी को 12 घंटे में पानी से भर सकता है, तो Q अकेले उसी टंकी के एक-चौथाई भाग को कितने घंटे में पानी से भरेगा?",
+    option: [
+        "4",
+        "6",
+        "7",
+        "3"
+    ],
+    answer: "3"
+},
+{
+    question: "एक टैंक में तीन पाइप हैं: A, B और C। पाइप A टैंक को 4 घंटे में भरता है, पाइप B इसे 6 घंटे में भरता है और पाइप C इसे 12 घंटे में खाली करता है। यदि तीनों पाइपों को बारी-बारी से 1 घंटे के लिए खोला जाए (पहले A, फिर B, फिर C), तो टैंक को भरने में कितना समय लगेगा?",
+    option: [
+        "11 घंटे",
+        "9 घंटे",
+        "10 2/3 घंटे",
+        "7 1/2 घंटे"
+    ],
+    answer: "7 1/2 घंटे"
+},
+{
+    question: "₹1,800 के मूलधन पर 10% की वार्षिक चक्रवृद्धि ब्याज की दर (वार्षिक रूप से संयोजित होने पर) से 2 वर्षों में प्राप्त मिश्रधन ज्ञात कीजिए।",
+    option: [
+        "₹2,506",
+        "₹2,178",
+        "₹2,820",
+        "₹3,118"
+    ],
+    answer: "₹2,178"
+},
+{
+    question: "√(√(24² − 16² + 2²) + √(2 × 3² + √169)) को सरल करें।",
+    option: [
+        "2",
+        "3",
+        "7",
+        "5"
+    ],
+    answer: "5"
+},
+{
+    question: "एक स्टोर घरेलू सामानों पर '5 खरीदें, 16 मुफ्त पाएँ' ऑफर दे रहा है। स्टोर द्वारा दी जा रही शुद्ध छूट (लगभग) का प्रतिशत कितना है?",
+    option: [
+        "78.42%",
+        "74.52%",
+        "74.24%",
+        "76.19%"
+    ],
+    answer: "76.19%"
+},
+{
+    question: "यदि एक गोले की त्रिज्या में 25% की वृद्धि की जाए, तो इसके पृष्ठीय क्षेत्रफल में प्रतिशत वृद्धि ज्ञात कीजिए।",
+    option: [
+        "42.36%",
+        "56.25%",
+        "50.48%",
+        "38.15%"
+    ],
+    answer: "56.25%"
+},
+{
+    question: "निम्नलिखित डेटा का बहुलक कितना है?\n55, 45, 44, 48, 42, 45, 52, 53, 42, 50, 54, 49, 52, 45, 47, 43, 45, 48",
+    option: [
+        "45",
+        "44",
+        "48",
+        "55"
+    ],
+    answer: "45"
+},
+{
+    question: "यदि 25, 29, 25, 32, 24 और x का माध्य 26 है, तो डेटा की माध्यिका कितनी है?",
+    option: [
+        "29",
+        "25",
+        "24",
+        "27"
+    ],
+    answer: "25"
+},
+{
+    question: "एक व्यक्ति अपनी आय का 50% बचत करता है। यदि उसका व्यय ₹360 है, तो उसकी आय (₹ में) कितनी है?",
+    option: [
+        "800",
+        "180",
+        "760",
+        "720"
+    ],
+    answer: "720"
+},
+{
+    question: "एक व्यक्ति अपनी यात्रा की आधी दूरी को 60 km/h की चाल से और आधी दूरी को 30 km/h की चाल से तय करता है। पूरी यात्रा के दौरान उसकी औसत चाल कितनी है?",
+    option: [
+        "45 km/h",
+        "55 km/h",
+        "50 km/h",
+        "40 km/h"
+    ],
+    answer: "40 km/h"
+},
+{
+    question: "1 घंटे तक 70 km/hr और 1/2 घंटे तक 'p' km/hr की चाल से चलने वाली एक कार की औसत चाल 58 km/hr है। p का मान ज्ञात कीजिए।",
+    option: [
+        "67.5",
+        "70",
+        "50",
+        "62.5"
+    ],
+    answer: "50"
+},
+{
+    question: "एक टोकरी में आम और संतरे मिलाकर 96 फल हैं। यदि संतरों की तुलना में आम 48 अधिक हैं, तो कुल कितने आम हैं?",
+    option: [
+        "72",
+        "64",
+        "88",
+        "96"
+    ],
+    answer: "72"
+},
+{
+    question: "9.73 × 9.73 × 9.73 + 7.27 × 7.27 × 7.27 को हल करें।\n────────────────────────────────────\n9.73 × 9.73 − 9.73 × 7.27 + 7.27 × 7.27",
+    option: [
+        "18",
+        "17",
+        "16",
+        "15"
+    ],
+    answer: "17"
+},
+{
+    question: "sec²50° − tan²50° का मान ज्ञात कीजिए।",
+    option: [
+        "2",
+        "0",
+        "1",
+        "0.5"
+    ],
+    answer: "1"
+},
+{
+    question: "38 घंटे का 2 दिन से अनुपात इनमें से किसके बराबर है?",
+    option: [
+        "12:19",
+        "19:24",
+        "22:27",
+        "21:27"
+    ],
+    answer: "19:24"
+},
+{
+    question: "यदि संख्या 2X73Y5, संख्या 11 से विभाज्य है, तो (X−Y) का मान ज्ञात कीजिए।",
+    option: [
+        "1",
+        "3",
+        "5",
+        "6"
+    ],
+    answer: "1"
+},
+{
+    question: "यदि किसी संख्या के 4/7 के 20% का 10%, 648 है, तो वह संख्या ज्ञात कीजिए।",
+    option: [
+        "57140",
+        "60230",
+        "56700",
+        "57580"
+    ],
+    answer: "56700"
+},
+{
+    question: "एक माता अपनी पुत्री से 25 वर्ष बड़ी है। 15 वर्ष बाद, माता की उम्र पुत्री की उम्र से दोगुनी हो जाएगी। पुत्री की वर्तमान उम्र ज्ञात कीजिए।",
+    option: [
+        "20 वर्ष",
+        "25 वर्ष",
+        "10 वर्ष",
+        "35 वर्ष"
+    ],
+    answer: "10 वर्ष"
+},
+{
+    question: "△ABC में, बिंदु D पर BD ⟂ AC है और ∠DBC = 65° है। BC पर एक बिंदु E इस प्रकार है कि ∠CAE = 30° है। ∠AEB की माप कितनी है?",
+    option: [
+        "53°",
+        "56°",
+        "50°",
+        "55°"
+    ],
+    answer: "55°"
+},
+{
+    question: "पूनम ने मोहिनी को एक किताब 5% की हानि पर बेची और मोहिनी ने उसे रूपशी को 8% के लाभ पर बेचा। यदि रूपशी ने किताब ₹1,539 में खरीदी, तो पूनम के लिए किताब का क्रय मूल्य (₹ में) कितना था?",
+    option: [
+        "1,600",
+        "1,650",
+        "1,500",
+        "1,550"
+    ],
+    answer: "1,500"
+},
+{
+    question: "यदि 896 केले तीन बंदरों में 4/6 : 2/2 : 2/2 के अनुपात में वितरित किए गए, तो तीसरे बंदर को कितने केले मिले?",
+    option: [
+        "334",
+        "336",
+        "338",
+        "335"
+    ],
+    answer: "336"
+},
+{
+    question: "राहुल 15 घंटे में 225 km की दूरी तय करता है। यदि वह अपनी मूल चाल से 20% तेज ड्राइव करे, तो उसे 40% कम दूरी तय करने में कितने घंटे लगेंगे?",
+    option: [
+        "8",
+        "7",
+        "8.5",
+        "7.5"
+    ],
+    answer: "8"
+},
+{
+    question: "X, Y और Z मिलकर किसी कार्य को 8 दिनों में पूरा कर सकते हैं, जबकि X अकेले उसी कार्य को 24 दिनों में, और Y अकेले उसी कार्य को 36 दिनों में पूरा कर सकता है। Z अकेले उसी कार्य को कितने दिनों में पूरा कर सकता है?",
+    option: [
+        "18 दिन",
+        "12 दिन",
+        "48 दिन",
+        "28 दिन"
+    ],
+    answer: "18 दिन"
+},
+{
+    question: "एक व्यापारी अपने माल का अंकित मूल्य, क्रय मूल्य से 25% अधिक अंकित करता है और अंकित मूल्य पर 28% की छूट देता है। उसका लाभ या हानि प्रतिशत कितना है?",
+    option: [
+        "11% हानि",
+        "10% हानि",
+        "8% हानि",
+        "7% लाभ"
+    ],
+    answer: "10% हानि"
+},
+{
+    question: "यदि P : 17 :: 42 : 6 है, तो P का मान ज्ञात कीजिए।",
+    option: [
+        "116",
+        "122",
+        "119",
+        "118"
+    ],
+    answer: "119"
+},
+{
+    question: "यदि किसी पुस्तक में छपी 4 पंक्तियों वाले एक कॉलम में 36 शब्द हैं, तो 50 पंक्तियों वाले एक कॉलम में कितने शब्द होंगे?",
+    option: [
+        "460",
+        "450",
+        "454",
+        "446"
+    ],
+    answer: "450"
+},
+
+{
+    question: "एक व्यक्ति अपनी आय के 10% की बचत करता है। यदि उसका व्यय ₹360 है, तो उसकी आय (₹ में) ज्ञात कीजिए।",
+    option: [
+        "324",
+        "400",
+        "36",
+        "440"
+    ],
+    answer: "400"
+},
+{
+    question: "प्रेक्षणों 22, 21, 22, 20, 33, 34, 22, 29, 29, 31, 23, 23, 28, 32, 22, 26 और 27 का बहुलक ज्ञात कीजिए।",
+    option: [
+        "33",
+        "21",
+        "20",
+        "22"
+    ],
+    answer: "22"
+},
+{
+    question: "एक गोले का आयतन संख्यात्मक रूप से उसके पृष्ठीय क्षेत्रफल के बराबर है। इसकी त्रिज्या (इकाई में) ज्ञात कीजिए।",
+    option: [
+        "4",
+        "5",
+        "6",
+        "3"
+    ],
+    answer: "3"
+},
+
+{
+    question: "दो रेलगाड़ियां समान चाल से विपरीत दिशाओं में चल रही हैं। यदि प्रत्येक रेलगाड़ी की लंबाई 444 m है और वे एक-दूसरे को 37 सेकंड में पार करती हैं, तो प्रत्येक रेलगाड़ी की चाल कितनी है?",
+    option: [
+        "8 m/s",
+        "9 m/s",
+        "12 m/s",
+        "10 m/s"
+    ],
+    answer: "12 m/s"
+},
+{
+    question: "तीन संख्याओं का अनुपात 12 : 21 : 5 है। यदि पहली संख्या का 50 प्रतिशत 78 है, तो तीसरी और दूसरी संख्या के पूर्ण अंतर का 50 प्रतिशत कितना होगा?",
+    option: [
+        "103",
+        "102",
+        "104",
+        "105"
+    ],
+    answer: "104"
+},
+{
+    question: "75,000 मतदाताओं वाले एक कस्बे में, 95% मतदाताओं ने अपने वोट डाले, और सभी वोट वैध थे। उस चुनाव में A, B और C नाम के तीन उम्मीदवार थे। उम्मीदवार A को वैध वोटों का 40% मिला, जबकि उम्मीदवार B को A से 12% कम वोट मिले। उम्मीदवार C को वैध वोटों का कितना प्रतिशत मिला?",
+    option: [
+        "15.2%",
+        "24.8%",
+        "48%",
+        "52%"
+    ],
+    answer: "24.8%"
+},
+{
+    question: "दो बहनों की वर्तमान आयु में 3 वर्षों का अंतर है। 2 वर्ष बाद, बड़ी बहन, छोटी बहन की 2 वर्ष पूर्व की आयु की दोगुनी हो जाएगी। अब से 8 वर्ष बाद उनकी आयु का योग ज्ञात कीजिए।",
+    option: [
+        "37 वर्ष",
+        "33 वर्ष",
+        "31 वर्ष",
+        "39 वर्ष"
+    ],
+    answer: "37 वर्ष"
+},
+{
+    question: "त्योहारों के दौरान, प्रसाद के रूप में 32 cm त्रिज्या वाला एक बड़ा लड्डू बनाया जाता है। पूजा के बाद, भक्तों में प्रसाद बांटने के लिए बड़े लड्डू से छोटे लड्डू बनाए जाने का निर्णय लिया जाता है। 2 cm त्रिज्या वाले कितने लड्डू बनाए जा सकते हैं?",
+    option: [
+        "4096",
+        "3964",
+        "3896",
+        "4132"
+    ],
+    answer: "4096"
+},
+{
+    question: "45 का 60%, 55 के से कितना अधिक है?",
+    option: [
+        "14",
+        "16",
+        "13",
+        "10"
+    ],
+    answer: "28"
+},
+{
+    question: "△ABC में, बिंदु D पर BD ⟂ AC है और ∠DBC = 66° है। BC पर एक बिंदु E इस प्रकार है कि ∠CAE = 35° है। ∠AEB की माप कितनी होगी?",
+    option: [
+        "65°",
+        "59°",
+        "47°",
+        "66°"
+    ],
+    answer: "59°"
+},
+{
+    question: "A, B और C किसी काम को क्रमशः 3, 9 और 18 दिनों में पूरा कर सकते हैं। एक साथ काम करते हुए, उसी काम का दोगुना काम करने में उन्हें कितना समय (दिन में) लगेगा?",
+    option: [
+        "5",
+        "8",
+        "4",
+        "12"
+    ],
+    answer: "4"
+},
+{
+    question: "प्रथम 6 विषम प्राकृतिक संख्याओं का औसत ज्ञात कीजिए।",
+    option: [
+        "5.5",
+        "6.5",
+        "7",
+        "6"
+    ],
+    answer: "6"
+},
+{
+    question: "22 फरवरी 2024 से 23 अप्रैल 2024 तक की अवधि के लिए ₹4,000 पर 6% वार्षिक ब्याज दर से साधारण ब्याज (₹ में) ज्ञात कीजिए।",
+    option: [
+        "38",
+        "39",
+        "40",
+        "41"
+    ],
+    answer: "40"
+},
+{
+    question: "एक कंप्यूटर ने एक दिन में 1,76,400 लाइनें प्रिंट कीं। यदि प्रिंटर दिन में 6 घंटे चला, तो उसने प्रति मिनट कितनी लाइनें प्रिंट कीं?",
+    option: [
+        "460",
+        "450",
+        "420",
+        "490"
+    ],
+    answer: "490"
+},
+
+{
+    question: "एक आदमी ने ₹300 में 10 संतरे के रेट से कुछ संतरे खरीदे और उन्हें ₹175 में 5 संतरे के रेट पर बेच दिए। उसका लाभ प्रतिशत कितना है (दो दशमलव स्थानों तक सही उत्तर दीजिए)?",
+    option: [
+        "15.67%",
+        "14.67%",
+        "18.67%",
+        "16.67%"
+    ],
+    answer: "16.67%"
+},
+{
+    question: "11%, 18% और 20% की तीन क्रमिक छूटों के बाद अंकित मूल्य का प्रभावी मूल्य प्रतिशत ज्ञात कीजिए। (दो दशमलव स्थानों तक पूर्णांकित करें)",
+    option: [
+        "62.14%",
+        "61.4%",
+        "58.38%",
+        "58.88%"
+    ],
+    answer: "58.38%"
+},
+{
+    question: "15 m लंबी एक ऊर्ध्वाधर छड़ी, भूमि पर 5 m लंबी छाया बनाती है। उसी समय, एक मीनार भूमि पर 46.5 m लंबी छाया बनाती है। मीनार की ऊंचाई ज्ञात कीजिए।",
+    option: [
+        "137.5 m",
+        "141.5 m",
+        "139.5 m",
+        "135.5 m"
+    ],
+    answer: "139.5 m"
+},
+{
+    question: "20 kg चावल ₹50 प्रति kg की दर से खरीदा गया और ₹45 प्रति kg की दर से बेचा गया। हानि प्रतिशत ज्ञात कीजिए।",
+    option: [
+        "13%",
+        "12%",
+        "10%",
+        "11%"
+    ],
+    answer: "10%"
+},
+
+{
+    question: "एक वस्तु पर क्रमशः 20%, 5% और 21% की छूट दी जाती है। यदि प्रभावी मूल्य प्रतिशत ज्ञात करना हो, तो सही विकल्प चुनिए।",
+    option: [
+        "60.04%",
+        "63.04%",
+        "58.66%",
+        "62.04%"
+    ],
+    answer: "60.04%"
+},
+
+{
+    question: "दो ट्रेनें X से Y की ओर सुबह 8 बजे 50 km/h की गति से तथा Y से X की ओर सुबह 9 बजे 60 km/h की गति से चलती हैं। वे सुबह 9:45 बजे मिलती हैं। X और Y के बीच की दूरी ज्ञात कीजिए।",
+    option: [
+        "30 km",
+        "32 km",
+        "33.125 km",
+        "35 km"
+    ],
+    answer: "33.125 km"
+},
+
+{
+    question: "एक पाइप टंकी को 20 मिनट में और दूसरा पाइप 35 मिनट में भर सकता है। दोनों पाइप खोले जाते हैं और पहला पाइप कुछ समय बाद बंद कर दिया जाता है। यदि टंकी 28 मिनट में भर जाती है, तो पहला पाइप कितने मिनट तक खुला रहा?",
+    option: [
+        "2 मिनट",
+        "3 मिनट",
+        "4 मिनट",
+        "5 मिनट"
+    ],
+    answer: "4 मिनट"
+},
+
+{
+    question: "एक पाइप टंकी को 4 मिनट में भर सकता है और एक निकासी पाइप उसे 8 मिनट में खाली कर सकता है। दोनों एक साथ खोले जाने पर आधी टंकी भरने में कितना समय लगेगा?",
+    option: [
+        "2 मिनट",
+        "3 मिनट",
+        "4 मिनट",
+        "5 मिनट"
+    ],
+    answer: "4 मिनट"
+},
+
+{
+    question: "77,792 निम्नलिखित में से किस संख्या से विभाजित होता है?",
+    option: [
+        "14",
+        "13",
+        "12",
+        "15"
+    ],
+    answer: "13"
+},
+
+{
+    question: "443 में सबसे छोटी कौन-सी संख्या जोड़ी जाए कि प्राप्त संख्या 12, 5 और 6 से विभाजित हो जाए?",
+    option: [
+        "17",
+        "27",
+        "37",
+        "47"
+    ],
+    answer: "37"
+},
+
+{
+    question: "एक चाचा की वर्तमान आयु उसके भतीजे की आयु की 6 गुना है। 20 वर्ष बाद चाचा की आयु भतीजे की आयु की दोगुनी होगी। भतीजे की वर्तमान आयु ज्ञात कीजिए।",
+    option: [
+        "4 वर्ष",
+        "6 वर्ष",
+        "5 वर्ष",
+        "8 वर्ष"
+    ],
+    answer: "5 वर्ष"
+},
+
+{
+    question: "₹2,288 की राशि पंकज, मीरा और अशोक में बाँटी गई। क्रमशः ₹39, ₹47 और ₹40 घटाने पर शेष राशियों का अनुपात 17:15:14 हो जाता है। मीरा को मूल रूप से कितनी राशि मिली?",
+    option: [
+        "₹752",
+        "₹705",
+        "₹745",
+        "₹712"
+    ],
+    answer: "₹752"
+},
+
+{
+    question: "एक गोले का व्यास 18 cm है। उसका आयतन ज्ञात कीजिए।",
+    option: [
+        "2504.6 cm³",
+        "1807.2 cm³",
+        "3013.2 cm³",
+        "1506.6 cm³"
+    ],
+    answer: "PDF में दिए गए विकल्पों/आयतन के expression की पुष्टि आवश्यक है।"
+},
+
+{
+    question: "एक वस्तु का अंकित मूल्य ₹6,420 है। यदि 20% की छूट दी जाती है, तो विक्रय मूल्य कितना होगा?",
+    option: [
+        "₹5,126",
+        "₹5,136",
+        "₹5,146",
+        "₹5,156"
+    ],
+    answer: "₹5,136"
+},
+
+{
+    question: "2 m + 3 s = 1980 तथा 3 m + 2 s = 1920 है। m + s का मान ज्ञात कीजिए।",
+    option: [
+        "760",
+        "780",
+        "800",
+        "820"
+    ],
+    answer: "780"
+},
+
+{
+    question: "एक ट्रेन 126 km/h की गति से चलती है और 300 m लंबी ट्रेन 12 सेकंड में एक प्लेटफॉर्म पार करती है। एक लड़का उसी प्लेटफॉर्म को 15 सेकंड में पार करता है। लड़के की गति ज्ञात कीजिए।",
+    option: [
+        "6 m/s",
+        "7 m/s",
+        "8 m/s",
+        "9 m/s"
+    ],
+    answer: "8 m/s"
+},
+
+{
+    question: "31, 36, 83, 84, 93, 47, 17, 45 और 50 का औसत ज्ञात कीजिए।",
+    option: [
+        "54",
+        "56",
+        "58",
+        "60"
+    ],
+    answer: "54"
+},
+
+{
+    question: "एक व्यक्ति का व्यय उसकी बचत से 100% अधिक है। यदि व्यय में 4% की कमी और बचत में 26% की वृद्धि हो, तो आय में कितने प्रतिशत की वृद्धि होगी?",
+    option: [
+        "4%",
+        "6%",
+        "8%",
+        "10%"
+    ],
+    answer: "6%"
+},
+
+{
+    question: "एक संख्या में 40% की दो क्रमिक वृद्धि और 40% की दो क्रमिक कमी के परिणामों की तुलना कीजिए।",
+    option: [
+        "25%",
+        "40%",
+        "50%",
+        "60%"
+    ],
+    answer: "50%"
+},
+
+{
+    question: "एक चतुर्भुज IJKL में ∠I = 35° और ∠J = 24° है। K तथा L के कोणों के समद्विभाजक Z पर मिलते हैं। ∠LZK ज्ञात कीजिए।",
+    option: [
+        "29.5°",
+        "30°",
+        "31.5°",
+        "32°"
+    ],
+    answer: "29.5°"
+},
+
+{
+    question: "एक क्षैतिज बेलनाकार पाइप की आंतरिक त्रिज्या 3.5 cm है। पानी 2 m/s की गति से बहता है और पाइप आधा भरा है। 5 मिनट में बहने वाले पानी का आयतन लीटर में ज्ञात कीजिए।",
+    option: [
+        "1050 L",
+        "1155 L",
+        "1250 L",
+        "1350 L"
+    ],
+    answer: "1155 L"
+},
+
+{
+    question: "यदि 63 : A :: A : 175 है, तो A का मान ज्ञात कीजिए।",
+    option: [
+        "95",
+        "105",
+        "115",
+        "125"
+    ],
+    answer: "105"
+},
+
+{
+    question: "₹2,600 की मूल राशि पर 10% वार्षिक चक्रवृद्धि ब्याज की दर से 2 वर्ष बाद कुल राशि कितनी होगी?",
+    option: [
+        "₹3,146",
+        "₹3,120",
+        "₹3,160",
+        "₹3,200"
+    ],
+    answer: "₹3,146"
+},
+
+{
+    question: "पहली चार प्राकृतिक संख्याओं के वर्गों का औसत ज्ञात कीजिए।",
+    option: [
+        "6.5",
+        "7",
+        "8",
+        "7.5"
+    ],
+    answer: "7.5"
+},
+];
+
+// Reasoning (30) - Hindi
+const reasoningQuestionsHi = [
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\n\n1, 2, 8, 16, 64, ?",
+    option: [
+        "136",
+        "124",
+        "128",
+        "132"
+    ],
+    answer: "128"
+},
+{
+    question: "सात डिब्बे, A, B, C, D, E, F और G, एक के ऊपर एक रखे गए हैं, लेकिन जरूरी नहीं कि वे इसी क्रम में हों। A और E के बीच केवल दो डिब्बे रखे गए हैं। G के ऊपर केवल F को रखा गया है। E के नीचे कोई डिब्बा नहीं रखा गया है। C को D के नीचे किसी स्थान पर लेकिन B के ऊपर किसी स्थान पर रखा गया है। D के ऊपर कितने डिब्बे रखे गए हैं?",
+    option: [
+        "2",
+        "4",
+        "3",
+        "1"
+    ],
+    answer: "2"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूहों में से तीन एक निश्चित तरीके से एकसमान हैं और इस प्रकार एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह उस ग्रुप से संबंधित नहीं है?\n\n(नोट: असंगत अक्षर-समूह, व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "LNR",
+        "NPV",
+        "TVZ",
+        "JLP"
+    ],
+    answer: "NPV"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह दी गई श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए प्रश्न-चिह्न (?) के स्थान पर आएगा?\n\nQRP 64, STR 54, UVT 44, WXV 34, ?",
+    option: [
+        "YYW 23",
+        "YGP 23",
+        "YZX 24",
+        "YAW 24"
+    ],
+    answer: "YZX 24"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़िए। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्य रूप से ज्ञात तथ्यों से भिन्न प्रतीत होती हो, तय कीजिए कि दिए गए निष्कर्षों में से कौन-से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करते हैं।\n\nकथन:\nसभी वृक्ष, नाव हैं।\nकोई पेन, नाव नहीं है।\nसभी कंघी, वृक्ष हैं।\n\nनिष्कर्ष:\n(I) सभी कंघी, नाव हैं।\n(II) कोई पेन, कंघी नहीं है।",
+    option: [
+        "केवल निष्कर्ष (II) अनुसरण करता है।",
+        "केवल निष्कर्ष (I) अनुसरण करता है।",
+        "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं।",
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है।"
+    ],
+    answer: "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं।"
+},
+{
+    question: "पाँच व्यक्ति, L, M, N, O और P, एक पंक्ति में उत्तर की ओर अभिमुख होकर बैठे हैं। पंक्ति के दाएँ छोर से तीसरे स्थान पर N बैठा है। M, N का निकटतम पड़ोसी नहीं है। P, N के ठीक बाएँ पड़ोस में बैठा है। P, O के ठीक दाएँ पड़ोस में बैठा है। N और M के बीच कौन बैठा है?",
+    option: [
+        "O",
+        "L",
+        "N",
+        "P"
+    ],
+    answer: "L"
+},
+{
+    question: "उस सेट का चयन कीजिए, जिसमें संख्याएँ उसी प्रकार संबंधित हैं जैसे कि निम्नलिखित सेटों की संख्याएँ संबंधित हैं।\n\n(नोट: संख्याओं को उनके घटक अंकों में तोड़े बिना, संक्रियाएँ पूर्ण संख्याओं पर की जानी चाहिए। उदाहरण के लिए 13 लीजिए — 13 पर संक्रियाएँ जैसे कि 13 में जोड़ना/घटाना/गुणा करना आदि केवल 13 पर की जा सकती हैं। 13 को 1 और 3 में तोड़ना तथा फिर 1 और 3 पर गणितीय संक्रियाएँ करने की अनुमति नहीं है।)\n\n(6, 3, 19)\n(4, 3, 13)",
+    option: [
+        "(5, 4, 16)",
+        "(3, 7, 22)",
+        "(8, 3, 26)",
+        "(5, 8, 40)"
+    ],
+    answer: "(3, 7, 22)"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n16, 28, 42, 58, 76, ?",
+    option: [
+        "90",
+        "96",
+        "88",
+        "94"
+    ],
+    answer: "96"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, YUTU का संबंध एक निश्चित तरीके से XTST से है। उसी प्रकार, FBAB का संबंध EAZA से है। समान तर्क का अनुसरण करते हुए, GCBC का संबंध दिए गए विकल्पों में से किससे है?",
+    option: [
+        "FBAB",
+        "FBZB",
+        "FCZG",
+        "FAZB"
+    ],
+    answer: "FBAB"
+},
+{
+    question: "निम्नलिखित संख्या श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए। सभी संख्याएँ केवल एकल-अंकीय संख्याएँ हैं। गिनती केवल बाएँ से दाएँ की ओर की जानी है।\n\n(बाएँ) 3 5 6 4 4 6 2 6 5 2 8 2 8 3 6 3 1 4 8 7 3 5 2 7 3 2 3 (दाएँ)\n\nऐसी कितनी विषम संख्याएँ हैं, जिनमें से प्रत्येक के ठीक पहले एक विषम संख्या और ठीक बाद एक सम संख्या है?",
+    option: [
+        "6",
+        "4",
+        "3",
+        "5"
+    ],
+    answer: "4"
+},
+{
+    question: "एक निश्चित कूट भाषा में,\n'A + B' का अर्थ है कि 'A, B का पुत्र है',\n'A − B' का अर्थ है कि 'A, B का पिता है',\n'A × B' का अर्थ है कि 'A, B का भाई है' और\n'A ÷ B' का अर्थ है कि 'A, B की पुत्री है'।\n\nयदि 'P + Q × S ÷ T − R' है, तो P का R से क्या संबंध है?",
+    option: [
+        "बहन का पुत्र",
+        "पुत्री का पुत्र",
+        "माता का भाई",
+        "भाई का पुत्र"
+    ],
+    answer: "भाई का पुत्र"
+},
+{
+    question: "A, B, C, D, E और F एक गोल मेज के परितः केंद्र की ओर अभिमुख होकर बैठे हैं। B, F के दाईं ओर तीसरे स्थान पर है। D, C के बाईं ओर दूसरे स्थान पर है। A, C के दाईं ओर तीसरे स्थान पर है। E, B के ठीक बाईं ओर पड़ोस में बैठा है। A के बाईं ओर से गिनने पर E और A के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "एक",
+        "दो",
+        "एक भी नहीं",
+        "चार"
+    ],
+    answer: "एक"
+},
+{
+    question: "विशाल, बिंदु A से चलना शुरू करते हुए दक्षिण की ओर 10 km ड्राइव करता है। फिर वह दाएँ मुड़ता है और 4 km ड्राइव करता है, फिर दाएँ मुड़ता है और 12 km ड्राइव करता है। फिर वह दाएँ मुड़ता है और 7 km ड्राइव करता है। अंत में वह दाएँ मुड़ता है, 2 km ड्राइव करता है और बिंदु P पर पहुँचकर रुक जाता है। बिंदु A पर वापस जाने के लिए उसे कितनी दूरी (न्यूनतम दूरी) और किस दिशा में ड्राइव करना होगा?\n\n(जब तक निर्दिष्ट न किया जाए, सभी मोड़ केवल 90 डिग्री के हैं।)",
+    option: [
+        "पूर्व में 3 km",
+        "पश्चिम में 3 km",
+        "पूर्व में 4 km",
+        "पश्चिम में 4 km"
+    ],
+    answer: "पश्चिम में 3 km"
+},
+{
+    question: "निम्नलिखित श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए। सभी संख्याएँ केवल एकल-अंकीय संख्याएँ हैं। गिनती केवल बाएँ से दाएँ की जानी है।\n\n(बाएँ) 1 9 3 7 9 8 7 7 6 2 9 1 6 2 7 4 8 5 5 6 5 (दाएँ)\n\nऐसे कितने विषम अंक हैं जिनमें से प्रत्येक के ठीक पहले एक विषम अंक है तथा ठीक बाद एक पूर्ण वर्ग है?\n\n(नोट: 1 भी एक पूर्ण वर्ग है।)",
+    option: [
+        "2",
+        "1",
+        "3",
+        "4"
+    ],
+    answer: "1"
+},
+{
+    question: "संख्या 78352416 में प्रत्येक अंक को बाएँ से दाएँ अवरोही क्रम में व्यवस्थित किया जाता है। इस प्रकार बनी नई संख्या में बाएँ से तीसरे और दाएँ से दूसरे अंकों का गुणनफल क्या होगा?",
+    option: [
+        "12",
+        "24",
+        "18",
+        "16"
+    ],
+    answer: "12"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\n\nCRB, ZOY, WLV, TIS, ?",
+    option: [
+        "QFP",
+        "QFO",
+        "QPF",
+        "QFR"
+    ],
+    answer: "QFP"
+},
+{
+    question: "सात डिब्बे, B, D, E, P, S, T और W, एक के ऊपर एक रखे गए हैं, लेकिन जरूरी नहीं कि इसी क्रम में हों। B के ऊपर केवल तीन डिब्बे रखे हैं। P और B के बीच केवल एक डिब्बा रखा है। P और T के बीच केवल तीन डिब्बे रखे हैं। T, B के ऊपर किसी स्थान पर रखा है। D, T के ठीक नीचे रखा है। E, S के ऊपर किसी स्थान पर रखा है। W, P के ठीक ऊपर या नीचे नहीं रखा है। S और D के बीच कितने डिब्बे रखे हैं?",
+    option: [
+        "तीन",
+        "चार",
+        "दो",
+        "एक"
+    ],
+    answer: "तीन"
+},
+{
+    question: "यदि '+' और '−' को परस्पर बदल दिया जाए तथा '×' और '÷' को परस्पर बदल दिया जाए, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n6 ÷ 3 + 16 × 4 − 9 = ? + 5",
+    option: [
+        "28",
+        "26",
+        "24",
+        "30"
+    ],
+    answer: "28"
+},
+{
+    question: "एक निश्चित कूट भाषा में, 'life offers hope' को 'sc tp gb' और 'hope shapes future' को 'hk mp tp' लिखा जाता है। दी गई भाषा में 'hope' को किस प्रकार लिखा जाएगा?",
+    option: [
+        "hk",
+        "gb",
+        "tp",
+        "sc"
+    ],
+    answer: "tp"
+},
+{
+    question: "निम्नलिखित संख्या श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए। सभी संख्याएँ केवल एकल-अंकीय संख्याएँ हैं। गिनती केवल बाएँ से दाएँ की जानी है।\n\n(बाएँ) 4 9 4 8 3 3 3 1 4 7 8 7 1 7 2 9 1 3 5 1 5 9 6 4 8 4 6 (दाएँ)\n\nऐसी कितनी विषम संख्याएँ हैं, जिनमें से प्रत्येक के ठीक पहले एक विषम संख्या है तथा ठीक बाद भी एक विषम संख्या है?",
+    option: [
+        "10",
+        "8",
+        "7",
+        "9"
+    ],
+    answer: "8"
+},
+{
+    question: "उस युग्म का चयन कीजिए, जो नीचे दिए गए दो युग्मों के समान पैटर्न का अनुसरण करता है। दोनों युग्म समान पैटर्न का अनुसरण करते हैं।\n\nADE : FIJ\nMDG : RIL",
+    option: [
+        "ZOT : GRS",
+        "VTE : ODR",
+        "BTS : YDR",
+        "UFL : ZKQ"
+    ],
+    answer: "UFL : ZKQ"
+},
+{
+    question: "छह मित्र — P, Q, R, S, U और V — एक गोल मेज के परितः केंद्र की ओर अभिमुख होकर बैठे हैं। Q और R दोनों का निकटतम पड़ोसी P है। R, U के ठीक बाईं ओर पड़ोस में बैठा है। V, P के बाईं ओर दूसरे स्थान पर बैठा है। S के दाईं ओर से गिनने पर, P और S के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "तीन",
+        "दो",
+        "एक भी नहीं",
+        "एक"
+    ],
+    answer: "दो"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूहों में से तीन एक निश्चित तरीके से एकसमान हैं और इस प्रकार एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह उस ग्रुप से संबंधित नहीं है?\n\n(नोट: असंगत अक्षर-समूह, व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "DFA",
+        "MOJ",
+        "JLP",
+        "FHC"
+    ],
+    answer: "JLP"
+},
+{
+    question: "निम्नलिखित श्रृंखला को देखें और उसके बाद दिए गए प्रश्न का उत्तर दें। सभी संख्याएँ केवल एकल-अंकीय संख्याएँ हैं। गिनती केवल बाएँ से दाएँ की जानी है।\n\n(बाएँ) 3 1 7 1 2 2 9 3 5 8 9 2 4 3 2 4 4 3 5 9 4 3 3 (दाएँ)\n\nऐसे कितने सम अंक हैं, जिनमें से प्रत्येक के ठीक पहले एक सम अंक है तथा ठीक बाद भी एक सम अंक है?",
+    option: [
+        "दो",
+        "चार",
+        "एक",
+        "तीन"
+    ],
+    answer: "एक"
+},
+{
+    question: "निम्नलिखित श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए, प्रश्न-चिह्न (?) के स्थान पर कौन-सी संख्या आनी चाहिए?\n\n527, 524, 529, 522, 531, ?",
+    option: [
+        "525",
+        "521",
+        "515",
+        "520"
+    ],
+    answer: "520"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह दी गई श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए प्रश्न-चिह्न (?) के स्थान पर आएगा?\n\nYCG 87, IMQ 95, SWA 103, CGK 111, ?",
+    option: [
+        "MRX 118",
+        "MRT 119",
+        "MPT 118",
+        "MQU 119"
+    ],
+    answer: "MQU 119"
+},
+{
+    question: "निम्नलिखित संख्या और प्रतीक श्रृंखला का संदर्भ लीजिए और उसके आधार पर पूछे गए प्रश्न का उत्तर दीजिए। गिनती केवल बाएँ से दाएँ की जानी है।\n\n(बाएँ) 9 @ 3 $ 2 ! 1 6 ^ & 9 3 ! @ # 3 $ 5 + ! (दाएँ)\n\nयदि श्रृंखला से सभी प्रतीकों को हटा दिया जाए, तो दाएँ से सातवें स्थान पर निम्नलिखित में से क्या आएगा?",
+    option: [
+        "9",
+        "2",
+        "3",
+        "6"
+    ],
+    answer: "2"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n71, 59, 46, 32, 17, ?",
+    option: [
+        "−1",
+        "2",
+        "3",
+        "1"
+    ],
+    answer: "1"
+},
+{
+    question: "एक निश्चित कूट भाषा में, 'speak the truth' को 'pc rd st' के रूप में कूटबद्ध किया गया है तथा 'truth always wins' को 'mo st kl' के रूप में कूटबद्ध किया गया है। उस भाषा में 'truth' को कैसे कूटबद्ध किया गया है?",
+    option: [
+        "pc",
+        "kl",
+        "st",
+        "mo"
+    ],
+    answer: "st"
+},
+{
+    question: "यदि संख्या 2543769 में प्रत्येक सम अंक में 1 जोड़ा जाए और प्रत्येक विषम अंक में से 2 घटाया जाए, तो इस प्रकार बनी नई संख्या में निम्नलिखित में से कौन-सा अंक बाईं ओर से दूसरा होगा?",
+    option: [
+        "3",
+        "2",
+        "1",
+        "5"
+    ],
+    answer: "3"
+},
+
+{
+    question: "पीयूष, बिंदु X से चलना शुरू करता है और पूर्व की ओर 6 km गाड़ी चलाता है। फिर वह बाएँ मुड़ता है और 3 km गाड़ी चलाता है। वह फिर दाएँ मुड़ता है और 5 km गाड़ी चलाता है। फिर वह दाएँ मुड़ता है और 3 km गाड़ी चलाता है। अंत में, वह दाएँ मुड़ता है और 5 km गाड़ी चलाकर बिंदु P पर रुक जाता है। बिंदु X पर वापस पहुँचने के लिए उसे कितनी दूरी (सबसे कम दूरी) तक और किस दिशा में गाड़ी चलानी चाहिए? (जब तक निर्दिष्ट न किया जाए, तब तक सभी मोड़ केवल 90 डिग्री के मोड़ हैं।)",
+    option: [
+        "4 km, उत्तर की ओर",
+        "6 km, पश्चिम की ओर",
+        "3 km, पूर्व की ओर",
+        "4 km, पूर्व की ओर"
+    ],
+    answer: "6 km, पश्चिम की ओर"
+},
+{
+    question: "नीचे दी गई संख्या और प्रतीक श्रृंखला का संदर्भ लीजिए तथा उसके आधार पर पूछे गए प्रश्न का उत्तर दीजिए। गिनती केवल बाएँ से दाएँ की जानी है।\n\n(बाएँ) 4 @ 3 % 5 $ 1 # 6 & 9 * 5 + 1 ? 6 + = 5 $ # 2 (दाएँ)\n\nयदि श्रृंखला से सभी प्रतीकों को हटा दिया जाए, तो दाएँ से सातवें स्थान पर निम्नलिखित में से क्या आएगा?",
+    option: [
+        "5",
+        "6",
+        "9",
+        "3"
+    ],
+    answer: "6"
+},
+{
+    question: "यदि ‘D’ का अर्थ ‘÷’ है, ‘E’ का अर्थ ‘×’ है, ‘F’ का अर्थ ‘+’ है और ‘G’ का अर्थ ‘−’ है, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n24 E 2 D 4 F 5 G 3 = ?",
+    option: [
+        "13",
+        "14",
+        "11",
+        "12"
+    ],
+    answer: "14"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\n\n167 176 194 221 257 ?",
+    option: [
+        "301",
+        "302",
+        "303",
+        "304"
+    ],
+    answer: "302"
+},
+{
+    question: "सात व्यक्ति, A, B, C, D, E, F और G, उत्तर की ओर अभिमुख होकर एक पंक्ति में बैठे हैं। F पंक्ति के दाएँ छोर से पाँचवें स्थान पर बैठा है। C के दाएँ केवल तीन व्यक्ति बैठे हैं। B और C का निकटतम पड़ोसी D है। A, E के दाएँ लेकिन F के बाएँ बैठा है। G और A के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "चार",
+        "तीन",
+        "एक",
+        "दो"
+    ],
+    answer: "चार"
+},
+{
+    question: "दिए गए समीकरण को संतुलित करने के लिए किन दो संख्याओं को परस्पर बदला जाना चाहिए?\n\n(36 − 28) × 3 + 9 × 5 − (108 ÷ 4) + 42 = 96\n\n(नोट: संपूर्ण संख्या को परस्पर बदला जाना है, न कि दी गई संख्या के अलग-अलग अंकों को।)",
+    option: [
+        "9 और 4",
+        "36 और 42",
+        "3 और 5",
+        "4 और 3"
+    ],
+    answer: "36 और 42"
+},
+{
+    question: "अंग्रेजी वर्णानुक्रम पर आधारित, निम्नलिखित चार अक्षर-समूह युग्मों में से तीन किसी निश्चित तरीके से एकसमान हैं और इस प्रकार वे एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह युग्म उस ग्रुप से संबंधित नहीं है?\n\n(नोट: असंगत अक्षर-समूह युग्म, व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "XF - CK",
+        "VC - BH",
+        "GN - LS",
+        "MD - RI"
+    ],
+    answer: "VC - BH"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़ें। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्यतः ज्ञात तथ्यों से भिन्न प्रतीत हो, तय करें कि दिए गए निष्कर्षों में से कौन-से निष्कर्ष, कथनों का तार्किक रूप से अनुसरण करते हैं।\n\nकथन: सभी बांसुरी, ड्रम हैं। सभी ड्रम, गिटार हैं।\n\nनिष्कर्ष (I): कोई गिटार, बांसुरी नहीं है।\nनिष्कर्ष (II): कुछ गिटार, बांसुरी हैं।",
+    option: [
+        "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं",
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है",
+        "केवल निष्कर्ष (I) अनुसरण करता है",
+        "केवल निष्कर्ष (II) अनुसरण करता है"
+    ],
+    answer: "केवल निष्कर्ष (II) अनुसरण करता है"
+},
+{
+    question: "उत्तर की ओर अभिमुख होकर बैठी 50 विद्यार्थियों की एक पंक्ति में, मिकू दाएँ छोर से 12वें स्थान पर है। यदि पुरुष, मिकू के बाएँ से पाँचवें स्थान पर है, तो पंक्ति के बाएँ छोर से पुरुष का स्थान कौन-सा होगा?",
+    option: [
+        "32वां",
+        "34वां",
+        "31वां",
+        "33वां"
+    ],
+    answer: "34वां"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़ें। आपको दिए गए कथनों को सत्य मानना है, भले ही वे सामान्य रूप से ज्ञात तथ्यों से भिन्न प्रतीत होते हों। आपको यह निर्धारित करना है कि दिए गए निष्कर्षों में से कौन-से निष्कर्ष, कथनों का तार्किक रूप से अनुसरण करते हैं।\n\nकथन:\nसभी पुस्तक, कलम हैं।\nकुछ कलम, क्रेयॉन हैं।\n\nनिष्कर्ष (I): सभी क्रेयॉन, कलम हैं।\nनिष्कर्ष (II): कुछ पुस्तक, क्रेयॉन हैं।",
+    option: [
+        "केवल निष्कर्ष (I) अनुसरण करता है",
+        "केवल निष्कर्ष (II) अनुसरण करता है",
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है",
+        "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं"
+    ],
+    answer: "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है"
+},
+{
+    question: "निम्नलिखित श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए। (सभी संख्याएँ केवल एकल-अंकीय संख्याएँ हैं।) गिनती केवल बाएँ से दाएँ की जानी है।\n\n(बाएँ) 5 7 9 4 2 1 4 7 9 3 2 6 8 5 4 1 9 5 4 3 2 (दाएँ)\n\nऐसे कितने सम अंक हैं, जिनमें से प्रत्येक के ठीक पहले एक सम अंक है तथा ठीक बाद में भी एक सम अंक है?",
+    option: [
+        "1",
+        "2",
+        "4",
+        "3"
+    ],
+    answer: "1"
+},
+{
+    question: "निम्नलिखित अक्षर श्रृंखला का संदर्भ लीजिए और दिए गए प्रश्न का उत्तर दीजिए।\n\n(बाएँ) F J L T M N C R P W X Z K O H A Y Q D G E B (दाएँ)\n\nदी गई श्रृंखला में \"Q\" के बाद लेकिन \"E\" से पहले कितने अक्षर हैं?",
+    option: [
+        "तीन",
+        "पाँच",
+        "दो",
+        "चार"
+    ],
+    answer: "दो"
+},
+{
+    question: "एक पंक्ति में सभी 51 लोग उत्तर दिशा की ओर अभिमुख होकर खड़े हुए हैं। रेखा बाएँ छोर से तेरहवें स्थान पर है जबकि अजय दाएँ छोर से छठे स्थान पर है। रेखा और अजय के बीच कितने लोग हैं?",
+    option: [
+        "32",
+        "33",
+        "31",
+        "34"
+    ],
+    answer: "32"
+},
+{
+    question: "सात व्यक्ति S, Q, U, A, R, E और D एक पंक्ति में उत्तर दिशा की ओर अभिमुख होकर बैठे हैं। A के बाईं ओर कोई नहीं बैठा है। A और S के बीच केवल चार व्यक्ति बैठे हैं। R के दाईं ओर केवल तीन व्यक्ति बैठे हैं। U, E के ठीक बाईं ओर पड़ोस में बैठा है। D, R का निकटतम पड़ोसी नहीं है। पंक्ति के दाहिने छोर पर कौन बैठा है?",
+    option: [
+        "E",
+        "S",
+        "D",
+        "A"
+    ],
+    answer: "D"
+},
+{
+    question: "एक निश्चित कूट भाषा में, ‘leaves turn brown’ को ‘ka gs rl’ के रूप में और ‘gather leaves daily’ को ‘ny hf gs’ के रूप में कूटबद्ध किया जाता है। दी गई भाषा में ‘leaves’ को किस रूप में कूटबद्ध किया जाएगा?",
+    option: [
+        "gs",
+        "rl",
+        "hf",
+        "ka"
+    ],
+    answer: "gs"
+},
+{
+    question: "एक निश्चित कूट भाषा में, ‘ride waves carefully’ को ‘el uw cb’ के रूप में और ‘waves crash loud’ को ‘sr cb vq’ के रूप में कूटबद्ध किया जाता है। दी गई भाषा में ‘waves’ को किस रूप में कूटबद्ध किया जाएगा?",
+    option: [
+        "uw",
+        "sr",
+        "cb",
+        "el"
+    ],
+    answer: "cb"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\n\n336 327 318 309 300 ?",
+    option: [
+        "285",
+        "291",
+        "281",
+        "289"
+    ],
+    answer: "291"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n18 25 32 39 46 ?",
+    option: [
+        "52",
+        "53",
+        "56",
+        "49"
+    ],
+    answer: "53"
+},
+{
+    question: "अंग्रेजी वर्णमाला के क्रम के आधार पर, एक निश्चित तरीके से MPLQ का संबंध SVRW से है। इसी प्रकार, ORNS का संबंध UXTY से है। समान तर्क के अनुसरण करते हुए, FIEJ का संबंध निम्नलिखित में से किससे है?",
+    option: [
+        "LNKP",
+        "LOKQ",
+        "LOKP",
+        "LNKQ"
+    ],
+    answer: "LOKP"
+},
+{
+    question: "रोहित, बिंदु A से ड्राइव करना शुरू करता है और पश्चिम दिशा में 15 km ड्राइव करता है। फिर वह बाएँ मुड़ता है और 11 km ड्राइव करता है, फिर वह बाएँ मुड़ता है और 18 km ड्राइव करता है। इसके बाद, वह फिर बाएँ मुड़ता है और 14 km ड्राइव करता है। अंत में वह बाएँ मुड़ता है और 3 km ड्राइव करके बिंदु P पर रुक जाता है। बिंदु A पर वापस पहुँचने के लिए उसे कितनी दूरी (सबसे कम दूरी) तक और किस दिशा में ड्राइव करना चाहिए? (जब तक निर्दिष्ट न किया जाए, सभी मोड़ केवल 90 डिग्री के मोड़ हैं।)",
+    option: [
+        "4 km, दक्षिण की ओर",
+        "3 km, दक्षिण की ओर",
+        "3 km, उत्तर की ओर",
+        "4 km, उत्तर की ओर"
+    ],
+    answer: "3 km, दक्षिण की ओर"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह दी गई श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए प्रश्न-चिह्न (?) के स्थान पर आएगा?\n\nWTQ 69 URO 76 SPM 83 QNK 90 ?",
+    option: [
+        "OLI 97",
+        "OKH 96",
+        "OPR 96",
+        "OMH 97"
+    ],
+    answer: "OLI 97"
+},
+{
+    question: "छह व्यक्ति, G, H, I, Q, R और S, एक सीधी पंक्ति में उत्तर की ओर अभिमुख होकर बैठे हैं। Q के दाईं ओर केवल दो व्यक्ति बैठे हैं। Q और S के बीच केवल एक व्यक्ति बैठा है। H और R के बीच केवल एक व्यक्ति बैठा है। Q के ठीक बाईं ओर पड़ोस में R बैठा है। G के दाईं ओर केवल I बैठा है। H और G के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "तीन",
+        "चार",
+        "एक",
+        "दो"
+    ],
+    answer: "तीन"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर रखे जाने से श्रृंखला तार्किक रूप से पूर्ण हो जाएगी?\n\nFVO 18, DTM 29, BRK 40, ZPI 51, ?",
+    option: [
+        "YNF 65",
+        "XNF 62",
+        "XNG 62",
+        "WNH 61"
+    ],
+    answer: "XNG 62"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर एक निश्चित तरीके से, TOIL का संबंध BWQT से है। इसी प्रकार, ZUOR का संबंध HCWZ से है। समान तर्क के आधार पर, XSMP का संबंध निम्नलिखित में से किस विकल्प से है?",
+    option: [
+        "FAXW",
+        "FAZS",
+        "FAUX",
+        "FAXE"
+    ],
+    answer: "FAUX"
+},
+{
+    question: "यह प्रश्न नीचे दी गई पाँच, तीन-अंकीय संख्याओं पर आधारित है।\n\n(बाएँ) 435 325 123 756 264 (दाएँ)\n\n(उदाहरण- 697 – पहला अंक = 6, दूसरा अंक = 9 और तीसरा अंक = 7)\n\nनोट - सभी संक्रियाएँ बाएँ से दाएँ की जानी हैं।\n\nयदि सबसे बड़ी संख्या के तीसरे अंक को सबसे छोटी संख्या के दूसरे अंक में जोड़ा जाए, तो क्या परिणाम प्राप्त होगा?",
+    option: [
+        "8",
+        "10",
+        "9",
+        "12"
+    ],
+    answer: "8"
+},
+
+{
+    question: "उस समूह का चयन कीजिए जिसमें संख्याएँ उसी प्रकार संबंधित हैं जिस प्रकार निम्नलिखित समूहों की संख्याएँ संबंधित हैं।\n\n(नोट: संख्याओं को उनके घटक अंकों में तोड़े बिना, संक्रियाएँ पूर्ण संख्याओं पर की जानी चाहिए। उदाहरण के लिए 13 को लीजिए – 13 पर गणितीय संक्रियाएँ जैसे कि 13 में जोड़ना/घटाना/गुणा करना, आदि की जा सकती हैं। 13 को 1 और 3 में तोड़ना तथा फिर 1 और 3 पर गणितीय संक्रियाएँ करने की अनुमति नहीं है।)\n\n77 - 3 - 80\n12 - 4 - 16",
+    option: [
+        "11 - 1 - 23",
+        "14 - 9 - 25",
+        "20 - 13 - 43",
+        "6 - 5 - 11"
+    ],
+    answer: "6 - 5 - 11"
+},
+{
+    question: "एक निश्चित कूट भाषा में,\nA+B का अर्थ है कि ‘A, B की बहन है’\nA#B का अर्थ है कि ‘A, B का भाई है’\nA×B का अर्थ है कि ‘A, B की पत्नी है’\nA@B का अर्थ है कि ‘A, B का पिता है’\n\nउपरोक्त के आधार पर, यदि ‘L×O#V@E+R’ है, तो L का R से क्या संबंध है?",
+    option: [
+        "पिता के भाई की पुत्री",
+        "पिता के भाई की पत्नी",
+        "माता",
+        "बहन"
+    ],
+    answer: "पिता के भाई की पत्नी"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम पर आधारित, निम्नलिखित चार अक्षर-समूह युग्मों में से तीन किसी निश्चित तरीके से एकसमान हैं और इस प्रकार वे एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह युग्म, उस ग्रुप से संबंधित नहीं है?\n\n(नोट: असंगत अक्षर-समूह युग्म, व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "GU - KY",
+        "EK - IP",
+        "PC - TG",
+        "LR - PV"
+    ],
+    answer: "EK - IP"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, एक निश्चित तरीके से HOCX का संबंध SZNI से है। उसी तरीके से, ZGUP का संबंध KRFA से है। उसी तर्क का अनुसरण करते हुए, GNBW का संबंध निम्नलिखित में से किस विकल्प से है?",
+    option: [
+        "RYHU",
+        "RYMH",
+        "THYU",
+        "RMKI"
+    ],
+    answer: "RYMH"
+},
+{
+    question: "निम्नलिखित समीकरण को संतुलित करने के लिए किन दो संख्याओं को परस्पर बदला जाना चाहिए?\n\n(56 ÷ 14) × 3 + 7 × 9 − 15 × 5 + 28 = 103\n\n(नोट: संपूर्ण संख्या को परस्पर बदला जाना है, न कि किसी दी गई संख्या के अलग-अलग अंकों को।)",
+    option: [
+        "28 और 14",
+        "5 और 7",
+        "7 और 14",
+        "56 और 28"
+    ],
+    answer: "7 और 14"
+},
+{
+    question: "उत्तर दिशा की अभिमुख 25 व्यक्तियों की एक पंक्ति में, संजय दाएं छोर से 7वें स्थान पर है। यदि अनु, संजय के बाएं तीसरे स्थान पर बैठी है, तो पंक्ति के बाएं छोर से अनु का स्थान कौन-सा है?",
+    option: [
+        "15वाँ",
+        "17वाँ",
+        "18वाँ",
+        "16वाँ"
+    ],
+    answer: "16वाँ"
+},
+
+{
+    question: "यह प्रश्न नीचे दी गई पाँच, तीन-अंकीय संख्याओं पर आधारित है।\n(बाएं) 593, 784, 358, 631, 296 (दाएं)\n(उदाहरण: 697 - पहला अंक = 6, दूसरा अंक = 9 और तीसरा अंक = 7)\nनोट: सभी संक्रियाएँ बाएं से दाएं करनी हैं।\nयदि सबसे बड़ी संख्या के तीसरे अंक को सबसे छोटी संख्या के दूसरे अंक में जोड़ा जाए, तो परिणाम क्या होगा?",
+    option: [
+        "10",
+        "13",
+        "14",
+        "17"
+    ],
+    answer: "13"
+},
+
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़ें। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्यतः ज्ञात तथ्यों से भिन्न प्रतीत होती हो, निर्णय कीजिए कि दिए गए निष्कर्षों में से कौन-सा/से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करता है/करते हैं।\n\nकथन:\nकुछ खरगोश, पंखे हैं।\nकोई पंखा, कार नहीं है।\n\nनिष्कर्ष:\n(I): कुछ खरगोश, कार हैं।\n(II): कुछ पंखे, खरगोश हैं।",
+    option: [
+        "केवल निष्कर्ष (II) अनुसरण करता है",
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है",
+        "केवल निष्कर्ष (I) अनुसरण करता है",
+        "दोनों निष्कर्ष (I) और (II) अनुसरण करते हैं"
+    ],
+    answer: "केवल निष्कर्ष (II) अनुसरण करता है"
+},
+
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूह युग्मों में से तीन एक निश्चित तरीके से एकसमान हैं और इस प्रकार वे एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह युग्म उस ग्रुप से संबंधित नहीं है?\n(नोट: असंगत अक्षर-समूह युग्म, उसमें व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "EL - CJ",
+        "NB - LZ",
+        "AQ - YO",
+        "DW - BV"
+    ],
+    answer: "DW - BV"
+},
+
+{
+    question: "सात डिब्बे, B, D, E, P, S, T और W, एक के ऊपर एक रखे गए हैं, लेकिन जरूरी नहीं कि वे इसी क्रम में हों। W को नीचे से दूसरे स्थान पर रखा गया है। W और B के बीच केवल तीन डिब्बे रखे गए हैं। P को W के नीचे किसी एक स्थान पर रखा गया है। B और S के बीच केवल D को रखा गया है। E को B के ऊपर किसी एक स्थान पर रखा गया है। P और E के बीच कितने डिब्बे रखे गए हैं?",
+    option: [
+        "चार",
+        "तीन",
+        "एक",
+        "पाँच"
+    ],
+    answer: "पाँच"
+},
+
+{
+    question: "निम्नलिखित संख्या श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए (सभी संख्याएँ केवल एकल-अंकीय संख्याएँ हैं)। गिनती केवल बाएं से दाएं की जानी है।\n(बाएं) 9 8 9 8 1 9 4 4 8 2 8 2 9 6 8 9 9 8 8 9 6 5 5 1 5 3 1 (दाएं)\nऐसी कितनी सम संख्याएँ हैं, जिनमें से प्रत्येक के ठीक पहले एक विषम संख्या है तथा ठीक बाद भी एक विषम संख्या है?",
+    option: [
+        "2",
+        "5",
+        "3",
+        "4"
+    ],
+    answer: "3"
+},
+
+{
+    question: "प्रिया बिंदु A से चलना शुरू करती है और दक्षिण की ओर 32 km चलती है। फिर वह दाएं मुड़ती है, 31 km चलती है, फिर दाएं मुड़ती है और 43 km चलती है। फिर वह दाएं मुड़ती है और 54 km चलती है। अंत में वह दाएं मुड़ती है, 11 km चलती है और बिंदु P पर रुकती है। बिंदु A पर दोबारा पहुँचने के लिए उसे कितनी दूरी (सबसे कम दूरी) और किस दिशा में चलना चाहिए? (सभी मोड़ केवल 90-डिग्री के हैं, जब तक कि निर्दिष्ट न किया गया हो।)",
+    option: [
+        "पश्चिम में 23 km",
+        "पश्चिम में 21 km",
+        "दक्षिण में 24 km",
+        "पश्चिम में 22 km"
+    ],
+    answer: "पश्चिम में 23 km"
+},
+
+{
+    question: "सात मित्र, B, C, D, T, U, V और W, उत्तर दिशा की ओर अभिमुख होकर एक सीधी पंक्ति में बैठे हैं। T के बाईं ओर केवल तीन व्यक्ति बैठे हैं। D के दाईं ओर केवल W बैठा है। D और C के बीच केवल तीन व्यक्ति बैठे हैं। B, U के बाईं ओर किसी स्थान पर लेकिन V के दाईं ओर किसी स्थान पर बैठा है। V और U के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "चार",
+        "तीन",
+        "एक",
+        "दो"
+    ],
+    answer: "तीन"
+},
+
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूहों में से तीन एक निश्चित तरीके से एकसमान हैं और इस प्रकार वे एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह उस ग्रुप से संबंधित नहीं है?\n(नोट: असंगत अक्षर-समूह, उसमें व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "MJO",
+        "NKP",
+        "RQP",
+        "HEJ"
+    ],
+    answer: "RQP"
+},
+
+{
+    question: "उस युग्म का चयन कीजिए जो नीचे दिए गए दोनों युग्मों के समान पैटर्न का अनुसरण करता है।\nDBD − BZB\nJHJ − HFH",
+    option: [
+        "VTV − TRT",
+        "VST − TRT",
+        "VTV − SRS",
+        "VST − SQS"
+    ],
+    answer: "VTV − TRT"
+},
+
+{
+    question: "छह मित्र, G, H, I, Q, R और S, एक गोल मेज के परितः इसके केंद्र की ओर अभिमुख होकर बैठे हैं। Q, G के बाएं तीसरे स्थान पर बैठा है। G, R के बाएं दूसरे स्थान पर बैठा है। G और H के बीच केवल S बैठा है। I, Q का निकटतम पड़ोसी नहीं है। H के दाएं से गिनने पर H और I के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "एक",
+        "चार",
+        "तीन",
+        "दो"
+    ],
+    answer: "दो"
+},
+
+{
+    question: "निम्नलिखित त्रिकों में, अक्षरों का प्रत्येक ग्रुप एक निश्चित तर्क के अनुसार अगले ग्रुप से संबंधित है। दिए गए विकल्पों में से उस विकल्प का चयन कीजिए जो समान तर्क का अनुसरण करता है।\nJOIN - OJIN - NOJI\nMALE - AMLE - EAML",
+    option: [
+        "LION - ILON - NILO",
+        "USER - SUER - SERU",
+        "NEAR - NAER - RAEN",
+        "PAGE - APGE - EAGP"
+    ],
+    answer: "LION - ILON - NILO"
+},
+
+{
+    question: "एक निश्चित कूट भाषा में, ‘AMIE’ को ‘9432’ और ‘SAME’ को ‘4279’ के रूप में कूटबद्ध किया जाता है। उस भाषा में ‘S’ के लिए कूट क्या होगा?",
+    option: [
+        "7",
+        "2",
+        "4",
+        "9"
+    ],
+    answer: "7"
+},
+
+{
+    question: "यदि संख्या 5341256 के प्रत्येक विषम अंक में 3 जोड़ दिया जाए और प्रत्येक सम अंक में से 2 घटा दिया जाए, तो इस प्रकार बनी नई संख्या में बाईं ओर से पहले और दाईं ओर से दूसरे अंकों का योगफल क्या होगा?",
+    option: [
+        "16",
+        "8",
+        "10",
+        "14"
+    ],
+    answer: "16"
+},
+
+{
+    question: "संख्या 56378492 में प्रत्येक अंक को बाएं से दाएं अवरोही क्रम में व्यवस्थित किया जाता है। इस प्रकार बनी नई संख्या में बाएं से दूसरे और दाएं से दूसरे अंकों का गुणनफल क्या होगा?",
+    option: [
+        "28",
+        "24",
+        "32",
+        "21"
+    ],
+    answer: "24"
+},
+
+{
+    question: "दी गई श्रृंखला को देखें और नीचे दिए गए प्रश्न का उत्तर दें। (सभी संख्याएँ केवल एक-अंकीय संख्याएँ हैं।) गिनती केवल बाएं से दाएं की जानी है।\n(बाएं) 9 6 7 2 3 7 3 8 1 7 2 8 6 3 6 8 9 9 3 9 5 6 1 5 1 7 8 (दाएं)\nऐसी कितनी विषम संख्याएँ हैं, जिनमें से प्रत्येक के ठीक पहले एक विषम संख्या है तथा ठीक बाद भी एक विषम संख्या है?",
+    option: [
+        "5",
+        "8",
+        "7",
+        "6"
+    ],
+    answer: "6"
+},
+
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n2, 27, 63, 112, 176, ?",
+    option: [
+        "259",
+        "257",
+        "258",
+        "256"
+    ],
+    answer: "257"
+},
+
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n94, 130, 179, 243, 324, ?",
+    option: [
+        "423",
+        "424",
+        "425",
+        "426"
+    ],
+    answer: "424"
+},
+
+{
+    question: "एक निश्चित कूट भाषा में,\nA + B का अर्थ है कि 'A, B का पुत्र है',\nA − B का अर्थ है कि 'A, B का भाई है',\nA × B का अर्थ है कि 'A, B की पत्नी है',\nऔर A & B का अर्थ है कि 'A, B का पिता है'।\nयदि 'K − T × R + Z & V' है, तो K का V से क्या संबंध है?",
+    option: [
+        "भाई की पत्नी के पिता",
+        "पुत्र",
+        "पति",
+        "भाई की पत्नी का भाई"
+    ],
+    answer: "भाई की पत्नी का भाई"
+},
+
+{
+    question: "यदि ‘P’ का अर्थ ‘×’ है, ‘Q’ का अर्थ ‘÷’ है, ‘R’ का अर्थ ‘−’ है और ‘S’ का अर्थ ‘+’ है, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n78 P 3 R 15 Q 5 S 126 Q 3 S 117 Q 9 S 125 Q 5 = ?",
+    option: [
+        "332",
+        "311",
+        "351",
+        "384"
+    ],
+    answer: "311"
+},
+
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़िए। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्यतः ज्ञात तथ्यों से भिन्न प्रतीत होती हो, तय कीजिए कि दिए गए निष्कर्षों में से कौन-सा/से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करता है/करते हैं।\n\nकथन:\nसभी जैक, हैमर हैं।\nसभी जैक, कुंजी हैं।\nसभी जैक, ड्रिलर हैं।\n\nनिष्कर्ष:\n(I) सभी हैमर, ड्रिलर हैं।\n(II) कुछ ड्रिलर, कुंजी हैं।",
+    option: [
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है।",
+        "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं।",
+        "केवल निष्कर्ष (II) अनुसरण करता है।",
+        "केवल निष्कर्ष (I) अनुसरण करता है।"
+    ],
+    answer: "केवल निष्कर्ष (II) अनुसरण करता है।"
+},
+
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर DRBH, SGQW से एक निश्चित तरीके से संबंधित है। उसी प्रकार LZJP, AOYE से संबंधित है। इसी तर्क का पालन करते हुए, दिए गए विकल्पों में से ESCI किससे संबंधित है?",
+    option: [
+        "THDR",
+        "THYU",
+        "THRX",
+        "THRE"
+    ],
+    answer: "THRX"
+},
+
+{
+    question: "उस सेट का चयन करें जिसमें संख्याएँ उसी तरह से संबंधित हैं जैसे कि निम्नलिखित सेटों की संख्याएँ हैं।\n(नोट: पूर्ण संख्याओं पर संक्रियाएँ की जानी चाहिए, संख्याओं को उनके घटक अंकों में तोड़े बिना। उदाहरणार्थ 13 को लीजिए - 13 पर संक्रियाएँ जैसे 13 में जोड़ना/घटाना/गुणा करना केवल 13 पर की जा सकती हैं। 13 को 1 और 3 में तोड़ना और फिर 1 और 3 पर गणितीय संक्रियाएँ करने की अनुमति नहीं है।)\n(55, 11, 5)\n(36, 3, 12)",
+    option: [
+        "(42, 15, 3)",
+        "(65, 5, 13)",
+        "(56, 14, 3)",
+        "(70, 5, 16)"
+    ],
+    answer: "(65, 5, 13)"
+},
+
+{
+    question: "O, P, Q, R, W, X और Y एक सीधी पंक्ति में, उत्तर की ओर अभिमुख होकर बैठे हैं। W और Y के बीच केवल तीन व्यक्ति बैठे हैं। Y के ठीक बाईं ओर पड़ोस में P बैठा है। Q के दाईं ओर कोई नहीं बैठा है। Q और P के बीच केवल दो व्यक्ति बैठे हैं। O के ठीक दाईं ओर पड़ोस में X बैठा है। R और X के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "दो",
+        "एक",
+        "चार",
+        "तीन"
+    ],
+    answer: "दो"
+},
+
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\nARB YVZ WZX UDV ?",
+    option: [
+        "RHS",
+        "RGT",
+        "TGU",
+        "SHT"
+    ],
+    answer: "SHT"
+},
+
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह दी गई श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए प्रश्न-चिह्न (?) के स्थान पर आएगा?\nYCG 87 IMQ 95 SWA 103 CGK 111 ?",
+    option: [
+        "MRX 118",
+        "MRT 119",
+        "MPT 118",
+        "MQU 119"
+    ],
+    answer: "MQU 119"
+},
+
+{
+    question: "निम्नलिखित संख्या और प्रतीक श्रृंखला का संदर्भ लीजिए और उसके आधार पर पूछे गए प्रश्न का उत्तर दीजिए। गिनती केवल बाएं से दाएं की जानी है।\n(बाएं) 9 @ 3 $ 2 ! 1 6 ^ & 9 3 ! @ # 3 $ 5 + ! (दाएं)\nयदि श्रृंखला से सभी प्रतीकों को हटा दिया जाए, तो दाएं से सातवें स्थान पर निम्नलिखित में से क्या आएगा?",
+    option: [
+        "9",
+        "2",
+        "3",
+        "6"
+    ],
+    answer: "2"
+},
+
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n71, 59, 46, 32, 17, ?",
+    option: [
+        "−1",
+        "2",
+        "3",
+        "1"
+    ],
+    answer: "1"
+},
+
+{
+    question: "एक निश्चित कूट भाषा में, ‘SOUP’ को ‘5179’ और ‘PACE’ को ‘2418’ लिखा जाता है। दी गई कूट भाषा में ‘P’ का कूट क्या है?",
+    option: [
+        "2",
+        "9",
+        "7",
+        "1"
+    ],
+    answer: "1"
+},
+
+{
+    question: "एक विद्यालय परिसर में, बिल्डिंग A, बिल्डिंग B के दक्षिण में है। बिल्डिंग E, बिल्डिंग B के पूर्व में है। बिल्डिंग D, बिल्डिंग A के पश्चिम में है। बिल्डिंग C, बिल्डिंग E के दक्षिण में है। बिल्डिंग B के सापेक्ष बिल्डिंग C की स्थिति क्या है?",
+    option: [
+        "दक्षिण",
+        "पश्चिम",
+        "पूर्व",
+        "दक्षिण-पूर्व"
+    ],
+    answer: "दक्षिण-पूर्व"
+},
+{
+    question: "A, B, C, D, E और F एक गोल मेज के परितः केंद्र की ओर अभिमुख होकर बैठे हैं। B, D के बाएं दूसरे स्थान पर बैठा है। F, A का निकटतम पड़ोसी है। B, A के ठीक दाएं पड़ोस में बैठा है। C, E के बाएं दूसरे स्थान पर बैठा है। A के सापेक्ष C का स्थान क्या है?",
+    option: [
+        "दाईं ओर ठीक पड़ोस में",
+        "बाएं से दूसरा",
+        "बाएं से तीसरा",
+        "दाएं से दूसरा"
+    ],
+    answer: "दाएं से दूसरा"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूह युग्मों में से तीन एक निश्चित तरीके से एकसमान हैं और इस प्रकार वे एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह युग्म उस ग्रुप से संबंधित नहीं है? (नोट: असंगत अक्षर-समूह युग्म, उसमें व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "LP - KO",
+        "IM - HL",
+        "MQ - LP",
+        "OS - NS"
+    ],
+    answer: "OS - NS"
+},
+{
+    question: "A, B, C, D, E, F और G एक गोल मेज के परितः केंद्र की ओर अभिमुख होकर बैठे हैं। A के बाएं से गिनने पर E और A के बीच केवल एक व्यक्ति बैठा है। B, C के दाएं तीसरे स्थान पर बैठा है। D, F के बाएं तीसरे स्थान पर बैठा है। B, D के ठीक दाएं पड़ोस में बैठा है। G, D का निकटतम पड़ोसी नहीं है। F के दाएं से गिनने पर C और F के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    answer: "1"
+},
+{
+    question: "किसी निश्चित कूट भाषा में, A + B का अर्थ है कि 'A, B का पुत्र है', A - B का अर्थ है कि 'A, B का भाई है', A × B का अर्थ है कि 'A, B की पत्नी है', और A & B का अर्थ है कि 'A, B का पिता है'। यदि 'K-T+R×Z&V' है, तो K का V से क्या संबंध है?",
+    option: [
+        "पिता",
+        "पति",
+        "पुत्र",
+        "भाई"
+    ],
+    answer: "भाई"
+},
+{
+    question: "यदि ‘+’ और ‘−’ को परस्पर बदल दिया जाए तथा ‘×’ और ‘÷’ को परस्पर बदल दिया जाए, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? 96 + 15 ÷ 5 − 154 × 14 = ?",
+    option: [
+        "32",
+        "29",
+        "34",
+        "30"
+    ],
+    answer: "32"
+},
+{
+    question: "निम्नलिखित संख्या श्रृंखला का संदर्भ लें और उसके बाद दिए गए प्रश्न का उत्तर दें (सभी संख्याएँ केवल एकल अंकीय संख्याएँ हैं)। (बाएं) 2 4 5 7 1 9 3 6 8 4 7 2 5 9 3 1 8 6 2 4 7 9 (दाएं)। श्रृंखला में कितनी अद्वितीय संख्याएं 5 से छोटी हैं (प्रत्येक संख्या को केवल एक बार गिना जाना है, चाहे वह कितनी भी बार दोहराई गई हो)?",
+    option: [
+        "एक",
+        "तीन",
+        "चार",
+        "दो"
+    ],
+    answer: "चार"
+},
+{
+    question: "JPUG एक निश्चित तरीके से OLXE से संबंधित है। उसी प्रकार, TMQK, YITI से संबंधित है। समान तर्क के अनुसार, NOLT निम्नलिखित में से किससे संबंधित है?",
+    option: [
+        "TJPQ",
+        "SKPR",
+        "TJOQ",
+        "SKOR"
+    ],
+    answer: "SKOR"
+},
+{
+    question: "एक निश्चित कूट भाषा में, VERL को 102 के रूप में कूटबद्ध किया गया है तथा GZQT को 76 के रूप में कूटबद्ध किया गया है। उस भाषा में BXNO के लिए कूट क्या होगा?",
+    option: [
+        "89",
+        "110",
+        "106",
+        "96"
+    ],
+    answer: "106"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़िए। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्य रूप से ज्ञात तथ्यों से भिन्न प्रतीत होती हो, तय कीजिए कि दिए गए निष्कर्षों में से कौन-से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करते हैं। कथन: कुछ क्रोमियम, गैलियम हैं। कोई गैलियम, गोल्ड नहीं है। सभी गोल्ड, स्टील हैं। निष्कर्ष: I: कुछ गोल्ड, गैलियम हैं। II: कुछ गैलियम, स्टील हैं।",
+    option: [
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है",
+        "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं",
+        "केवल निष्कर्ष (II) अनुसरण करता है",
+        "केवल निष्कर्ष (I) अनुसरण करता है"
+    ],
+    answer: "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है"
+},
+{
+    question: "निम्नलिखित संख्या, प्रतीक श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए। गिनती केवल बाएं से दाएं की जानी है। (बाएं) 4 © 7 # 3 $ 7 6 4 £ 8 $ 2 * £ & $ # % 1 * 2 (दाएं)। ऐसी कितनी संख्याएं हैं, जिनमें से प्रत्येक के ठीक पहले एक संख्या है और ठीक बाद एक प्रतीक है?",
+    option: [
+        "0",
+        "1",
+        "2",
+        "3"
+    ],
+    answer: "1"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह, दी गई श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए प्रश्न-चिह्न (?) के स्थान पर आएगा? YVW 58 VST 69 SPQ 80 PMN 91 ?",
+    option: [
+        "MIJ 101",
+        "MJK 102",
+        "MRX 101",
+        "MKJ 102"
+    ],
+    answer: "MJK 102"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? 5 8 14 26 ? 98",
+    option: [
+        "50",
+        "45",
+        "51",
+        "49"
+    ],
+    answer: "50"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? FRU HTW JVY LXA ?",
+    option: [
+        "NDS",
+        "NZS",
+        "NCZ",
+        "NZC"
+    ],
+    answer: "NZC"
+},
+{
+    question: "उस सेट का चयन करें जिसमें संख्याएँ उसी प्रकार से संबंधित हैं जिस प्रकार से निम्नलिखित सेटों की संख्याएँ संबंधित हैं। (नोट: संख्याओं को उनके घटक अंकों में तोड़े बिना संक्रियाएँ केवल पूर्ण संख्याओं पर की जानी चाहिए। उदाहरण के लिए, 13 लीजिए – 13 पर संक्रियाएँ, जैसे 13 में जोड़ना/घटाना/गुणा करना, की जा सकती हैं। 13 को 1 और 3 में तोड़ना तथा फिर 1 और 3 पर गणितीय संक्रियाएँ करने की अनुमति नहीं है।) (25, 37, 53) (40, 52, 68)",
+    option: [
+        "(9, 21, 33)",
+        "(32, 44, 28)",
+        "(39, 27, 43)",
+        "(26, 38, 54)"
+    ],
+    answer: "(26, 38, 54)"
+},
+{
+    question: "यह प्रश्न नीचे दी गई पांच, तीन-अंकीय संख्याओं पर आधारित है। (बाएं) 351 369 458 517 619 (दाएं)। (उदाहरण: 697 में - पहला अंक = 6, दूसरा अंक = 9 और तीसरा अंक = 7 है।) (नोट: सभी संक्रियाएं बाएं से दाएं की जानी हैं।) यदि सबसे बड़ी संख्या के दूसरे अंक को सबसे छोटी संख्या के दूसरे अंक में जोड़ा जाए, तो प्राप्त परिणाम कितना होगा?",
+    option: [
+        "5",
+        "4",
+        "6",
+        "7"
+    ],
+    answer: "6"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़ें। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्यतः ज्ञात तथ्यों से भिन्न प्रतीत होती हो, निर्णय कीजिए कि दिए गए निष्कर्षों में से कौन-सा/से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करता है/करते हैं। कथन: सभी हथौड़ा, स्क्रूड्राइवर हैं। कोई भी स्क्रूड्राइवर, रिंच नहीं है। कुछ रिंच, प्लायर हैं। निष्कर्ष: (I): कोई भी हथौड़ा, रिंच नहीं है। (II): कोई भी प्लायर, स्क्रूड्राइवर नहीं है।",
+    option: [
+        "न तो निष्कर्ष (I) और न ही (II) सत्य है",
+        "केवल निष्कर्ष (I) सत्य है",
+        "निष्कर्ष (I) और (II) दोनों सत्य हैं",
+        "केवल निष्कर्ष (II) सत्य है"
+    ],
+    answer: "केवल निष्कर्ष (I) सत्य है"
+},
+{
+    question: "उस युग्म का चयन कीजिए, जो नीचे दिए गए दो युग्मों के समान पैटर्न का अनुसरण करता है। दोनों युग्म समान पैटर्न का अनुसरण करते हैं। ELP : CJN, IQW : GOU",
+    option: [
+        "NRT : FSE",
+        "HWZ : FUX",
+        "BTS : AWP",
+        "BTD : VRY"
+    ],
+    answer: "HWZ : FUX"
+},
+{
+    question: "किसी निश्चित कूट भाषा में, ‘nice large land’ को ‘cd ak pi’ के रूप में कूटबद्ध किया गया है, ‘land is fertile’ को ‘rf pc ak’ के रूप में कूटबद्ध किया गया है तथा ‘cost is high’ को ‘si ig pc’ के रूप में कूटबद्ध किया गया है। उस भाषा में ‘fertile’ को किस प्रकार कूटबद्ध किया गया है?",
+    option: [
+        "rf",
+        "cd",
+        "pc",
+        "ak"
+    ],
+    answer: "rf"
+},
+{
+    question: "सात डिब्बे L, M, N, O, Q, R और S एक के ऊपर एक रखे हैं, लेकिन आवश्यक नहीं है कि वे इसी क्रम में हों। M को नीचे से दूसरे स्थान पर रखा गया है। M और N के बीच केवल एक डिब्बा रखा गया है। M और S के बीच केवल तीन डिब्बे रखे गए हैं जहाँ S को M के ऊपर रखा गया है। L को S के ठीक नीचे रखा गया है। Q को O के ऊपर किसी एक स्थान पर रखा गया है। R को M के ठीक ऊपर या नीचे नहीं रखा गया है। O के नीचे कितने डिब्बे रखे गए हैं?",
+    option: [
+        "एक भी नहीं",
+        "एक",
+        "तीन",
+        "दो"
+    ],
+    answer: "एक भी नहीं"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूह युग्मों में से तीन एक निश्चित तरीके से एकसमान हैं और इस प्रकार एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह युग्म, उस ग्रुप से संबंधित नहीं है? (नोट: असंगत अक्षर-समूह युग्म, व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "MJ−LI",
+        "XU−WT",
+        "HE−FF",
+        "OL−NK"
+    ],
+    answer: "HE−FF"
+},
+{
+    question: "यदि ‘A’ का अर्थ ‘÷’ है, ‘B’ का अर्थ ‘×’ है, ‘C’ का अर्थ ‘+’ है और ‘D’ का अर्थ ‘−’ है, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? 9 B 3 D 56 A 4 C 6 = ?",
+    option: [
+        "24",
+        "19",
+        "27",
+        "15"
+    ],
+    answer: "19"
+},
+{
+    question: "सात डिब्बे D, E, F, U, V, W और X एक के ऊपर एक रखे गए हैं, लेकिन जरूरी नहीं कि वे इसी क्रम में हों। केवल U को D के ऊपर रखा गया है। D और F के बीच केवल V को रखा गया है। E के नीचे कोई डिब्बा नहीं रखा गया है। D और W के बीच केवल तीन डिब्बे रखे गए हैं। X और E के बीच कितने डिब्बे रखे गए हैं?",
+    option: [
+        "चार",
+        "दो",
+        "एक",
+        "तीन"
+    ],
+    answer: "एक"
+},
+{
+    question: "एक निश्चित तर्क के अनुसार, TM 13 का संबंध WR 16 से है। उसी तर्क के अनुसार, MF 18 का संबंध PK 21 से है। समान तर्क के अनुसार, QJ 26 दिए गए विकल्पों में किससे संबंधित है?",
+    option: [
+        "TM 28",
+        "UM 28",
+        "TO 29",
+        "UP 29"
+    ],
+    answer: "TO 29"
+},
+{
+    question: "यदि ‘+’ का अर्थ ‘−’ है, ‘−’ का अर्थ ‘×’ है, ‘×’ का अर्थ ‘÷’ और ‘÷’ का अर्थ ‘+’ है, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? 20 × 2 ÷ 2 − 3 + 7 = ?",
+    option: [
+        "9",
+        "11",
+        "5",
+        "14"
+    ],
+    answer: "9"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? 34 44 57 73 92 ?",
+    option: [
+        "118",
+        "114",
+        "116",
+        "112"
+    ],
+    answer: "114"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा? 57 67 82 102 127 ?",
+    option: [
+        "157",
+        "159",
+        "158",
+        "156"
+    ],
+    answer: "157"
+},
+{
+    question: "सात व्यक्ति, A, B, C, D, E, F और G, एक पंक्ति में उत्तर दिशा की ओर अभिमुख होकर बैठे हैं। G के दाईं ओर कोई नहीं बैठा है। G और D के बीच केवल तीन व्यक्ति बैठे हैं। D और C के बीच केवल दो व्यक्ति बैठे हैं। E, F के बाईं ओर तीसरे स्थान पर बैठा है। B, F के ठीक दाईं ओर पड़ोस में बैठा है। C के दाईं ओर कितने व्यक्ति बैठे हैं?",
+    option: [
+        "4",
+        "3",
+        "1",
+        "2"
+    ],
+    answer: "1"
+},
+{
+    question: "बिल्डिंग X, बिल्डिंग Y के दक्षिण में है और बिल्डिंग Z, बिल्डिंग Y के पूर्व में है। बिल्डिंग Z के संदर्भ में बिल्डिंग X किस दिशा में स्थित है?",
+    option: [
+        "उत्तर-पश्चिम",
+        "दक्षिण-पश्चिम",
+        "उत्तर-पूर्व",
+        "दक्षिण-पूर्व"
+    ],
+    answer: "दक्षिण-पश्चिम"
+},
+{
+    question: "निम्नलिखित श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए (सभी संख्याएं केवल एकल अंकीय संख्याएं हैं)। (बाएं) 3 6 8 9 1 5 7 3 2 4 6 1 9 7 8 2 5 3 9 6 1 4 2 7 (दाएं)। श्रृंखला में कितने अद्वितीय सम अंक हैं?",
+    option: [
+        "एक भी नहीं",
+        "दो",
+        "चार",
+        "तीन"
+    ],
+    answer: "चार"
+},
+{
+    question: "तरुण बिंदु A से चलना प्रारंभ करता है और पूर्व की ओर 65 km ड्राइव करता है। फिर वह बाएँ मुड़ता है, 42 km ड्राइव करता है, बाएँ मुड़ता है और 78 km ड्राइव करता है। फिर वह बाएँ मुड़ता है और 71 km ड्राइव करता है। वह अंत में बाएँ मुड़ता है, 13 km ड्राइव करता है और बिंदु P पर रुकता है। बिंदु A पर दोबारा पहुँचने के लिए उसे कितनी दूर (न्यूनतम दूरी) और किस दिशा में ड्राइव करनी चाहिए? (जब तक निर्दिष्ट न किया जाए, सभी मोड़ केवल 90 डिग्री के मोड़ हैं।)",
+    option: [
+        "26 km, दक्षिण में",
+        "27 km, दक्षिण में",
+        "29 km, उत्तर में",
+        "28 km, उत्तर में"
+    ],
+    answer: "29 km, उत्तर में"
+},
+{
+    question: "संख्या 21786539 के प्रत्येक अंक को बाएं से दाएं आरोही क्रम में व्यवस्थित किया जाता है। मूल संख्या की तुलना में कितने अंकों का स्थान अपरिवर्तित रहेगा?",
+    option: [
+        "एक",
+        "दो",
+        "तीन",
+        "एक का भी नहीं"
+    ],
+    answer: "एक का भी नहीं"
+},
+{
+    question: "निम्नलिखित अक्षर श्रृंखला का संदर्भ लें और दिए गए प्रश्न का उत्तर दें। (गिनती केवल बाएं से दाएं की जानी है।)\n\n(बाएं) D M X A G N R L W O T P Y E F Q K Z J V U H (दाएं)\n\nऐसे कितने व्यंजन हैं, जिनमें से प्रत्येक से ठीक पहले एक व्यंजन और ठीक बाद एक स्वर है?",
+    option: [
+        "एक",
+        "तीन",
+        "दो",
+        "तीन से अधिक"
+    ],
+    answer: "एक"
+},
+{
+    question: "यदि ‘A’ का अर्थ ‘÷’ है, ‘B’ का अर्थ ‘×’ है, ‘C’ का अर्थ ‘+’ है और ‘D’ का अर्थ ‘−’ है, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n(84 A 12) B 5 C 13 B 2 D 11 B 5 C 28 = ?",
+    option: [
+        "54",
+        "49",
+        "34",
+        "27"
+    ],
+    answer: "54"
+},
+{
+    question: "अंग्रेजी वर्णानुक्रम पर आधारित, निम्नलिखित चार में से तीन किसी निश्चित तरीके से एकसमान हैं और इस प्रकार वे एक ग्रुप बनाते हैं। निम्नलिखित में से कौन-सा उस ग्रुप से संबंधित नहीं है?\n\n(नोट: असंगत अक्षर-समूह, व्यंजनों/स्वरों की संख्या या उनकी स्थिति पर आधारित नहीं है।)",
+    option: [
+        "ILQ",
+        "JMQ",
+        "CFK",
+        "YBG"
+    ],
+    answer: "YBG"
+},
+{
+    question: "यह प्रश्न नीचे दी गई पाँच, तीन-अंकीय संख्याओं पर आधारित है।\n\n(बाएं) 654 842 684 714 385 (दाएं)\n\nयदि सभी संख्याओं को आरोही क्रम में व्यवस्थित किया जाए, तो कितनी संख्याओं की स्थिति अपरिवर्तित रहेगी?",
+    option: [
+        "दो",
+        "एक",
+        "चार",
+        "तीन"
+    ],
+    answer: "दो"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-समूह दी गई श्रृंखला को तार्किक रूप से पूर्ण बनाने के लिए प्रश्न-चिह्न (?) के स्थान पर आएगा?\n\nKDG, MFI, OHK, QJM, ?",
+    option: [
+        "SKO",
+        "SLP",
+        "SLO",
+        "SKP"
+    ],
+    answer: "SLO"
+},
+{
+    question: "एक निश्चित कूट भाषा में,\nP + Q का अर्थ है कि ‘P, Q का पति है’,\nP # Q का अर्थ है कि ‘P, Q का भाई है’,\nP & Q का अर्थ है कि ‘P, Q की माता है’ और\nP % Q का अर्थ है कि ‘P, Q की बहन है’।\n\nयदि ‘F # N + O & V % E’ है, तो F का E से क्या संबंध है?",
+    option: [
+        "पिता के भाई",
+        "बहन का पति",
+        "पिता की बहन",
+        "बहन का पुत्र"
+    ],
+    answer: "पिता के भाई"
+},
+{
+    question: "दी गई संख्या श्रृंखला का संदर्भ लीजिए और नीचे दिए गए प्रश्न का उत्तर दीजिए। (सभी संख्याएँ केवल एक-अंकीय संख्याएँ हैं। गिनती केवल बाएं से दाएं करनी है।)\n\n(बाएं) 4 2 1 5 7 9 8 5 3 6 2 1 5 7 3 7 8 4 3 6 9 7 4 5 2 4 1 (दाएं)\n\nऐसे कितने सम अंक हैं, जिनमें से प्रत्येक के ठीक पहले एक सम अंक और ठीक बाद एक विषम अंक है?",
+    option: [
+        "तीन से अधिक",
+        "तीन",
+        "एक",
+        "दो"
+    ],
+    answer: "तीन"
+},
+{
+    question: "सात मित्र, L, M, N, O, Q, R और S, उत्तर दिशा की ओर अभिमुख होकर एक सीधी पंक्ति में बैठे हैं। S के दाईं ओर कोई नहीं बैठा है। S, Q के ठीक दाईं ओर पड़ोस में बैठा है। S और N के बीच केवल तीन व्यक्ति बैठे हैं। R, M के बाईं ओर तीसरे स्थान पर बैठा है। O, M के ठीक दाईं ओर पड़ोस में बैठा है। L और Q के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "शून्य",
+        "दो",
+        "एक",
+        "तीन"
+    ],
+    answer: "एक"
+},
+{
+    question: "सभी 46 व्यक्ति एक पंक्ति में उत्तर की ओर अभिमुख होकर खड़े हैं। Z दाएँ छोर से 12वें स्थान पर है, जबकि G बाएँ छोर से 9वें स्थान पर है। Z और G के बीच कितने व्यक्ति हैं?",
+    option: [
+        "21",
+        "24",
+        "25",
+        "23"
+    ],
+    answer: "25"
+},
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-संख्या समूह दिए गए क्रम में प्रश्न-चिह्न (?) के स्थान पर आएगा ताकि यह तार्किक रूप से पूर्ण हो सके?\n\nCYB 48, DZC 53, EAD 58, FBE 63, ?",
+    option: [
+        "GCF 68",
+        "GBE 67",
+        "GHJ 67",
+        "GDE 68"
+    ],
+    answer: "GCF 68"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़िए। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्यतः ज्ञात तथ्यों से भिन्न प्रतीत होती हो, तय कीजिए कि दिए गए निष्कर्षों में से कौन-सा/से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करता है/करते हैं।\n\nकथन:\nकुछ हाइड्रोजन, ऑक्सीजन हैं।\nसभी ऑक्सीजन, नाइट्रोजन हैं।\nसभी नाइट्रोजन, कार्बन हैं।\n\nनिष्कर्ष I: सभी ऑक्सीजन, कार्बन हैं।\nनिष्कर्ष II: कुछ नाइट्रोजन, हाइड्रोजन हैं।",
+    option: [
+        "निष्कर्ष I और II दोनों अनुसरण करते हैं",
+        "केवल निष्कर्ष I अनुसरण करता है",
+        "केवल निष्कर्ष II अनुसरण करता है",
+        "न तो निष्कर्ष I और न ही II अनुसरण करता है"
+    ],
+    answer: "निष्कर्ष I और II दोनों अनुसरण करते हैं"
+},
+{
+    question: "दिए गए कथनों और निष्कर्षों को ध्यानपूर्वक पढ़िए। यह मानते हुए कि कथनों में दी गई जानकारी सत्य है, भले ही वह सामान्यतः ज्ञात तथ्यों से भिन्न प्रतीत होती हो, निर्णय कीजिए कि दिए गए निष्कर्षों में से कौन-सा/से निष्कर्ष कथनों का तार्किक रूप से अनुसरण करता है/करते हैं।\n\nकथन:\nसभी बैग, जूते हैं।\nसभी बैग, टोपी हैं।\nसभी बैग, लैपटॉप हैं।\n\nनिष्कर्ष:\n(I) सभी जूते, लैपटॉप हैं।\n(II) कुछ लैपटॉप, टोपी हैं।",
+    option: [
+        "निष्कर्ष (I) और (II) दोनों अनुसरण करते हैं",
+        "केवल निष्कर्ष (I) अनुसरण करता है",
+        "केवल निष्कर्ष (II) अनुसरण करता है",
+        "न तो निष्कर्ष (I) और न ही (II) अनुसरण करता है"
+    ],
+    answer: "केवल निष्कर्ष (II) अनुसरण करता है"
+},
+{
+    question: "विकास बिंदु Y से चलना शुरू करता है और दक्षिण की ओर 81 km गाड़ी चलाता है। फिर वह दाईं ओर मुड़कर 77 km गाड़ी चलाता है। फिर वह दाईं ओर मुड़कर 27 km गाड़ी चलाता है। फिर वह दाईं ओर मुड़कर 35 km गाड़ी चलाता है। फिर वह दाईं ओर मुड़कर 39 km गाड़ी चलाता है, फिर बाईं ओर मुड़कर 42 km गाड़ी चलाकर बिंदु Z पर रुकता है। बिंदु Y तक दोबारा पहुँचने के लिए उसे कितनी दूरी (सबसे कम दूरी) और किस दिशा में गाड़ी चलानी चाहिए? (जब तक निर्दिष्ट न किया गया हो, सभी मोड़ केवल 90-डिग्री के मोड़ हैं।)",
+    option: [
+        "उत्तर की ओर 89 km",
+        "उत्तर की ओर 93 km",
+        "दक्षिण की ओर 94 km",
+        "दक्षिण की ओर 97 km"
+    ],
+    answer: "उत्तर की ओर 89 km"
+},
+{
+    question: "यदि ‘A’ का अर्थ ‘÷’ है, ‘B’ का अर्थ ‘×’ है, ‘C’ का अर्थ ‘+’ है और ‘D’ का अर्थ ‘−’ है, तो निम्नलिखित समीकरण में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n12 C 52 A 13 B 7 D 31 = ?",
+    option: [
+        "5",
+        "7",
+        "9",
+        "8"
+    ],
+    answer: "9"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आएगा?\n\n17, 22, 32, 47, 67, ?",
+    option: [
+        "92",
+        "94",
+        "93",
+        "91"
+    ],
+    answer: "92"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर, निम्नलिखित चार अक्षर-समूह युग्मों में से तीन एक निश्चित रूप से समान हैं और इस प्रकार एक ग्रुप बनाते हैं। कौन-सा अक्षर-समूह युग्म उस ग्रुप से संबंधित नहीं है?\n\n(नोट: असंगत अक्षर-समूह युग्म, व्यंजनों/स्वरों की संख्या या अक्षर-समूह में उनके स्थान पर आधारित नहीं है।)",
+    option: [
+        "GE−ZA",
+        "MK−GE",
+        "CA−WU",
+        "SQ−MK"
+    ],
+    answer: "CA−WU"
+},
+{
+    question: "उस सेट का चयन कीजिए, जिसमें संख्याएँ उसी प्रकार संबंधित हैं जैसे कि निम्नलिखित सेटों की संख्याएँ संबंधित हैं।\n\n(5, 14, 25)\n(4, 13, 24)\n\n(नोट: संख्याओं को उनके घटक अंकों में तोड़े बिना, संक्रियाएँ पूर्ण संख्याओं पर की जानी चाहिए।)",
+    option: [
+        "(10, 31, 42)",
+        "(9, 18, 23)",
+        "(8, 17, 6)",
+        "(6, 15, 26)"
+    ],
+    answer: "(6, 15, 26)"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर YEVA, JPGL से एक निश्चित तरीके से संबंधित है। उसी प्रकार QWNS, BHYD से संबंधित है। इसी तर्क के अनुसार, XDUZ दिए गए विकल्पों में से किससे संबंधित है?",
+    option: [
+        "FIKO",
+        "IOFJ",
+        "IOFK",
+        "FOKI"
+    ],
+    answer: "IOFK"
+},
+{
+    question: "निम्नलिखित संख्या-प्रतीक श्रृंखला का संदर्भ लीजिए तथा दिए गए प्रश्न का उत्तर दीजिए। गिनती केवल बाएं से दाएं की जानी है।\n\n(बाएं) 4 8 @ 3 € 8 & 6 * 6 © 6 $ £ & 5 7 $ $ # 8 $ (दाएं)\n\nऐसी कितनी संख्याएँ हैं, जिनमें से प्रत्येक के ठीक पहले एक प्रतीक है और ठीक बाद भी एक प्रतीक है?",
+    option: [
+        "7",
+        "5",
+        "8",
+        "6"
+    ],
+    answer: "6"
+},
+{
+    question: "सभी 54 व्यक्ति एक पंक्ति में उत्तर की ओर अभिमुख होकर खड़े हैं। श्री अक्ते दाएँ छोर से 8वें स्थान पर हैं, जबकि श्री मेमी बाएँ छोर से 21वें स्थान पर हैं। श्री अक्ते और श्री मेमी के बीच कितने व्यक्ति हैं?",
+    option: [
+        "26",
+        "24",
+        "23",
+        "25"
+    ],
+    answer: "25"
+},
+{
+    question: "किसी निश्चित कूट भाषा में, 'go there now' को 'lb gt de' के रूप में कूटबद्ध किया गया है तथा 'go to school' को 'kj ft de' के रूप में कूटबद्ध किया गया है। दी गई भाषा में 'go' को कैसे कूटबद्ध किया गया है? (सभी कूट दो-अक्षर वाले कूट हैं।)",
+    option: [
+        "kj",
+        "lf",
+        "de",
+        "gt"
+    ],
+    answer: "de"
+},
+{
+    question: "किसी निश्चित कूट भाषा में, 'AUTO' को '2683' और 'TOUR' को '8136' के रूप में कूटबद्ध किया जाता है। उस भाषा में 'R' के लिए कूट क्या होगा?",
+    option: [
+        "6",
+        "1",
+        "8",
+        "3"
+    ],
+    answer: "1"
+},
+{
+    question: "A, B, C, D, E और F एक गोल मेज के परितः केंद्र की ओर अभिमुख होकर बैठे हैं। D, C के दाईं ओर तीसरे स्थान पर बैठा है। A, C के बाईं ओर दूसरे स्थान पर बैठा है। E, F के दाईं ओर दूसरे स्थान पर बैठा है। B, E के ठीक दाईं ओर पड़ोस में बैठा है। A के बाईं ओर से गिनने पर, A और F के बीच कितने व्यक्ति बैठे हैं?",
+    option: [
+        "एक भी नहीं",
+        "चार",
+        "दो",
+        "एक"
+    ],
+    answer: "दो"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\n\n6, 8, ?, 18, 26, 36",
+    option: [
+        "12",
+        "14",
+        "11",
+        "13"
+    ],
+    answer: "12"
+},
+{
+    question: "कार्तिक बिंदु A से चलना शुरू करता है और पूर्व की ओर 9 km गाड़ी चलाता है। फिर वह दाएं मुड़ता है और 5 km गाड़ी चलाता है, फिर दाएं मुड़ता है और 11 km गाड़ी चलाता है। फिर वह दाएं मुड़ता है और 12 km गाड़ी चलाता है। वह अंत में दाएं मुड़ता है, 2 km गाड़ी चलाता है और बिंदु P पर रुकता है। बिंदु A तक दोबारा पहुँचने के लिए उसे कितनी दूरी (सबसे कम दूरी) और किस दिशा में गाड़ी चलानी चाहिए? (सभी मोड़ केवल 90° के हैं, जब तक कि निर्दिष्ट न हों।)",
+    option: [
+        "उत्तर में 6 km",
+        "दक्षिण में 7 km",
+        "दक्षिण में 6 km",
+        "उत्तर में 7 km"
+    ],
+    answer: "उत्तर में 6 km"
+},
+{
+    question: "पाँच व्यक्ति, A, B, C, D और E, एक पंक्ति में उत्तर दिशा की ओर अभिमुख होकर बैठे हैं। A और D के बीच केवल दो व्यक्ति बैठे हैं। B पंक्ति के बाएं छोर से तीसरे स्थान पर बैठा है। B, A के ठीक दाएं पड़ोस में बैठा है। B, E के ठीक बाएं पड़ोस में बैठा है। E और A के बीच कुल कितने व्यक्ति बैठे हैं?",
+    option: [
+        "दो",
+        "एक भी नहीं",
+        "एक",
+        "तीन"
+    ],
+    answer: "एक"
+},
+{
+    question: "अंग्रेजी वर्णमाला क्रम के आधार पर JTUB का संबंध एक निश्चित तरीके से HRSZ से है। इसी प्रकार MXNP का संबंध KVLN से है। समान तर्क का अनुसरण करते हुए, LRYH का संबंध दिए गए विकल्पों में से किससे है?",
+    option: [
+        "IOVE",
+        "JPWF",
+        "KQXG",
+        "JPXF"
+    ],
+    answer: "JPWF"
+},
+{
+    question: "उस युग्म का चयन कीजिए जो नीचे दिए गए दो युग्मों के समान पैटर्न का अनुसरण करता है। दोनों युग्म समान पैटर्न का अनुसरण करते हैं।\n\nPSQ−MPN\nGJH−DGE",
+    option: [
+        "TVS−PSQ",
+        "TWU−QTR",
+        "TVS−QTR",
+        "TWU−PTQ"
+    ],
+    answer: "TWU−PTQ"
+},
+{
+    question: "दी गई श्रृंखला में प्रश्न-चिह्न (?) के स्थान पर क्या आना चाहिए?\n\n1, 5, 11, 19, ?, 41",
+    option: [
+        "29",
+        "28",
+        "27",
+        "30"
+    ],
+    answer: "29"
+},
+{
+    question: "संख्याओं 496, 357, 256, 547 और 413 में दूसरी सबसे बड़ी संख्या के दूसरे अंक तथा सबसे छोटी संख्या के तीसरे अंक का योग ज्ञात कीजिए।",
+    option: [
+        "12",
+        "13",
+        "14",
+        "15"
+    ],
+    answer: "15"
+},
+
+{
+    question: "श्रृंखला में लुप्त संख्या ज्ञात कीजिए: 1, 2, 10, ?, 101, 226",
+    option: [
+        "40",
+        "30",
+        "37",
+        "19"
+    ],
+    answer: "37"
+},
+
+{
+    question: "दी गई अक्षर श्रृंखला में ऐसे कितने अक्षर हैं जिनके ठीक बाद एक स्वर आता है?\n\nR B M Y A C T F K W N J Z Q L X O P E D H V",
+    option: [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    answer: "3"
+},
+
+{
+    question: "संख्याओं 826, 117, 681, 964 और 529 में सबसे बड़ी संख्या के तीसरे अंक तथा सबसे छोटी संख्या के दूसरे अंक का योग ज्ञात कीजिए।",
+    option: [
+        "3",
+        "4",
+        "5",
+        "6"
+    ],
+    answer: "5"
+},
+
+{
+    question: "श्रृंखला में अगली संख्या ज्ञात कीजिए: 129, 143, 154, 168, 179, ?",
+    option: [
+        "189",
+        "191",
+        "193",
+        "195"
+    ],
+    answer: "193"
+},
+
+{
+    question: "यदि DWXK को LEFS और JCDQ को RKLY के रूप में कूटबद्ध किया जाता है, तो HABO को किस रूप में कूटबद्ध किया जाएगा?",
+    option: [
+        "PIJW",
+        "QIKW",
+        "PJIV",
+        "PIJW"
+    ],
+    answer: "PIJW"
+},
+
+{
+    question: "एक व्यक्ति बिंदु A से 47 km उत्तर की ओर चलता है, फिर 48 km पूर्व, 51 km दक्षिण, 56 km पश्चिम और अंत में 4 km उत्तर की ओर चलता है। अब वह बिंदु A से किस दिशा में और कितनी दूरी पर है?",
+    option: [
+        "पूर्व में 8 km",
+        "पश्चिम में 8 km",
+        "उत्तर में 8 km",
+        "दक्षिण में 8 km"
+    ],
+    answer: "पश्चिम में 8 km"
+},
+
+{
+    question: "श्रृंखला में अगली संख्या ज्ञात कीजिए: 84, 85, 87, 91, 99, ?",
+    option: [
+        "111",
+        "113",
+        "115",
+        "117"
+    ],
+    answer: "115"
+},
+
+{
+    question: "उस विकल्प का चयन कीजिए जो दिए गए समूह के समान संबंध दर्शाता है:\n\n(9, 25, 17), (13, 33, 25)",
+    option: [
+        "(14, 35, 27)",
+        "(15, 31, 23)",
+        "(16, 34, 26)",
+        "(12, 29, 21)"
+    ],
+    answer: "(14, 35, 27)"
+},
+
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-समूह अन्य तीन से भिन्न है?",
+    option: [
+        "JFG",
+        "XTV",
+        "EAB",
+        "PLM"
+    ],
+    answer: "XTV"
+},
+
+{
+    question: "यदि OGAR को 123 और ZAPQ को 180 के रूप में कूटबद्ध किया जाता है, तो WVDL का कूट क्या होगा?",
+    option: [
+        "180",
+        "183",
+        "186",
+        "189"
+    ],
+    answer: "183"
+},
+
+{
+    question: "निम्नलिखित में से कौन-सा अक्षर-समूह अन्य तीन से भिन्न है?",
+    option: [
+        "SPN",
+        "WTR",
+        "TRO",
+        "BYW"
+    ],
+    answer: "TRO"
+},
+
+{
+    question: "यदि '+' और '−' तथा '×' और '÷' को आपस में बदल दिया जाए, तो निम्नलिखित समीकरण में '?' का मान ज्ञात कीजिए:\n\n10 ÷ 2 + 21 × 7 − 8 = ? + 5",
+    option: [
+        "22",
+        "28",
+        "30",
+        "25"
+    ],
+    answer: "30"
+},
+
+{
+    question: "यदि A का अर्थ '+', B का अर्थ '−', C का अर्थ '×' और D का अर्थ '÷' है, तो निम्नलिखित का मान ज्ञात कीजिए:\n\n42 B 3 D 70 A 2 C 9 B (36 A 6) B 3",
+    option: [
+        "109",
+        "119",
+        "129",
+        "139"
+    ],
+    answer: "109"
+},
+
+{
+    question: "सात व्यक्ति A, B, C, D, E, F और G उत्तर की ओर मुख करके एक पंक्ति में बैठे हैं। B के बाईं ओर केवल दो व्यक्ति हैं। C और F के बीच ठीक तीन व्यक्ति हैं तथा दोनों में से कोई भी छोर पर नहीं बैठा है। E, D के ठीक दाईं ओर बैठा है और A, C के ठीक बाईं ओर बैठा है। C के दाईं ओर कितने व्यक्ति बैठे हैं?",
+    option: [
+        "4",
+        "5",
+        "3",
+        "2"
+    ],
+    answer: "5"
+},
+
+{
+    question: "एक पंक्ति में एक व्यक्ति ऊपर से 15वें और नीचे से 10वें स्थान पर है। पंक्ति में कुल कितने व्यक्ति हैं?",
+    option: [
+        "24",
+        "25",
+        "26",
+        "23"
+    ],
+    answer: "24"
+},
+
+{
+    question: "श्रृंखला में अगला पद ज्ञात कीजिए:\n\nDEA48, CDZ55, BCY62, ABX69, ?",
+    option: [
+        "ZAW75",
+        "ZAW76",
+        "YAW76",
+        "ZAX76"
+    ],
+    answer: "ZAW76"
+},
+
+{
+    question: "कथन:\nसभी होटल रेस्तराँ हैं। सभी रेस्तराँ कैफे हैं। कुछ रेस्तराँ बार हैं।\n\nनिष्कर्ष:\nI. कुछ कैफे बार हैं।\nII. कुछ होटल बार हैं।\n\nकौन-सा निष्कर्ष/कौन-से निष्कर्ष अनुसरण करते हैं?",
+    option: [
+        "केवल निष्कर्ष I",
+        "केवल निष्कर्ष II",
+        "दोनों निष्कर्ष",
+        "न तो I और न ही II"
+    ],
+    answer: "केवल निष्कर्ष I"
+},
+
+{
+    question: "यदि MKO को KIM और RPT को PNR के रूप में कूटबद्ध किया जाता है, तो FDH को किस रूप में कूटबद्ध किया जाएगा?",
+    option: [
+        "DBF",
+        "EAG",
+        "CEG",
+        "DBE"
+    ],
+    answer: "DBF"
+},
+
+{
+    question: "एक कूट भाषा में 'lets move on' को 'rk ts jn' और 'move on the' को 'pl jn ts' लिखा जाता है। 'lets' का कूट क्या है?",
+    option: [
+        "pl",
+        "jn",
+        "rk",
+        "ts"
+    ],
+    answer: "rk"
+},
+
+{
+    question: "एक व्यक्ति बिंदु M से 8 km उत्तर की ओर चलता है, फिर बाईं ओर मुड़कर 3 km चलता है, फिर दाईं ओर मुड़कर 5 km, फिर दाईं ओर 3 km और अंत में दाईं ओर 1 km चलता है। वह बिंदु M से किस दिशा में और कितनी दूरी पर है?",
+    option: [
+        "उत्तर में 10 km",
+        "उत्तर में 11 km",
+        "उत्तर में 12 km",
+        "दक्षिण में 12 km"
+    ],
+    answer: "उत्तर में 12 km"
+},
+
+{
+    question: "दी गई श्रृंखला में से सभी चिह्न हटा दिए जाएँ, तो दाईं ओर से पाँचवाँ अंक कौन-सा होगा?\n\n1, 7, 5, 2, 6, 4, 9, 5",
+    option: [
+        "6",
+        "2",
+        "4",
+        "9"
+    ],
+    answer: "2"
+},
+
+{
+    question: "श्रृंखला में अगला पद ज्ञात कीजिए:\n\nODH, QFJ, SHL, UJN, ?",
+    option: [
+        "VKO",
+        "WLP",
+        "XMQ",
+        "YNR"
+    ],
+    answer: "WLP"
+},
+
+{
+    question: "सात व्यक्ति E, F, G, H, I, J और K उत्तर की ओर मुख करके एक पंक्ति में बैठे हैं। J के बाईं ओर चार व्यक्ति हैं। J और E के बीच ठीक तीन व्यक्ति हैं। K, F के बाईं ओर दूसरे स्थान पर बैठा है। G और J, H के निकटतम पड़ोसी हैं। J के बाईं ओर दूसरे स्थान पर कौन बैठा है?",
+    option: [
+        "I",
+        "F",
+        "G",
+        "K"
+    ],
+    answer: "I"
+},
+
+{
+    question: "कथन:\nसभी मॉडल अभिनेता हैं। कुछ अभिनेता निर्देशक हैं। सभी निर्देशक निर्माता हैं।\n\nनिष्कर्ष:\nI. कुछ अभिनेता निर्माता हैं।\nII. सभी मॉडल निर्देशक हैं।\n\nकौन-सा निष्कर्ष/कौन-से निष्कर्ष अनुसरण करते हैं?",
+    option: [
+        "केवल निष्कर्ष I",
+        "केवल निष्कर्ष II",
+        "दोनों निष्कर्ष",
+        "न तो I और न ही II"
+    ],
+    answer: "केवल निष्कर्ष I"
+},
+
+{
+    question: "यदि A ± B का अर्थ है A, B की पत्नी है; A * B का अर्थ है A, B की बहन है; A ₹ B का अर्थ है A, B का पिता है; और A # B का अर्थ है A, B का भाई है, तो D * R # A ± C ₹ O में D का O से क्या संबंध है?",
+    option: [
+        "मौसी",
+        "बहन",
+        "दादी",
+        "बेटी"
+    ],
+    answer: "मौसी"
+},
+
+{
+    question: "संख्या 7483516 के अंकों को आरोही क्रम में व्यवस्थित करने पर कितने अंक अपने मूल स्थान पर ही रहेंगे?",
+    option: [
+        "2",
+        "3",
+        "4",
+        "5"
+    ],
+    answer: "2"
+},
+
+{
+    question: "यदि DINS को GLQV और HMRW को KPUZ के रूप में कूटबद्ध किया जाता है, तो BGLQ को किस रूप में कूटबद्ध किया जाएगा?",
+    option: [
+        "DINS",
+        "EJOT",
+        "FKPU",
+        "GLQV"
+    ],
+    answer: "EJOT"
+},
+
+{
+    question: "एक पंक्ति में 51 व्यक्ति हैं। महेश दाईं ओर से 18वें स्थान पर है और वल्ली बाईं ओर से 22वें स्थान पर है। उनके बीच कितने व्यक्ति हैं?",
+    option: [
+        "11",
+        "12",
+        "10",
+        "13"
+    ],
+    answer: "11"
+},
+
+{
+    question: "आठ व्यक्ति एक वृत्ताकार मेज के चारों ओर केंद्र की ओर मुख करके बैठे हैं। फखर, दीपु, हरि, अमन, चotu, बाबू, गुना और एहसान के बैठने की शर्तों के अनुसार, अमन के दाईं ओर दूसरे स्थान पर कौन बैठा है?",
+    option: [
+        "दीपु",
+        "हरि",
+        "गुना",
+        "एहसान"
+    ],
+    answer: "गुना"
+},
+];
+
+// Science (25) - Hindi
+const scienceQuestionsHi = [
+{
+    question: "प्रकाश की एक किरण किसी समतल दर्पण पर अभिलंब से 30° के कोण पर टकराती है। आपतित किरण और परावर्तित किरण के बीच का कोण कितना होगा?",
+    option: [
+        "90°",
+        "60°",
+        "120°",
+        "30°"
+    ],
+    answer: "60°"
+},
+{
+    question: "वृक्क की नलिकाओं और लार ग्रंथि नलिकाओं का अस्तर बनाने वाला उपकला ऊतक निम्नलिखित में से कौन-सा है?",
+    option: [
+        "स्तंभाकार उपकला (Columnar epithelium)",
+        "स्तरीकृत उपकला (Stratified epithelium)",
+        "पक्ष्माभी उपकला (Ciliated epithelium)",
+        "घनाभाकार उपकला (Cuboidal epithelium)"
+    ],
+    answer: "घनाभाकार उपकला (Cuboidal epithelium)"
+},
+{
+    question: "श्वसन के बारे में निम्नलिखित कथनों का उनकी सही विशेषताओं से मिलान करें।\n\na. वायवीय श्वसन\nb. ऑक्सीजन की अनुपस्थिति में ग्लूकोज का विघटन होता है\nc. ऑक्सीजन की उपस्थिति में पाइरुवेट का विघटन होता है\nd. अवायवीय श्वसन\n\ni. ऑक्सीजन की आवश्यकता नहीं होती है\nii. माइटोकॉन्ड्रिया\niii. कोशिका द्रव्य\niv. ऑक्सीजन की आवश्यकता होती है",
+    option: [
+        "a - i, b - iii, c - ii, d - iv",
+        "a - iv, b - i, c - ii, d - iii",
+        "a - i, b - iv, c - ii, d - iii",
+        "a - iv, b - i, c - iii, d - ii"
+    ],
+    answer: "a - iv, b - i, c - ii, d - iii"
+},
+{
+    question: "स्वपोषी को खाद्य श्रृंखला में प्रथम पोषण स्तर पर क्यों रखा जाता है?",
+    option: [
+        "क्योंकि वे अकार्बनिक पदार्थों से भोजन बनाते हैं",
+        "क्योंकि वे जैविक अपशिष्ट पदार्थों का उपभोग करते हैं",
+        "क्योंकि वे भोजन के लिए शाकाहारी जीवों पर निर्भर होते हैं",
+        "क्योंकि वे मृत जीवों को अपघटित करते हैं"
+    ],
+    answer: "क्योंकि वे अकार्बनिक पदार्थों से भोजन बनाते हैं"
+},
+{
+    question: "निम्नलिखित में से कौन-सा परमाणु का आकार निर्धारित करता है?",
+    option: [
+        "इलेक्ट्रॉन मेघ (Electron Clouds)",
+        "न्यूट्रॉन (Neutrons)",
+        "नाभिक (Nucleus)",
+        "प्रोटॉन (Protons)"
+    ],
+    answer: "इलेक्ट्रॉन मेघ (Electron Clouds)"
+},
+{
+    question: "क्रियाशीलता श्रेणी में उच्च धातुओं को किस प्रक्रिया द्वारा निष्कर्षित किया जा सकता है?",
+    option: [
+        "वैद्युतअपघटनी अपचयन (Electrolytic reduction)",
+        "केवल तापन (Heating)",
+        "कार्बन के साथ तापन",
+        "निस्तापन (Calcination)"
+    ],
+    answer: "वैद्युतअपघटनी अपचयन (Electrolytic reduction)"
+},
+{
+    question: "एक पत्थर को 49 m/s के प्रारंभिक वेग से ऊर्ध्वाधर ऊपर की ओर फेंका जाता है। क्षणिक ठहराव से पूर्व इसकी अधिकतम ऊँचाई की गणना कीजिए (g = 9.8 m/s² लीजिए)।",
+    option: [
+        "245 m",
+        "122.5 m",
+        "49 m",
+        "9.8 m"
+    ],
+    answer: "122.5 m"
+},
+{
+    question: "पादपों में प्रतान गति (Tendril movement) अन्य अनुवर्तनी गतियों (Tropic movements) से किस प्रकार समान है?",
+    option: [
+        "यह केवल यादृच्छिक और अकस्मात दबाव होता है।",
+        "इसमें उद्दीपन की प्रतिक्रिया में दिशात्मक वृद्धि शामिल होती है।",
+        "यह आंतरिक जल पर आधारित है।",
+        "यह सदैव रात के समय होती है।"
+    ],
+    answer: "इसमें उद्दीपन की प्रतिक्रिया में दिशात्मक वृद्धि शामिल होती है।"
+},
+{
+    question: "एक 7 V की बैटरी पाँच प्रतिरोधकों 0.1 Ω, 0.4 Ω, 0.5 Ω, 0.6 Ω और 12.4 Ω के साथ श्रेणी क्रम में जुड़ी हुई है। 12.4 Ω प्रतिरोधक से प्रवाहित होने वाली धारा ज्ञात कीजिए।",
+    option: [
+        "1 A",
+        "0.75 A",
+        "0.5 A",
+        "2 A"
+    ],
+    answer: "0.5 A"
+},
+{
+    question: "अपचयन अभिक्रिया क्या है?",
+    option: [
+        "न्यूट्रॉनों की हानि",
+        "इलेक्ट्रॉनों की हानि",
+        "प्रोटॉनों की लब्धि",
+        "इलेक्ट्रॉनों की लब्धि"
+    ],
+    answer: "इलेक्ट्रॉनों की लब्धि"
+},
+{
+    question: "घरेलू परिपथ में, विशेष रूप से धातु उपकरणों के लिए, हरे रंग के विद्युतरोधी अर्थ तार का प्राथमिक सुरक्षा कार्य क्या है?",
+    option: [
+        "अल्प प्रतिरोध वाला पथ प्रदान करना ताकि रिसाव धारा साधित्र के विभव को भूमि के विभव के बराबर रखे और तीव्र विद्युत आघातों से सुरक्षित बचा जा सके।",
+        "वोल्टेज को 220 V पर स्थिर रखना",
+        "काला तार खराब होने पर तटस्थ तार के रूप में कार्य करना",
+        "अतिरिक्त धारा को भूमि में मोड़ने के लिए उच्च प्रतिरोध पथ प्रदान करना"
+    ],
+    answer: "अल्प प्रतिरोध वाला पथ प्रदान करना ताकि रिसाव धारा साधित्र के विभव को भूमि के विभव के बराबर रखे और तीव्र विद्युत आघातों से सुरक्षित बचा जा सके।"
+},
+{
+    question: "निम्नलिखित स्तंभों को सुमेलित कीजिए।\n\nस्तंभ A (परिस्थिति)\nA. अम्ल वर्षा\nB. अपच\nC. दंतक्षय\nD. मधुमक्खी के डंक\n\nस्तंभ B (प्रभाव)\n1. यह तब होता है जब मुख में pH < 5.5 होता है\n2. प्रतिअम्ल अतिरिक्त अम्ल को प्रभावहीन करते हैं\n3. pH < 5.6, जलीय जीवन के लिए हानिकारक है\n4. बेकिंग सोडा द्वारा निष्प्रभावी किया जाता है",
+    option: [
+        "A-3; B-2; C-1; D-4",
+        "A-4; B-3; C-2; D-1",
+        "A-2; B-4; C-1; D-3",
+        "A-1; B-2; C-3; D-4"
+    ],
+    answer: "A-3; B-2; C-1; D-4"
+},
+{
+    question: "एस्टर __________ वाले पदार्थ होते हैं।",
+    option: [
+        "खट्टी-गंध",
+        "मीठी-गंध",
+        "तीव्र-गंध",
+        "तीखी-गंध"
+    ],
+    answer: "मीठी-गंध"
+},
+{
+    question: "किसी वस्तु में उसकी स्थिति या विन्यास के कारण संचित ऊर्जा को क्या कहते हैं?",
+    option: [
+        "स्थितिज ऊर्जा",
+        "ध्वनि ऊर्जा",
+        "ऊष्मीय ऊर्जा",
+        "गतिज ऊर्जा"
+    ],
+    answer: "स्थितिज ऊर्जा"
+},
+{
+    question: "वेग-समय ग्राफ के अंतर्गत क्षेत्र क्या दर्शाता है?",
+    option: [
+        "वस्तु द्वारा लिया गया समय",
+        "वस्तु का त्वरण",
+        "वस्तु की चाल",
+        "उस समय अंतराल के दौरान वस्तु का विस्थापन"
+    ],
+    answer: "उस समय अंतराल के दौरान वस्तु का विस्थापन"
+},
+{
+    question: "निम्नलिखित में से कौन-सा कथन अलैंगिक प्रजनन की विशेषता दर्शाता है?",
+    option: [
+        "इसमें केवल एक जनक शामिल होता है",
+        "इसमें दो जनक शामिल होते हैं",
+        "आनुवंशिक रूप से विविध संतति उत्पन्न होती हैं",
+        "इसमें युग्मकों की आवश्यकता होती है"
+    ],
+    answer: "इसमें केवल एक जनक शामिल होता है"
+},
+{
+    question: "सरल स्थायी ऊतक जो पौधे के भागों जैसे तने और प्रतान को यांत्रिक आलंब (Mechanical support) और लचीलापन प्रदान करता है, __________ है।",
+    option: [
+        "जाइलम (Xylem)",
+        "कोलेनकाइमा (Collenchyma)",
+        "पैरेन्काइमा (Parenchyma)",
+        "स्क्लेरेनकाइमा (Sclerenchyma)"
+    ],
+    answer: "कोलेनकाइमा (Collenchyma)"
+},
+{
+    question: "गैंडे, व्हेल और हाथी संचार के लिए किस श्रेणी की ध्वनि आवृत्ति का उपयोग करते हैं?",
+    option: [
+        "पराश्रव्य ध्वनि",
+        "अतिध्वनि (Ultrasound)",
+        "श्रव्य ध्वनि (Audible sound)",
+        "अवश्रव्य ध्वनि (Infrasound)"
+    ],
+    answer: "अवश्रव्य ध्वनि (Infrasound)"
+},
+{
+    question: "निम्नलिखित में से कौन-सा विलयन के निर्माण के दौरान भौतिक परिवर्तन का उदाहरण है?",
+    option: [
+        "आमाशय में भोजन का पाचन",
+        "जल में लवण का विलयन",
+        "लवण विलयन में लोहे का जंग लगना",
+        "नींबू का रस डालने पर दूध का फटना"
+    ],
+    answer: "जल में लवण का विलयन"
+},
+{
+    question: "अवतल दर्पण द्वारा निर्मित प्रतिबिंब के बारे में निम्नलिखित में से कौन-सा/से कथन सत्य है/हैं?\n\n(i) अवतल दर्पण सदैव वास्तविक तथा उल्टा प्रतिबिंब बनाता है, चाहे बिंब की स्थिति कुछ भी हो।\n(ii) जब बिंब को अवतल दर्पण के फोकस और वक्रता केंद्र के बीच रखा जाता है, तो दर्पण वास्तविक, उल्टा और छोटा प्रतिबिंब बनाता है।\n(iii) जब बिंब को अनंत पर रखा जाता है, तो अवतल दर्पण अपने फोकस पर वास्तविक, उल्टा और बिंदु आकार का प्रतिबिंब बनाता है।",
+    option: [
+        "केवल (iii)",
+        "(ii) और (iii) दोनों",
+        "केवल (i)",
+        "(i) और (ii) दोनों"
+    ],
+    answer: "केवल (iii)"
+},
+{
+    question: "असमान त्वरण से गतिमान किसी वस्तु के वेग-समय ग्राफ के आकार के बारे में क्या कहा जा सकता है?",
+    option: [
+        "यह एक वक्र रेखा होती है।",
+        "यह सदैव एक क्षैतिज रेखा होती है।",
+        "यह सदैव नीचे की ओर झुकी हुई रेखा होती है।",
+        "यह सदैव एक सीधी रेखा होती है।"
+    ],
+    answer: "यह एक वक्र रेखा होती है।"
+},
+{
+    question: "एक पुरुष रोगी में शुक्राणु गतिशीलता कम है। इस मामले में निम्नलिखित में से किन ग्रंथियों के ठीक से काम न करने की सर्वाधिक संभावना है?",
+    option: [
+        "अग्न्याशय और अधिवृक्क ग्रंथियां",
+        "थाइरॉक्सिन और पिनियल ग्रंथियां",
+        "प्रोस्टेट ग्रंथि और शुक्राशय",
+        "वृषण और मूत्राशय"
+    ],
+    answer: "प्रोस्टेट ग्रंथि और शुक्राशय"
+},
+{
+    question: "बोर-बरी (Bohr-Bury) के अनुसार, M-कोश में अधिकतम कितने इलेक्ट्रॉन समायोजित हो सकते हैं?",
+    option: [
+        "8",
+        "18",
+        "2",
+        "20"
+    ],
+    answer: "18"
+},
+{
+    question: "कौन-सा गुणधर्म किसी यौगिक को मिश्रण से विभेदित करता है?",
+    option: [
+        "निश्चित संघटन और गुणधर्म होते हैं",
+        "किसी भी अवस्था में विद्यमान हो सकता है",
+        "सदैव ठोस होता है",
+        "एक से अधिक पदार्थों से निर्मित होता है"
+    ],
+    answer: "निश्चित संघटन और गुणधर्म होते हैं"
+},
+{
+    question: "लैंगिक जनन करने वाले पौधों में विविधता क्यों महत्वपूर्ण है?",
+    option: [
+        "इससे जनसंख्या में आनुवंशिक विविधता कम हो जाती है।",
+        "यह पर्यावरणीय परिवर्तनों के प्रति अनुकूलन को सक्षम बनाकर जीवित रहने की संभावनाओं को बढ़ाता है।",
+        "यह प्रजातियों की बदलते वातावरण के प्रति अनुकूलन क्षमता को सीमित करता है।",
+        "यह सुनिश्चित करता है कि सभी संतानें माता-पिता के समान हों, जिससे एकरूपता बनी रहे।"
+    ],
+    answer: "यह पर्यावरणीय परिवर्तनों के प्रति अनुकूलन को सक्षम बनाकर जीवित रहने की संभावनाओं को बढ़ाता है।"
+},
+
+{
+    question: "गॉल्जी उपकरण में होने वाली कौन-सी प्रक्रिया संश्लेषण में अपनी भूमिका दर्शाती है?",
+    option: [
+        "राइबोसोम से न्यूक्लिक एसिड का संश्लेषण",
+        "सरल शर्करा से जटिल शर्करा का निर्माण",
+        "परासरण के माध्यम से जल का अवशोषण",
+        "प्रोटीन का अमीनो एसिड में रूपांतरण"
+    ],
+    answer: "सरल शर्करा से जटिल शर्करा का निर्माण"
+},
+{
+    question: "एपिस फ्लोरिया (Apis florae) का सामान्य नाम क्या है?",
+    option: [
+        "ड्वार्फ बी (dwarf bee)",
+        "जायंट बी (giant bee)",
+        "लिटिल बी (little bee)",
+        "एशियन बी (Asian bee)"
+    ],
+    answer: "लिटिल बी (little bee)"
+},
+{
+    question: "कौन-सा कारक वाष्पीकरण की दर को नहीं बढ़ाता है?",
+    option: [
+        "तापमान में कमी",
+        "आर्द्रता में कमी",
+        "पृष्ठीय क्षेत्रफल में वृद्धि",
+        "वायु की गति में वृद्धि"
+    ],
+    answer: "तापमान में कमी"
+},
+{
+    question: "यदि कोई कण प्रत्येक 3 सेकंड में 12 m की दूरी तय करता है, तो उसके दूरी-समय ग्राफ की प्रवणता क्या होगी?",
+    option: [
+        "3.0 m/s",
+        "12.0 m/s",
+        "4.0 m/s",
+        "0.25 m/s"
+    ],
+    answer: "4.0 m/s"
+},
+{
+    question: "निम्नलिखित में से कौन-सी ऊर्जा किसी पिंड में उसकी स्थिति, आकार और विन्यास के आधार पर होती है?",
+    option: [
+        "ऊष्मीय ऊर्जा",
+        "पेशीय ऊर्जा",
+        "गतिज ऊर्जा",
+        "स्थितिज ऊर्जा"
+    ],
+    answer: "स्थितिज ऊर्जा"
+},
+{
+    question: "निम्नलिखित में से कौन-सी, भारत के राजस्थान में जल संग्रहण की एक पारंपरिक विधि है?",
+    option: [
+        "बोरवेल (Borewell)",
+        "जोहड़ (Johad)",
+        "चेक डैम (Check dam)",
+        "हैंड पंप (Hand pump)"
+    ],
+    answer: "जोहड़ (Johad)"
+},
+{
+    question: "यदि किसी लेंस की क्षमता −4 D है, तो इस लेंस के बारे में निम्नलिखित में से कौन-सा कथन सही है?",
+    option: [
+        "यह 0.4 m की फोकस दूरी वाला एक अवतल लेंस है।",
+        "यह 25 cm की फोकस दूरी वाला एक उत्तल लेंस है।",
+        "यह 2.5 m की फोकस दूरी वाला एक उत्तल लेंस है।",
+        "यह 25 cm की फोकस दूरी वाला एक अवतल लेंस है।"
+    ],
+    answer: "यह 25 cm की फोकस दूरी वाला एक अवतल लेंस है।"
+},
+{
+    question: "निम्नलिखित में से कौन-सा, महिलाओं के गर्भ-धारण एवं स्वास्थ्य के लिए सर्वाधिक महत्वपूर्ण है?",
+    option: [
+        "रोजाना धूम्रपान करना",
+        "भोजन स्किप करना",
+        "उचित आहार और प्रसव-पूर्व देखभाल करना",
+        "बहुत अधिक कैफ़ीन का सेवन करना"
+    ],
+    answer: "उचित आहार और प्रसव-पूर्व देखभाल करना"
+},
+{
+    question: "जब किसी वस्तु का दूरी-समय ग्राफ एक वक्र रेखा है, तो यह क्या दर्शाता है?",
+    option: [
+        "गति में कोई त्वरण नहीं है।",
+        "वस्तु नियत चाल से चल रही है।",
+        "वस्तु स्थिर अवस्था में है।",
+        "वस्तु की चाल समय के साथ परिवर्तित हो रही है।"
+    ],
+    answer: "वस्तु की चाल समय के साथ परिवर्तित हो रही है।"
+},
+{
+    question: "किसी वस्तु को तरल में निमज्जित करने पर उस पर लगने वाले उत्प्लावन बल के बारे में निम्नलिखित में से कौन-से कथन सही हैं?\n\n(i) जब सभी वस्तुएँ किसी तरल में निमज्जित की जाती हैं तो उन पर उत्प्लावन बल लगता है।\n(ii) इस उत्प्लावन बल का परिमाण तरल के घनत्व पर निर्भर करता है।",
+    option: [
+        "केवल (ii)",
+        "केवल (i)",
+        "न तो (i) और न ही (ii)",
+        "(i) और (ii) दोनों"
+    ],
+    answer: "(i) और (ii) दोनों"
+},
+{
+    question: "निम्नलिखित में से कौन-सी एक संयोजन अभिक्रिया है?",
+    option: [
+        "2KClO₃ → 2KCl + 3O₂",
+        "AgNO₃ + NaCl → AgCl + NaNO₃",
+        "Fe + CuSO₄ → FeSO₄ + Cu",
+        "CaO + H₂O → Ca(OH)₂"
+    ],
+    answer: "CaO + H₂O → Ca(OH)₂"
+},
+{
+    question: "वह अभिक्रिया जिसमें दो आयनिक यौगिकों के धनात्मक और ऋणात्मक आयन आपस में स्थान बदलकर दो नए यौगिक बनाते हैं, किसका उदाहरण है?",
+    option: [
+        "संयोजन अभिक्रिया",
+        "अपघटन अभिक्रिया",
+        "दोहरी विस्थापन अभिक्रिया",
+        "विस्थापन अभिक्रिया"
+    ],
+    answer: "दोहरी विस्थापन अभिक्रिया"
+},
+{
+    question: "निम्नलिखित में से कौन-सा विकल्प मानव में श्वसन के दौरान वायु के पथ को सटीक रूप से दर्शाता है?",
+    option: [
+        "मुख → आमाशय → फेफड़े → एल्वियोली",
+        "नासाद्वार → कंठ → फेफड़े → एल्वियोली",
+        "नासाद्वार → खाद्य नली → हृदय → फेफड़े",
+        "मुख → हृदय → फेफड़े → डायाफ्राम"
+    ],
+    answer: "नासाद्वार → कंठ → फेफड़े → एल्वियोली"
+},
+{
+    question: "निम्नलिखित में से कौन-सा एक विषमांगी मिश्रण है?",
+    option: [
+        "रेत और जल",
+        "वायु",
+        "शर्करा विलयन",
+        "लवण विलयन"
+    ],
+    answer: "रेत और जल"
+},
+{
+    question: "चुंबकीय क्षेत्र में रखे धारावाही चालक पर लगने वाले बल की दिशा की पहचान करने में कौन-सा नियम सहायक होता है?",
+    option: [
+        "मैक्सवेल का कॉर्कस्क्रू नियम",
+        "दक्षिण-हस्त अंगूठा नियम",
+        "फ्लेमिंग का वामहस्त नियम",
+        "ओम का नियम"
+    ],
+    answer: "फ्लेमिंग का वामहस्त नियम"
+},
+{
+    question: "खंडन आधारित जनन की प्रक्रिया के दौरान निम्नलिखित चरणों को सही क्रम में व्यवस्थित करें:\n\n1. समसूत्रण द्वारा शरीर के लुप्त अंगों की वृद्धि\n2. शरीर/तंतु का खंडों में विघटित होना\n3. प्रौढ़ जीव स्वतंत्र रूप से रहता है\n4. प्रत्येक खंड एक पूर्ण जीव में विकसित होता है",
+    option: [
+        "2 – 4 – 1 – 3",
+        "2 – 1 – 4 – 3",
+        "1 – 2 – 4 – 3",
+        "4 – 2 – 1 – 3"
+    ],
+    answer: "2 – 1 – 4 – 3"
+},
+{
+    question: "वह प्रक्रिया जिसके द्वारा नेत्र लेंस, निकट या दूरस्थ वस्तुओं पर फोकस करने के लिए अपनी फोकस दूरी बदलता है, __________ कहलाती है।",
+    option: [
+        "समायोजन (Adjustment)",
+        "अनुकूलन (Adaptation)",
+        "समंजन (Accommodation)",
+        "परावर्तन (Reflection)"
+    ],
+    answer: "समंजन (Accommodation)"
+},
+{
+    question: "जब किसी ध्वनि स्रोत के कंपन की आवृत्ति में वृद्धि होती है, तो परिणामी ध्वनि में _________ होगा/होगी।",
+    option: [
+        "अधिक प्रबलता",
+        "निम्न तारत्व",
+        "उच्च तारत्व",
+        "लघु आयाम"
+    ],
+    answer: "उच्च तारत्व"
+},
+{
+    question: "दाहिने हाथ के अंगूठे के नियम के अनुसार, यदि हमारे दाहिने हाथ की उंगलियों को मोड़ने से चुंबकीय क्षेत्र की दिशा मिलती है, तो हमारे दाहिने हाथ का अंगूठा किस भौतिक राशि की दिशा में संरेखित होता है?",
+    option: [
+        "चालक के सिरों पर अनुप्रयुक्त विद्युत क्षेत्र",
+        "चालक पर लगने वाला बल",
+        "चालक से प्रवाहित होने वाली धारा",
+        "चालक में प्रेरित धारा"
+    ],
+    answer: "चालक से प्रवाहित होने वाली धारा"
+},
+{
+    question: "जब कॉपर को वायु में गर्म करने पर ऑक्सीजन के साथ अभिक्रिया कराई जाती है, तो निम्नलिखित में से कौन-सा विकल्प, बनने वाले उत्पाद और उसके रंग को सही तरीके से दर्शाता है?",
+    option: [
+        "कॉपर (II) ऑक्साइड (CuO) - काले रंग का",
+        "कॉपर (II) ऑक्साइड (CuO) - भूरे रंग का",
+        "कॉपर (I) ऑक्साइड (Cu₂O) - सफेद रंग का",
+        "कॉपर (I) ऑक्साइड (Cu₂O) - लाल रंग का"
+    ],
+    answer: "कॉपर (II) ऑक्साइड (CuO) - काले रंग का"
+},
+{
+    question: "निम्नलिखित में से कौन-सा विकल्प, किसी तत्व की द्रव्यमान संख्या को सही रूप में निरूपित करता है?",
+    option: [
+        "केवल प्रोटॉनों की संख्या",
+        "इलेक्ट्रॉनों की संख्या",
+        "प्रोटॉन और न्यूट्रॉन के बीच का अंतर",
+        "प्रोटॉन और न्यूट्रॉन का योग"
+    ],
+    answer: "प्रोटॉन और न्यूट्रॉन का योग"
+},
+{
+    question: "धातुएँ, सामान्यतः ऊष्मा की सुचालक होती हैं। निम्नलिखित में से कौन-सा, इसका एक अपवाद है?",
+    option: [
+        "एल्यूमीनियम",
+        "लोहा",
+        "तांबा",
+        "पारा"
+    ],
+    answer: "पारा"
+},
+{
+    question: "एक पादप जनक, मटर के दो शुद्ध-नस्ली पादपों—एक गोल बीज वाला और दूसरा झुर्रीदार बीज वाला—के बीच संकरण कराता है। मेंडल के निष्कर्षों के आधार पर, F₁ पीढ़ी के सभी बीजों में कौन-सा लक्षणरूप प्रदर्शित होगा?",
+    option: [
+        "झुर्रीदार बीज",
+        "गोल बीज",
+        "विभिन्न अनुपातों में गोल और झुर्रीदार का मिश्रण",
+        "आधे गोल, आधे झुर्रीदार"
+    ],
+    answer: "गोल बीज"
+},
+{
+    question: "निम्नलिखित में से कौन-सा कथन, सूत्रीविभाजन के लिए सही है लेकिन अर्धसूत्री विभाजन के लिए सही नहीं है?",
+    option: [
+        "यह आनुवंशिक विविधता को बढ़ावा देता है।",
+        "यह जनन कोशिकाओं में होता है।",
+        "इसके परिणामस्वरूप अगुणित कोशिकाएँ बनती हैं।",
+        "यह समान संतति कोशिकाएँ उत्पन्न करता है।"
+    ],
+    answer: "यह समान संतति कोशिकाएँ उत्पन्न करता है।"
+},
+{
+    question: "लोहे में जंग लगने के लिए निम्नलिखित में से कौन-सी परिस्थितियाँ आवश्यक हैं?",
+    option: [
+        "केवल ऑक्सीजन की उपस्थिति",
+        "ऑक्सीजन और पानी (नमी) दोनों की उपस्थिति",
+        "केवल पानी (नमी) की उपस्थिति",
+        "कार्बन डाइऑक्साइड की उपस्थिति"
+    ],
+    answer: "ऑक्सीजन और पानी (नमी) दोनों की उपस्थिति"
+},
+
+{
+    question: "क्या किसी वस्तु का विस्थापन तय की गई दूरी से अधिक हो सकता है?",
+    option: [
+        "हाँ, सदैव",
+        "हाँ, कभी-कभी",
+        "केवल तभी जब वस्तु सरल रेखा में गति करती है",
+        "नहीं, विस्थापन कभी भी दूरी से अधिक नहीं हो सकता है"
+    ],
+    answer: "नहीं, विस्थापन कभी भी दूरी से अधिक नहीं हो सकता है"
+},
+{
+    question: "गोलीय लेंसों की चिह्न परिपाटी के अनुसार, निम्नलिखित में से कौन-से कथन सही नहीं हैं?\n\n(i) मुख्य अक्ष के समानांतर सभी दूरियाँ लेंस के फोकस से मापी जाती हैं।\n(ii) मूल-बिंदु के दाईं ओर मापी गई सभी दूरियाँ धनात्मक मानी जाती हैं।\n(iii) मुख्य अक्ष के लंबवत और ऊपर मापी गई दूरियाँ ऋणात्मक मानी जाती हैं।\n(iv) वस्तु हमेशा लेंस के बाईं ओर रखी जाती है।",
+    option: [
+        "(ii) और (iii) दोनों",
+        "(ii) और (iv) दोनों",
+        "(i) और (iv) दोनों",
+        "(i) और (iii) दोनों"
+    ],
+    answer: "(i) और (iii) दोनों"
+},
+{
+    question: "स्थायी वातावरण में अलैंगिक जनन से क्या लाभ मिलता है?",
+    option: [
+        "लैंगिक विविधता",
+        "तीव्र और एकसमान जनन",
+        "आनुवंशिक विविधता",
+        "नए वातावरण के अनुकूलन"
+    ],
+    answer: "तीव्र और एकसमान जनन"
+},
+{
+    question: "शक्ति का SI मात्रक वाट (W) है। कार्य-शक्ति संबंध के अनुसार, एक वाट _____________ के बराबर होता है।",
+    option: [
+        "1 जूल प्रति सेकंड (1 J/s)",
+        "1 न्यूटन प्रति मीटर (1 N/m)",
+        "1 जूल-सेकंड (1 J·s)",
+        "एक किलोवाट-घंटा (1 kWh)"
+    ],
+    answer: "1 जूल प्रति सेकंड (1 J/s)"
+},
+{
+    question: "एक पुष्प से दूसरे पुष्प तक पराग कण के अंतरण को क्या कहते हैं?",
+    option: [
+        "स्वपरागण (Self pollination)",
+        "ऑटो परागण (Auto pollination)",
+        "स्वयुग्मन (Autogamy)",
+        "पर-परागण (Cross pollination)"
+    ],
+    answer: "पर-परागण (Cross pollination)"
+},
+{
+    question: "निम्नलिखित में से कौन-सा विकल्प किसी परिनलिका के बाहर चुंबकीय क्षेत्र की दिशा का सही वर्णन करता है?",
+    option: [
+        "सिरे से केंद्र तक",
+        "दक्षिणी ध्रुव से उत्तरी ध्रुव",
+        "केंद्र से सिरे तक",
+        "उत्तरी ध्रुव से दक्षिणी ध्रुव"
+    ],
+    answer: "उत्तरी ध्रुव से दक्षिणी ध्रुव"
+},
+{
+    question: "दिए गए विकल्पों में से सामान्य घरेलू अपशिष्ट से संबंधित सही कथन का चयन कीजिए।",
+    option: [
+        "संपूर्ण अपशिष्ट अजैव-निम्नीकरणीय होता है।",
+        "अपशिष्ट का सुरक्षित निपटान अनिवार्य नहीं है।",
+        "संपूर्ण अपशिष्ट जैव-निम्नीकरणीय होता है।",
+        "अपशिष्ट में जैव-निम्नीकरणीय और अजैव-निम्नीकरणीय दोनों घटक होते हैं।"
+    ],
+    answer: "अपशिष्ट में जैव-निम्नीकरणीय और अजैव-निम्नीकरणीय दोनों घटक होते हैं।"
+},
+{
+    question: "ट्रक और मोटरबस के टायर, कार के टायरों की तुलना में ज़्यादा चौड़े डिज़ाइन किए जाते हैं, जबकि कर्तन औज़ारों और कीलों के सिरे नुकीले और छोटे होते हैं। डिज़ाइन में यह अंतर इस सिद्धांत को दर्शाता है कि ___________।",
+    option: [
+        "प्रणोद, संपर्क क्षेत्रफल के अनुक्रमानुपाती होता है",
+        "समान प्रणोद छोटे क्षेत्रफल पर कार्य करते हुए अधिक दाब डालता है",
+        "अधिक प्रणोद की परिणति सदैव कम दाब में होती है",
+        "दाब वस्तु के द्रव्यमान के व्युत्क्रमानुपाती होता है"
+    ],
+    answer: "समान प्रणोद छोटे क्षेत्रफल पर कार्य करते हुए अधिक दाब डालता है"
+},
+{
+    question: "निम्नलिखित में से कौन-सी डिवाइस, ध्वनि तरंगों के बहु परावर्तन के सिद्धांत पर कार्य करती है?",
+    option: [
+        "थर्मामीटर",
+        "माइक्रोस्कोप",
+        "मेगाफोन",
+        "स्टेथोस्कोप"
+    ],
+    answer: "स्टेथोस्कोप"
+},
+{
+    question: "बॉक्साइट से ऐलुमिनियम निष्कर्षण के लिए किस प्रक्रम का उपयोग किया जाता है?",
+    option: [
+        "भर्जन के बाद अपचयन",
+        "पिघले हुए ऐलुमिनियम ऑक्साइड का विद्युत अपघटन",
+        "जस्ता द्वारा विस्थापन",
+        "निस्तापन के बाद कार्बन अपचयन"
+    ],
+    answer: "पिघले हुए ऐलुमिनियम ऑक्साइड का विद्युत अपघटन"
+},
+{
+    question: "निम्नलिखित में से किस प्रक्रिया के परिणामस्वरूप दो समान संतति कोशिकाओं का निर्माण होता है?",
+    option: [
+        "अर्धसूत्रीविभाजन",
+        "समसूत्रीविभाजन",
+        "निषेचन",
+        "सूत्रीविभाजन के बिना कोशिका विभाजन"
+    ],
+    answer: "समसूत्रीविभाजन"
+},
+{
+    question: "यदि 50 g साधारण नमक को 300 g जल में घोला जाता है, तो द्रव्यमान/द्रव्यमान प्रतिशत (mass by mass percentage) के आधार पर विलयन की सांद्रता का प्राक्कलन कीजिए।",
+    option: [
+        "12%",
+        "14.28%",
+        "12.22%",
+        "14%"
+    ],
+    answer: "14.28%"
+},
+{
+    question: "निम्नलिखित में से कौन-सा विकल्प न्यूटन के गति के तीसरे नियम को सर्वोत्तम रूप से दर्शाता है?",
+    option: [
+        "एक रॉकेट जो गैसों को नीचे की ओर फेंककर ऊपर की ओर बढ़ता है।",
+        "गुरुत्वाकर्षण के प्रभाव में गिरती हुई गेंद।",
+        "एक पेंडुलम आगे-पीछे दोलन कर रहा है।",
+        "इंजन की शक्ति के कारण सड़क पर तेजी से त्वरित होती कार।"
+    ],
+    answer: "एक रॉकेट जो गैसों को नीचे की ओर फेंककर ऊपर की ओर बढ़ता है।"
+},
+{
+    question: "निम्नलिखित में से कौन-सा कथन सर्वोत्तम रूप से इसकी व्याख्या करता है कि क्यों किसी तत्व के सभी परमाणुओं को एक ही प्रतीक द्वारा दर्शाया जाता है?",
+    option: [
+        "क्योंकि उनके नाभिक में प्रोटॉनों की संख्या समान होती है",
+        "क्योंकि उनके भौतिक गुणधर्म समान होते हैं",
+        "क्योंकि उनके नाभिक में न्यूट्रॉनों की संख्या समान होती है",
+        "क्योंकि उनकी द्रव्यमान संख्याएँ सदैव समान होती हैं"
+    ],
+    answer: "क्योंकि उनके नाभिक में प्रोटॉनों की संख्या समान होती है"
+},
+{
+    question: "हाइड्रोकार्बन कार्बनिक यौगिकों में ___________________ तत्व होते हैं।",
+    option: [
+        "हाइड्रोजन और कार्बन दोनों",
+        "ऑक्सीजन",
+        "कार्बन",
+        "हाइड्रोजन"
+    ],
+    answer: "हाइड्रोजन और कार्बन दोनों"
+},
+{
+    question: "निम्नलिखित में से कौन-सा रासायनिक समीकरण सही रूप से संतुलित है?",
+    option: [
+        "Fe + H₂O → Fe₃O₄ + H₂",
+        "3Fe + 4H₂O → Fe₃O₄ + 4H₂",
+        "2Fe + 3H₂O → 2Fe₃O₄ + 3H₂",
+        "3Fe + 4H₂O → Fe₃O₄ + 2H₂"
+    ],
+    answer: "3Fe + 4H₂O → Fe₃O₄ + 4H₂"
+},
+{
+    question: "निम्नलिखित में से कौन-सा यौगिक, जल में विलीन होने पर एक विलयन बनाता है?",
+    option: [
+        "रेत",
+        "सोडियम क्लोराइड",
+        "तेल",
+        "लोहे का बुरादा"
+    ],
+    answer: "सोडियम क्लोराइड"
+},
+{
+    question: "कौन-सा जीव स्वच्छ जलीय पारिस्थितिकी तंत्र का प्रमुख संकेतक है?",
+    option: [
+        "तिलचट्टा",
+        "लाइकेन",
+        "केंचुआ",
+        "मछली"
+    ],
+    answer: "मछली"
+},
+{
+    question: "विभज्योतक ऊतक केवल विशिष्ट क्षेत्रों में पाए जाते हैं। स्थिति के आधार पर, कौन-सा विभज्योतक ऊतक का प्रकार नहीं है?",
+    option: [
+        "अंतर्विष्ट (Intercalary)",
+        "शीर्षस्थ (Apical)",
+        "आधारी (Basal)",
+        "पार्श्व (Lateral)"
+    ],
+    answer: "आधारी (Basal)"
+},
+{
+    question: "सोडियम क्लोराइड के जलीय विलयन में विद्युत प्रवाहित करके सोडियम हाइड्रॉक्साइड तैयार किया जाता है। इस प्रक्रम को ___________ कहा जाता है।",
+    option: [
+        "हॉल-हेरॉल्ट (Hall-Héroult)",
+        "बॉर्न-हाबर (Born-Haber)",
+        "क्लोर-एल्कली (Chlor-alkali)",
+        "डाउ (Dow’s)"
+    ],
+    answer: "क्लोर-एल्कली (Chlor-alkali)"
+},
+{
+    question: "मादा जनन तंत्र के संदर्भ में निम्नलिखित में से कौन-से कथन सही हैं?\n\nकथन A: अंडा (egg), एक पतली अंडवाहिनी या डिंबवाहिनी नली के माध्यम से अंडाशय से गर्भाशय तक ले जाया जाता है।\nकथन B: गर्भाशय, गर्भाशयग्रीवा के माध्यम से योनि में खुलता है।",
+    option: [
+        "न तो कथन A और न ही कथन B",
+        "कथन A और कथन B दोनों",
+        "केवल कथन A",
+        "केवल कथन B"
+    ],
+    answer: "कथन A और कथन B दोनों"
+},
+{
+    question: "निम्नलिखित में से कौन-सी विस्थापन अभिक्रियाएँ संभव हैं?\n\nI. Fe₍s₎ + CuSO₄₍aq₎ → FeSO₄ + Cu\nII. Cu + FeSO₄₍aq₎ → CuSO₄ + Fe₍s₎\nIII. Na₂SO₄ + BaCl₂ → BaSO₄ + 2NaCl\nIV. AgCl + NaNO₃ → AgNO₃ + NaCl",
+    option: [
+        "केवल I और III",
+        "केवल I, II और III",
+        "केवल I, III और IV",
+        "केवल II और IV"
+    ],
+    answer: "केवल I और III"
+},
+{
+    question: "यदि वोल्टेज (V) स्थिर है, तो शक्ति निम्नलिखित में से किसके अनुक्रमानुपाती होगी?",
+    option: [
+        "प्रतिरोध",
+        "प्रतिरोध के वर्ग",
+        "ऊर्जा",
+        "धारा"
+    ],
+    answer: "धारा"
+},
+{
+    question: "चिकनी अंतःप्रद्रव्यी जालिका के सही कार्य का चयन करें।",
+    option: [
+        "लिपिड संश्लेषण (Lipid synthesis)",
+        "प्रोटीन संश्लेषण (Protein synthesis)",
+        "कार्बोहाइड्रेट संश्लेषण (Carbohydrate synthesis)",
+        "न्यूक्लिक एसिड संश्लेषण (Nucleic acid synthesis)"
+    ],
+    answer: "लिपिड संश्लेषण (Lipid synthesis)"
+},
+{
+    question: "किसी लेंस के प्रकाशिक केंद्र और उसके मुख्य फोकस के बीच की दूरी क्या कहलाती है?",
+    option: [
+        "आवर्धन",
+        "वक्रता त्रिज्या",
+        "फोकस दूरी",
+        "द्वारक"
+    ],
+    answer: "फोकस दूरी"
+},
+{
+    question: "जब किसी वस्तु को अवतल दर्पण के वक्रता केंद्र (C) से परे रखा जाता है, तो किस प्रकार का प्रतिबिंब बनता है?",
+    option: [
+        "आभासी, सीधा और वस्तु से बड़ा",
+        "आभासी, उल्टा और वस्तु से बड़ा",
+        "वास्तविक, उल्टा और वस्तु से छोटा",
+        "वास्तविक, सीधा और वस्तु के समान आकार का"
+    ],
+    answer: "वास्तविक, उल्टा और वस्तु से छोटा"
+},
+{
+    question: "जब हमारी त्वचा से पसीना (sweat) वाष्पित होता है, तो हमें ठंडक का अनुभव किस कारण होता है?",
+    option: [
+        "वाष्पन के दौरान पसीना ऊष्मा मुक्त करता है।",
+        "पसीने से क्रिस्टल बनते हैं जो त्वचा को ठंडा करते हैं।",
+        "वाष्पन के लिए पसीना हमारी त्वचा से ऊष्मा अवशोषित करता है।",
+        "वाष्पन से पूर्व पसीना बर्फ में बदल जाता है।"
+    ],
+    answer: "वाष्पन के लिए पसीना हमारी त्वचा से ऊष्मा अवशोषित करता है।"
+},
+{
+    question: "चंद्रमा पर किसी वस्तु का भार पृथ्वी पर उसके भार की तुलना में कैसा होता है?",
+    option: [
+        "यह पृथ्वी पर इसके भार का छठा भाग होता है।",
+        "यह पृथ्वी पर इसके भार का छह गुना होता है।",
+        "यह पृथ्वी पर इसके भार का एक तिहाई होता है।",
+        "यह पृथ्वी पर भी वैसा ही होता है।"
+    ],
+    answer: "यह पृथ्वी पर इसके भार का छठा भाग होता है।"
+},
+{
+    question: "हम बैठे या सोते समय भी श्वास क्यों लेते रहते हैं?",
+    option: [
+        "हृदय को विश्राम देने के लिए",
+        "जीवन क्रियाओं हेतु ऑक्सीजन की आपूर्ति करने के लिए",
+        "श्वसन क्रियाएँ करने के लिए",
+        "पाचन क्रिया को जारी रखने के लिए"
+    ],
+    answer: "जीवन क्रियाओं हेतु ऑक्सीजन की आपूर्ति करने के लिए"
+},
+{
+    question: "निम्नलिखित में से कौन-सा एकसमान वृत्तीय गति कर रही वस्तु का उदाहरण है?",
+    option: [
+        "सीधी पटरी पर अलग-अलग चाल से चलती एक रेलगाड़ी",
+        "एकसमान चाल से पृथ्वी की परिक्रमा करता एक उपग्रह",
+        "भीड़-भाड़ वाली सड़क पर चलती एक कार",
+        "पार्क में जॉगिंग करता एक व्यक्ति"
+    ],
+    answer: "एकसमान चाल से पृथ्वी की परिक्रमा करता एक उपग्रह"
+},
+{
+    question: "20 Ω के प्रतिरोधक पर 40 V का विभवांतर प्रयुक्त करने पर उसमें कितनी धारा प्रवाहित होगी?",
+    option: [
+        "2 A",
+        "5 A",
+        "1/5 A",
+        "1/2 A"
+    ],
+    answer: "2 A"
+},
+{
+    question: "प्रजनन स्वास्थ्य के लिए सुरक्षित यौन संबंध बनाना क्यों महत्वपूर्ण है?",
+    option: [
+        "यह गर्भावस्था की गारंटी देता है",
+        "यह प्रजनन क्षमता बढ़ाता है",
+        "यह HIV-AIDS जैसे यौन संचारित रोगों से बचाता है",
+        "यह शरीर में हार्मोनल संतुलन सुनिश्चित करता है"
+    ],
+    answer: "यह HIV-AIDS जैसे यौन संचारित रोगों से बचाता है"
+},
+{
+    question: "एथेनॉल की सोडियम के साथ अभिक्रिया होने पर किस प्रकार की गैस मुक्त होती है?",
+    option: [
+        "कार्बन डाइऑक्साइड",
+        "हाइड्रोजन",
+        "ऑक्सीजन",
+        "मेथेन"
+    ],
+    answer: "हाइड्रोजन"
+},
+{
+    question: "अधात्विक ऑक्साइड और क्षार के बीच अभिक्रिया का सामान्य उत्पाद क्या है/हैं?",
+    option: [
+        "लवण और हाइड्रोजन",
+        "लवण और जल",
+        "केवल जल",
+        "गैस और जल"
+    ],
+    answer: "लवण और जल"
+},
+{
+    question: "गैस के कणों की निरंतर अनियमित गति के कारण, कण पात्र की दीवारों से टकराते हैं। गैस द्वारा लगाया गया दाब, ___________ के बराबर होता है।",
+    option: [
+        "पात्र के तल के प्रति इकाई क्षेत्रफल पर गैस के कणों द्वारा लगाए गए बल",
+        "गैस के कणों द्वारा पात्र की दीवारों पर लगाए गए बल",
+        "पात्र की दीवारों पर प्रति इकाई क्षेत्रफल पर गैस के कणों द्वारा लगाए गए बल",
+        "पात्र के प्रति इकाई आयतन पर गैस के कणों द्वारा लगाए गए बल"
+    ],
+    answer: "पात्र की दीवारों पर प्रति इकाई क्षेत्रफल पर गैस के कणों द्वारा लगाए गए बल"
+},
+{
+    question: "20 m की ऊँचाई पर रखे गए 30 kg द्रव्यमान के ब्लॉक की स्थितिज ऊर्जा कितनी होगी? (g का मान = 10 m/s² लीजिए)",
+    option: [
+        "60 J",
+        "6000 J",
+        "6 J",
+        "600 J"
+    ],
+    answer: "6000 J"
+},
+{
+    question: "निम्नलिखित में से कौन-सा कथन सही नहीं है?",
+    option: [
+        "ध्वनि निर्वातों की तुलना में गैसों में मंद गति से चलती है।",
+        "ध्वनि वायु की तुलना में जल में तेजी से चलती है।",
+        "ध्वनि ठोस पदार्थों में सबसे तेज चलती है।",
+        "ध्वनि निर्वात में भी चल सकती है।"
+    ],
+    answer: "ध्वनि निर्वात में भी चल सकती है।"
+},
+{
+    question: "मनुष्यों जैसे बहुकोशिकीय जीवों में, पाचन _________ में होता है।",
+    option: [
+        "केंद्रक (nucleus)",
+        "विशिष्ट पाचक अंगों (specialised digestive organs)",
+        "खाद्य रसधानियों (food vacuoles)",
+        "संपूर्ण कोशिका सतह (entire cell surface)"
+    ],
+    answer: "विशिष्ट पाचक अंगों (specialised digestive organs)"
+},
+{
+    question: "पादप कोशिका भित्ति का मुख्य संरचनात्मक घटक क्या है?",
+    option: [
+        "काइटिन (Chitin)",
+        "पेप्टीडोग्लाइकन (Peptidoglycan)",
+        "कोलैजन (Collagen)",
+        "सेल्यूलोज (Cellulose)"
+    ],
+    answer: "सेल्यूलोज (Cellulose)"
+},
+{
+    question: "निम्नलिखित में से कौन-सा, हमारे शरीर के केंद्रीय तंत्रिका तंत्र का भाग है?",
+    option: [
+        "आमाशय",
+        "मेरुरज्जु",
+        "अग्न्याशय",
+        "यकृत"
+    ],
+    answer: "मेरुरज्जु"
+},
+{
+    question: "निम्नलिखित में से क्या घरेलू सर्किट में आमतौर पर श्रेणीक्रम में जुड़ा होता है?",
+    option: [
+        "बिजली का बल्ब",
+        "सभी उपकरण",
+        "पंखा",
+        "मुख्य फ्यूज"
+    ],
+    answer: "मुख्य फ्यूज"
+},
+{
+    question: "एक किसान अपनी फसल से प्राप्त अनाज को नमी तथा गर्मी वाले एक कमरे में भंडारित करता है। कुछ सप्ताह बाद अनाज खराब हो जाता है और उसकी मात्रा कम हो जाती है। इसका सबसे संभावित कारण क्या है?",
+    option: [
+        "अनाज पक्षियों और कीटों द्वारा खा लिया गया",
+        "कटाई से पूर्व अपर्याप्त सिंचाई",
+        "अनाज जल में बह गया",
+        "भंडारण की अनुचित परिस्थितियाँ"
+    ],
+    answer: "भंडारण की अनुचित परिस्थितियाँ"
+},
+{
+    question: "कौन-सा शब्द ठोस पदार्थों में कणों की निकटता का वर्णन करता है?",
+    option: [
+        "घनत्व",
+        "दृढ़ता",
+        "संपीड्यता",
+        "अंतर-कण स्थान"
+    ],
+    answer: "घनत्व"
+},
+{
+    question: "मुख्य अक्ष पर वह बिंदु जहाँ मुख्य अक्ष के समानांतर किरणें दर्पण से परावर्तन के बाद अभिसरित होती हैं (या अपसरित होती हुई प्रतीत होती हैं), निम्नलिखित में से क्या कहलाता है?",
+    option: [
+        "मुख्य फोकस",
+        "द्वारक",
+        "वक्रता केंद्र",
+        "ध्रुव"
+    ],
+    answer: "मुख्य फोकस"
+},
+{
+    question: "अनुकूल पर्यावरणीय परिस्थितियों में बीज से नए पौधे के उद्भव को ________ कहा जाता है।",
+    option: [
+        "प्रकाश संश्लेषण",
+        "निषेचन",
+        "अंकुरण",
+        "परागण"
+    ],
+    answer: "अंकुरण"
+},
+{
+    question: "निम्नलिखित में से कौन-सा सबसे छोटा ऐल्केन है, जो एक स्थिर वलय बना सकता है?",
+    option: [
+        "प्रोपेन (Propane)",
+        "साइक्लोप्रोपेन (Cyclopropane)",
+        "एथेन (Ethane)",
+        "मेथेन (Methane)"
+    ],
+    answer: "साइक्लोप्रोपेन (Cyclopropane)"
+},
+{
+    question: "निम्नलिखित पदार्थों और उनके आयनों का मिलान करें।\nस्तंभ A (पदार्थ)    स्तंभ B (उत्पादित आयन)\nA. HCl    1. H₃O⁺ और Cl⁻\nB. NaOH    2. Na⁺ और OH⁻\nC. KOH    3. K⁺ और OH⁻\nD. Mg(OH)₂    4. Mg²⁺ और 2OH⁻",
+    option: [
+        "A-4; B-3; C-2; D-1",
+        "A-1; B-2; C-3; D-4",
+        "A-2; B-1; C-4; D-3",
+        "A-3; B-4; C-1; D-2"
+    ],
+    answer: "A-1; B-2; C-3; D-4"
+},
+{
+    question: "यदि तय की गई दूरी आधी कर दी जाए तथा समय समान रहे, तो रैखिक वेग _________ है।",
+    option: [
+        "दोगुना हो जाता",
+        "समान बना रहता",
+        "शून्य हो जाता",
+        "आधा हो जाता"
+    ],
+    answer: "आधा हो जाता"
+},
+{
+    question: "वृषणों का उदर गुहा के बाहर वृषणकोश में स्थित होने का मुख्य कारण क्या है?",
+    option: [
+        "शुक्राणु निर्माण को सुगम बनाने के लिए क्योंकि इसके लिए शरीर के तापमान से कम तापमान की आवश्यकता होती है",
+        "शुक्राणु और मूत्र का उचित मिश्रण सुनिश्चित करने के लिए",
+        "संक्रमण के जोखिम को कम करने के लिए",
+        "हार्मोन स्राव को आसान बनाने के लिए"
+    ],
+    answer: "शुक्राणु निर्माण को सुगम बनाने के लिए क्योंकि इसके लिए शरीर के तापमान से कम तापमान की आवश्यकता होती है"
+},
+{
+    question: "असंतृप्त कार्बन, संतृप्त कार्बन यौगिकों की तुलना में _______ होते हैं।",
+    option: [
+        "कम अभिक्रियाशील",
+        "अधिक संतृप्त",
+        "बराबर अभिक्रियाशील",
+        "अधिक अभिक्रियाशील"
+    ],
+    answer: "अधिक अभिक्रियाशील"
+},
+{
+    question: "स्रोत का कंपन शीघ्रता से होने पर ध्वनि पर क्या प्रभाव पड़ता है?",
+    option: [
+        "तारत्व वही रहता है, लेकिन आवृत्ति कम हो जाती है।",
+        "आवृत्ति और तारत्व अधिक हो जाते हैं।",
+        "आवृत्ति और तारत्व कम हो जाते हैं।",
+        "ध्वनि, संपीडन और विरलन उत्पन्न करना बंद कर देती है।"
+    ],
+    answer: "आवृत्ति और तारत्व अधिक हो जाते हैं।"
+},
+{
+    question: "जब CO₂, कैल्शियम हाइड्रॉक्साइड के साथ अभिक्रिया करती है, तो कैल्शियम कार्बोनेट और जल देती है। इस अभिक्रिया में CO₂ का कौन-सा गुण दिखाई देता है?",
+    option: [
+        "उदासीन गुण",
+        "ऑक्सीकारक गुण",
+        "क्षारीय गुण",
+        "अम्लीय गुण"
+    ],
+    answer: "अम्लीय गुण"
+},
+{
+    question: "माइटोकॉन्ड्रिया के समान प्लास्टिडों में भी स्वयं के __________ और __________ होती/होते हैं।",
+    option: [
+        "एंजाइम; रसधानी",
+        "पुटिकाएं; प्रोटीन",
+        "न्यूक्लियस; गुणसूत्र",
+        "DNA; राइबोसोम"
+    ],
+    answer: "DNA; राइबोसोम"
+},
+{
+    question: "जल संग्रहण (Water harvesting) महत्वपूर्ण है, क्योंकि यह ______________।",
+    option: [
+        "अनुप्रवाह क्षेत्रों में जल आपूर्ति को कम करता है",
+        "जल निकायों में खनिज घनत्व को कम करता है",
+        "जल निकायों का शुद्धिकरण करता है",
+        "भूजल का पुनर्भरण करता है"
+    ],
+    answer: "भूजल का पुनर्भरण करता है"
+},
+{
+    question: "निम्नलिखित में से कौन-सा, आयनिक यौगिकों का गुणधर्म नहीं है?",
+    option: [
+        "इनका गलनांक और क्वथनांक सामान्यतः उच्च होता है।",
+        "ये किरोसिन और पेट्रोल जैसे विलायकों में विलेय होते हैं।",
+        "ये जलीय/गलित अवस्था में विद्युत का चालन कर सकते हैं।",
+        "ये सामान्यतः कमरे के तापमान पर ठोस होते हैं।"
+    ],
+    answer: "ये किरोसिन और पेट्रोल जैसे विलायकों में विलेय होते हैं।"
+},
+{
+    question: "परिवार नियोजन में रासायनिक गर्भनिरोधक विधियों की भूमिका के लिए निम्नलिखित में से कौन-सा कथन सबसे उपयुक्त है?",
+    option: [
+        "ये हार्मोन के स्तर को बदलकर अंडोत्सर्जन और गर्भाशय की तैयारी को बाधित करते हैं।",
+        "वे अंडोत्सर्ग को बढ़ावा देने के लिए एस्ट्रोजन के स्तर को बढ़ाते हैं और निषेचन की संभावना को कम करते हैं।",
+        "वे योनि की भित्ति को मोटा करके शुक्राणुओं को गर्भाशय में प्रवेश करने से रोकते हैं।",
+        "ये फैलोपियन ट्यूब को यांत्रिक रूप से अवरुद्ध करके रजोधर्म को पूरी तरह से रोक देते हैं।"
+    ],
+    answer: "ये हार्मोन के स्तर को बदलकर अंडोत्सर्जन और गर्भाशय की तैयारी को बाधित करते हैं।"
+},
+{
+    question: "निम्नलिखित में से कौन-सी स्थिति न्यूटन के तीसरे नियम को स्पष्ट रूप से दर्शाती है, जहाँ क्रिया और प्रतिक्रिया बल दो अलग-अलग वस्तुओं पर कार्य करते हैं और बराबर और विपरीत होते हैं?",
+    option: [
+        "नाविक आगे की ओर कूदते हुए नाव को पीछे की ओर धकेलता है और नाव उसे आगे की ओर धकेलती है।",
+        "इंजन की शक्ति के कारण त्वरित होती कार।",
+        "ज़मीन पर रखा एक पत्थर।",
+        "मेज पर रखी एक पुस्तक स्थिर अवस्था में रहती है।"
+    ],
+    answer: "नाविक आगे की ओर कूदते हुए नाव को पीछे की ओर धकेलता है और नाव उसे आगे की ओर धकेलती है।"
+},
+{
+    question: "एक तार का प्रतिरोध 1 Ω है। यदि इसे दो बराबर भागों में काटा जाए, तो प्रत्येक भाग का प्रतिरोध कितना होगा?",
+    option: [
+        "0.5 Ω",
+        "1 Ω",
+        "4 Ω",
+        "2 Ω"
+    ],
+    answer: "0.5 Ω"
+},
+{
+    question: "लैंगिक जनन द्वारा उत्पन्न आनुवंशिक विविधता का परिणाम निम्नलिखित में से क्या है?",
+    option: [
+        "विकास",
+        "समरूप यमज (twins) का निर्माण",
+        "उत्तरजीविता की संभावना में कमी",
+        "आनुवंशिक रूप से समरूप संतति की उत्पत्ति"
+    ],
+    answer: "विकास"
+},
+{
+    question: "खाद्य जाल (Food web) विभिन्न प्रकार की _________ से मिलकर बना होता है।",
+    option: [
+        "खाद्य शृंखलाओं",
+        "पोषी स्तरों",
+        "खाद्य पदार्थों",
+        "पारिस्थितिकी तंत्रों"
+    ],
+    answer: "खाद्य शृंखलाओं"
+},
+{
+    question: "प्रोकैरियोटिक कोशिकाएं, यूकेरियोटिक कोशिकाओं से निम्नलिखित में से किसमें भिन्न होती हैं?",
+    option: [
+        "झिल्लीयुक्त अंगक",
+        "एक वास्तविक केंद्रक",
+        "झिल्लीयुक्त केंद्रक का अभाव",
+        "राइबोसोम"
+    ],
+    answer: "झिल्लीयुक्त केंद्रक का अभाव"
+},
+{
+    question: "एक वस्तु का द्रव्यमान 11 kg है और इसे ज़मीन से ऊँचाई पर रखा गया है। यदि इसकी स्थितिज ऊर्जा 440 J है और g = 10 m/s² है, तो ऊँचाई कितनी है?",
+    option: [
+        "8 m",
+        "4 m",
+        "48,400 m",
+        "2 m"
+    ],
+    answer: "4 m"
+},
+{
+    question: "दाब की गणना के लिए सही सूत्र क्या है, जहाँ प्रणोद लगाया गया बल है और क्षेत्रफल वह सतह है जिस पर यह कार्य करता है?",
+    option: [
+        "दाब = क्षेत्रफल ÷ प्रणोद",
+        "दाब = प्रणोद ÷ क्षेत्रफल",
+        "दाब = प्रणोद + क्षेत्रफल",
+        "दाब = प्रणोद × क्षेत्रफल"
+    ],
+    answer: "दाब = प्रणोद ÷ क्षेत्रफल"
+},
+{
+    question: "उत्तल दर्पण हमेशा ________ प्रतिबिंब बनाता है।",
+    option: [
+        "आभासी, सीधा और न्यूनिकृत",
+        "वास्तविक, उल्टा और वस्तु से छोटा",
+        "वास्तविक, सीधा और वस्तु के समान आकार वाला",
+        "आभासी, सीधा और वस्तु से बड़ा"
+    ],
+    answer: "आभासी, सीधा और न्यूनिकृत"
+},
+{
+    question: "जस्ता लेपित लोहे की वस्तु में, जस्ते की परत पर खरोंच लगने पर भी वह जंग से क्यों सुरक्षित रहती है?",
+    option: [
+        "लोहे पर जंग की एक पतली परत बन जाती है जो जंग लगने से रोकती है।",
+        "खरोंचों से तेल अंदर रिस सकता है, जो जंग लगने से रोकता है।",
+        "जस्ता, लोहे के साथ अभिक्रिया करके आयरन ऑक्साइड की एक रक्षी परत बनाता है।",
+        "जस्ता, लोहे की तुलना में अधिक अभिक्रियाशील होता है और अधिमान्य ऑक्सीकरण से गुजरता है, जो लोहे को जंग लगने से बचाता है।"
+    ],
+    answer: "जस्ता, लोहे की तुलना में अधिक अभिक्रियाशील होता है और अधिमान्य ऑक्सीकरण से गुजरता है, जो लोहे को जंग लगने से बचाता है।"
+},
+{
+    question: "'निलंबन' का निम्नलिखित में से कौन-सा गुणधर्म गलत है?",
+    option: [
+        "निलंबन के कणों को निस्यंदन प्रक्रिया द्वारा मिश्रण से पृथक किया जा सकता है।",
+        "निलंबन एक विषमांगी मिश्रण है।",
+        "निलंबन के कण नग्न आंखों से दिखाई देते हैं।",
+        "निलंबन के कण प्रकाश की किरण को प्रकीर्णित नहीं करते हैं।"
+    ],
+    answer: "निलंबन के कण प्रकाश की किरण को प्रकीर्णित नहीं करते हैं।"
+},
+{
+    question: "ओम के नियम के अनुसार, किसी चालक में विभवांतर .................... होता है।",
+    option: [
+        "धारा से स्वतंत्र",
+        "धारा के व्युत्क्रमानुपाती",
+        "प्रतिरोध के बराबर",
+        "धारा के अनुक्रमानुपाती"
+    ],
+    answer: "धारा के अनुक्रमानुपाती"
+},
+{
+    question: "निम्नलिखित में से कौन-सी संयोजन अभिक्रिया ऊष्माक्षेपी अभिक्रिया का उदाहरण है?",
+    option: [
+        "PDF में विकल्प दिखाई नहीं दिए",
+        "PDF में विकल्प दिखाई नहीं दिए",
+        "PDF में विकल्प दिखाई नहीं दिए",
+        "PDF में विकल्प दिखाई नहीं दिए"
+    ],
+    answer: "PDF के उपलब्ध text से सत्यापित नहीं हो सका"
+},
+{
+    question: "मानव मुख में दंत क्षय किस pH पर शुरू होने लगता है?",
+    option: [
+        "8 से अधिक",
+        "7 और 8 के बीच",
+        "ठीक 6.5",
+        "5.5 से कम"
+    ],
+    answer: "5.5 से कम"
+},
+{
+    question: "एक पदार्थ का निरपेक्ष अपवर्तनांक 4/3 है। यदि वायु में प्रकाश की चाल 3 × 10⁸ m/s है, तो इस माध्यम (पदार्थ) में प्रकाश की चाल क्या होगी?",
+    option: [
+        "4 × 10⁸ m/s",
+        "2.25 × 10⁸ m/s",
+        "3 × 10⁸ m/s",
+        "1.33 × 10⁸ m/s"
+    ],
+    answer: "2.25 × 10⁸ m/s"
+},
+{
+    question: "किसी विशेष विलायक में घुले हुए विलेय की मात्रा को _____ के रूप में परिभाषित किया जाता है।",
+    option: [
+        "तरलता (fluidity)",
+        "सांद्रता (concentration)",
+        "श्यानता (viscosity)",
+        "पृष्ठीय तनाव (surface tension)"
+    ],
+    answer: "सांद्रता (concentration)"
+},
+{
+    question: "लार में मौजूद कौन-सा एंजाइम, स्टार्च को तोड़ने में सहायक होता है?",
+    option: [
+        "ट्रिप्सिन (Trypsin)",
+        "पेप्सिन (Pepsin)",
+        "एमाइलेज (Amylase)",
+        "लाइपेज़ (Lipase)"
+    ],
+    answer: "एमाइलेज (Amylase)"
+},
+{
+    question: "कौन-सी अभिक्रिया, द्रव्यमान संरक्षण के नियम को सर्वोत्तम रूप से सपोर्ट करती है?",
+    option: [
+        "खुली हवा में लोहे को गर्म करना",
+        "एक सीलबंद कंटेनर में सिरका और बेकिंग सोडा का मिश्रण",
+        "खुली हवा में कागज जलाना",
+        "खुली हवा में ऐल्कोहॉल का वाष्पन"
+    ],
+    answer: "एक सीलबंद कंटेनर में सिरका और बेकिंग सोडा का मिश्रण"
+},
+{
+    question: "एक कण 2 m/s² पर एकसमान रूप से त्वरित होता है। इसका वेग 5 m/s से 15 m/s हो जाता है। इसमें कितना समय लगता है?",
+    option: [
+        "2 s",
+        "7 s",
+        "10 s",
+        "5 s"
+    ],
+    answer: "5 s"
+},
+{
+    question: "उस विकल्प का चयन कीजिए, जो अभिकथन (A) और कारण (R) नामक निम्नलिखित दो कथनों के संबंध में सही है।\n\nअभिकथन (A): कायिक प्रवर्धन उन पौधों को उगाने में सहायता करता है जो बीज उत्पन्न नहीं करते हैं।\nकारण (R): यह नए पौधे उगाने के लिए पुष्पों का उपयोग करता है।",
+    option: [
+        "A और R दोनों सही हैं, और R, A की सही व्याख्या है।",
+        "A और R दोनों सही हैं, लेकिन R, A की सही व्याख्या नहीं है।",
+        "A असत्य है, लेकिन R सत्य है।",
+        "A सत्य है, लेकिन R असत्य है।"
+    ],
+    answer: "A सत्य है, लेकिन R असत्य है।"
+},
+
+{
+    question: "जब ब्रायोफिलम की पत्तियों के किनारों से कलियाँ निकलकर नए पौधे में विकसित होती हैं तो इसमें किस प्रकार का प्रजनन शामिल होता है?",
+    option: [
+        "लैंगिक प्रजनन",
+        "स्टेम नोड्स के माध्यम से मुकुलन",
+        "बीजाणुओं द्वारा अलैंगिक प्रजनन",
+        "कायिक प्रवर्धन द्वारा अलैंगिक प्रजनन"
+    ],
+    answer: "कायिक प्रवर्धन द्वारा अलैंगिक प्रजनन"
+},
+{
+    question: "ध्वनि की चाल के संबंध में निम्नलिखित में से कौन-से कथन सत्य नहीं हैं?\n\n(i) माध्यम के तापमान में वृद्धि के साथ ध्वनि की चाल बढ़ जाती है।\n(ii) ठोस अवस्था में ध्वनि की चाल गैसीय अवस्था में ध्वनि की चाल से अधिक होती है।\n(iii) माध्यम के तापमान में वृद्धि के साथ ध्वनि की चाल कम हो जाती है।\n(iv) ध्वनि की चाल उस माध्यम के गुणों से स्वतंत्र होती है जिससे होकर वह गुजरती है।",
+    option: [
+        "(i) और (iv) दोनों",
+        "(iii) और (iv) दोनों",
+        "(i) और (ii) दोनों",
+        "(ii) और (iii) दोनों"
+    ],
+    answer: "(iii) और (iv) दोनों"
+},
+{
+    question: "धारावाही परिनालिका के अंदर चुंबकीय क्षेत्र रेखाएँ किस प्रकार विन्यासित होती हैं?",
+    option: [
+        "वक्रित और असमान",
+        "यादृच्छिक",
+        "केंद्र से अरीय",
+        "समानांतर और समान दूरी पर"
+    ],
+    answer: "समानांतर और समान दूरी पर"
+},
+{
+    question: "2 kg द्रव्यमान के एक पिंड पर 10 N का बल कार्य करता है। उसका त्वरण .............. है।",
+    option: [
+        "2 m/s²",
+        "5 m/s²",
+        "20 m/s²",
+        "10 m/s²"
+    ],
+    answer: "5 m/s²"
+},
+{
+    question: "पुष्पी पादपों को अगली पीढ़ी में नए पादप उगाने में क्या मदद करता है?",
+    option: [
+        "जड़ों का निर्माण",
+        "बीज का निर्माण और अंकुरण",
+        "पंखुड़ियों की वृद्धि",
+        "वर्तिकाग्र का निर्माण"
+    ],
+    answer: "बीज का निर्माण और अंकुरण"
+},
+{
+    question: "निम्नलिखित में से कौन-सी, फसल किस्मों में वांछनीय गुण उत्पन्न करने की एक विधि नहीं है?",
+    option: [
+        "अंतर्जातीय संकरण (Interspecific hybridisation)",
+        "अंतराजीनी संकरण (Intragenic hybridisation)",
+        "अंतःउपजातीय संकरण (Intervarietal hybridisation)",
+        "अंतरवंशीय संकरण (Intergeneric hybridisation)"
+    ],
+    answer: "अंतराजीनी संकरण (Intragenic hybridisation)"
+},
+{
+    question: "एक बक्से को 25 N बल की दिशा में 3 m की दूरी तक ले जाने के लिए कितना कार्य करना होगा?",
+    option: [
+        "0 J",
+        "25.0 J",
+        "75.0 J",
+        "750.0 J"
+    ],
+    answer: "75.0 J"
+},
+{
+    question: "यदि किसी प्रतिबिंब की ऊँचाई (h') को मुख्य अक्ष के लंबवत और नीचे (-y-अक्ष के अनुदिश) मापा जाता है, तो परिपाटी के अनुसार उसके मान को कौन-सा चिह्न दिया जाता है?",
+    option: [
+        "उदासीन",
+        "ऋणात्मक",
+        "धनात्मक",
+        "आवर्धन पर निर्भर करता है"
+    ],
+    answer: "ऋणात्मक"
+},
+{
+    question: "जीवों में नई कोशिकाओं के निर्माण को __________ कहते हैं।",
+    option: [
+        "कोशिका विभाजन",
+        "कोशिका संलयन",
+        "कोशिका श्वसन",
+        "कोशिका स्राव"
+    ],
+    answer: "कोशिका विभाजन"
+},
+{
+    question: "सूक्ष्म इकाई द्रव्यमान की इकाई क्या है?",
+    option: [
+        "mole",
+        "kg",
+        "g",
+        "u"
+    ],
+    answer: "u"
+},
+{
+    question: "गुरुत्वाकर्षण के नियम ने क्या सिद्ध करने में सहायता की?",
+    option: [
+        "सूर्य, पृथ्वी के चारों ओर परिक्रमण करता है",
+        "पृथ्वी चपटी है",
+        "पृथ्वी पर गिरते पिंडों और ग्रहों की गति दोनों को एक ही बल नियंत्रित करता है",
+        "गुरुत्वाकर्षण केवल पार्थिव वस्तुओं पर ही कार्य करता है"
+    ],
+    answer: "पृथ्वी पर गिरते पिंडों और ग्रहों की गति दोनों को एक ही बल नियंत्रित करता है"
+},
+{
+    question: "निम्नलिखित में से किस जीव में, खंडन और बीजाणु निर्माण दोनों होते हैं?",
+    option: [
+        "प्लेनेरिया",
+        "कवक",
+        "यीस्ट",
+        "अमीबा"
+    ],
+    answer: "कवक"
+},
+{
+    question: "निम्नलिखित में से कौन-सा विकल्प, 'विलयन की सांद्रता' को सबसे यथार्थ रूप से परिभाषित करता है?",
+    option: [
+        "द्रव्यमान और वेग के बीच आनुपातिक संबंध",
+        "विलायक के सापेक्ष विलेय पदार्थ की मात्रा",
+        "वायु में परिक्षेपित गैसीय कणों की कुल संख्या",
+        "वर्ण और फ्लेवर जैसी संवेदी विशेषताएँ"
+    ],
+    answer: "विलायक के सापेक्ष विलेय पदार्थ की मात्रा"
+},
+{
+    question: "ब्लीचिंग पाउडर रासायनिक रूप से .................... द्वारा बनता है।",
+    option: [
+        "NaOH की HCl अम्ल के साथ अभिक्रिया",
+        "Ca(OH)₂ की Cl₂ गैस के साथ अभिक्रिया",
+        "CaCO₃ की CO₂ गैस के साथ अभिक्रिया",
+        "CaCl₂ की O₂ गैस के साथ अभिक्रिया"
+    ],
+    answer: "Ca(OH)₂ की Cl₂ गैस के साथ अभिक्रिया"
+},
+{
+    question: "निम्नलिखित में से कौन-सा, पारिस्थितिकी तंत्र का अजैव घटक नहीं है?",
+    option: [
+        "वर्षा",
+        "पवन",
+        "तापमान",
+        "सूक्ष्मजीव"
+    ],
+    answer: "सूक्ष्मजीव"
+},
+{
+    question: "लोहे पर जंग कब लगती है?",
+    option: [
+        "जब यह शुद्ध हवा के संपर्क में आता है",
+        "जब यह केवल ऊष्मा के संपर्क में आता है",
+        "जब यह जल और ऑक्सीजन के संपर्क में आता है",
+        "जब यह कार्बन डाइऑक्साइड के साथ अभिक्रिया करता है"
+    ],
+    answer: "जब यह जल और ऑक्सीजन के संपर्क में आता है"
+},
+{
+    question: "मानव शरीर में पेशीय ऊतक का मुख्य कार्य क्या है?",
+    option: [
+        "यह संकुचन और शिथिलन द्वारा संचलन उत्पन्न करता है।",
+        "यह अंगों को सुरक्षा और संरचनात्मक सहारा प्रदान करता है।",
+        "यह ऊर्जा संचय करता है और शरीर के तापमान को बनाए रखता है।",
+        "यह शरीर के विभिन्न अंगों के बीच आवेगों का संचार करता है।"
+    ],
+    answer: "यह संकुचन और शिथिलन द्वारा संचलन उत्पन्न करता है।"
+},
+{
+    question: "जब किसी वस्तु को अवतल दर्पण के सामने वक्रता केंद्र (C) से परे रखा जाता है, तो किस प्रकार का प्रतिबिंब बनता है?",
+    option: [
+        "अधिक आवर्धित और आभासी",
+        "समान आकार, वास्तविक, और सीधा",
+        "न्यूनीकृत, वास्तविक और उलटा",
+        "आवर्धित, आभासी और सीधा"
+    ],
+    answer: "न्यूनीकृत, वास्तविक और उलटा"
+},
+{
+    question: "विकृतगंधिता (rancidity) क्या है?",
+    option: [
+        "जीवाणु वृद्धि के कारण भोजन के सड़ने की प्रक्रिया",
+        "नमक या चीनी डालकर भोजन को संरक्षित करने की प्रक्रिया",
+        "वह प्रक्रिया जिसमें भोजन में वसा और तेल का ऑक्सीकरण होता है, जिससे गंध और स्वाद में परिवर्तन होता है",
+        "सूखने के कारण भोजन के बासी होने की प्रक्रिया"
+    ],
+    answer: "वह प्रक्रिया जिसमें भोजन में वसा और तेल का ऑक्सीकरण होता है, जिससे गंध और स्वाद में परिवर्तन होता है"
+},
+{
+    question: "कौन-से ऊतक जानवरों को अपने आस-पास के परिवर्तनों पर शीघ्र प्रतिक्रिया करने में मदद कर सकते हैं?",
+    option: [
+        "अस्थि और उपास्थि एक साथ कार्य करते हैं",
+        "तंत्रिका आवेग और पेशी ऊतक एक साथ कार्य करते हैं",
+        "केवल पेशी ऊतक",
+        "पाचन और उत्सर्जन तंत्र एक साथ कार्य करते हैं"
+    ],
+    answer: "तंत्रिका आवेग और पेशी ऊतक एक साथ कार्य करते हैं"
+},
+{
+    question: "उत्प्रेरक की उपस्थिति में एथेनोइक अम्ल के साथ ऐल्कोहॉल की अभिक्रिया होने पर जल और _____ बनता है।",
+    option: [
+        "हाइड्रोकार्बन",
+        "एस्टर",
+        "लवण",
+        "ऐल्डिहाइड"
+    ],
+    answer: "एस्टर"
+},
+{
+    question: "किसी वस्तु की सीधी रेखा के अनुदिश एकसमान गति के दौरान __________।",
+    option: [
+        "किसी भी समय अंतराल में वेग में परिवर्तन शून्य नहीं होता है।",
+        "वेग समय के साथ लगातार बदलता रहता है।",
+        "किसी भी समय अंतराल में वेग में परिवर्तन शून्य होता है।",
+        "वेग का मान विभिन्न क्षणों पर तथा पथ के विभिन्न बिंदुओं पर भिन्न-भिन्न होता है।"
+    ],
+    answer: "किसी भी समय अंतराल में वेग में परिवर्तन शून्य होता है।"
+},
+{
+    question: "निम्नलिखित कथनों पर विचार कीजिए और सही विकल्प चुनिए।\n\nकथन A: ऐल्कोहॉल, सोडियम के साथ अभिक्रिया करके हाइड्रोजन मुक्त करता है।\nकथन B: सोडियम की इथेनॉल के साथ अभिक्रिया करने पर कोई गैस मुक्त नहीं होती।",
+    option: [
+        "कथन A और B दोनों सही हैं।",
+        "कथन A सही है लेकिन B गलत है।",
+        "कथन A गलत है लेकिन B सही है।",
+        "कथन A और B दोनों गलत हैं।"
+    ],
+    answer: "कथन A सही है लेकिन B गलत है।"
+},
+{
+    question: "यदि एक तार का प्रतिरोध R है और उसमें से धारा I प्रवाहित हो रही है, तो तार में व्ययित शक्ति को _______ द्वारा निरूपित किया जाता है।",
+    option: [
+        "$P=V/I$",
+        "$P=I^2/R$",
+        "$P=V^2R$",
+        "$P=I^2R$"
+    ],
+    answer: "$P=I^2R$"
+},
+{
+    question: "धातु ऑक्साइड को गर्म करके तांबा और चांदी जैसी धातुओं का निष्कर्षण करने के लिए किस प्रक्रम का उपयोग किया जाता है?",
+    option: [
+        "प्रगलन (Smelting)",
+        "भर्जन (Roasting)",
+        "तापीय अपघटन (Thermal Decomposition)",
+        "विद्युत अपघटन (Electrolysis)"
+    ],
+    answer: "तापीय अपघटन (Thermal Decomposition)"
+},
+
+];
+
+// Current Affairs (20) - Hindi
+const currentAffairsQuestionsHi = [
+{
+    question: "IPL 2025 में मुंबई इंडियंस का मोस्ट वैल्यूएबल प्लेयर कौन था?",
+    option: [
+        "क्रुणाल पांड्या",
+        "सूर्यकुमार यादव",
+        "जसप्रीत बुमराह",
+        "रोहित शर्मा"
+    ],
+    answer: "सूर्यकुमार यादव"
+},
+{
+    question: "निम्नलिखित में से किस शहर ने आवास और शहरी मामलों के मंत्रालय (MoHUA) द्वारा आयोजित 18वें शहरी गतिशीलता भारत (UMI) सम्मेलन और प्रदर्शनी 2025 के कर्टेन रेज़र के लिए स्थल के रूप में कार्य किया?",
+    option: [
+        "नोएडा, उत्तर प्रदेश",
+        "जयपुर, राजस्थान",
+        "गुरुग्राम, हरियाणा",
+        "नई दिल्ली, दिल्ली"
+    ],
+    answer: "गुरुग्राम, हरियाणा"
+},
+{
+    question: "केरल के एक स्कूल में मेकरलैब्स एडुटेक (Makerlabs Edutech) द्वारा अनावरण किए गए भारत के पहले AI-जनरेटेड स्कूल टीचर रोबोट का नाम क्या है?",
+    option: [
+        "वेदिका (Vedika)",
+        "सोफिया (Sophia)",
+        "आइरिस (Iris)",
+        "ईशा (Esha)"
+    ],
+    answer: "आइरिस (Iris)"
+},
+{
+    question: "कौन-सा देश आधिकारिक तौर पर ट्रांस-पैसिफिक पार्टनरशिप (CPTPP) के लिए व्यापक और प्रगतिशील समझौते में शामिल होने वाला पहला यूरोपीय राष्ट्र बन गया है?",
+    option: [
+        "जर्मनी",
+        "ब्रिटेन",
+        "फ्रांस",
+        "इटली"
+    ],
+    answer: "ब्रिटेन"
+},
+{
+    question: "पहलगाम में आतंकवादी हमले के जवाब में, मई 2025 में शुरू किए गए ऑपरेशन का नाम क्या था?",
+    option: [
+        "ऑपरेशन अभिमान",
+        "ऑपरेशन विजय",
+        "ऑपरेशन सिंदूर",
+        "ऑपरेशन रक्षा"
+    ],
+    answer: "ऑपरेशन सिंदूर"
+},
+{
+    question: "ज्योति याराजी ने राष्ट्रीय खेल 2025 के दौरान किस स्थान पर रिकॉर्ड तोड़ प्रदर्शन किया?",
+    option: [
+        "गंगा एथलेटिक्स ग्राउंड, उत्तराखंड",
+        "कलिंगा स्टेडियम, ओडिशा",
+        "श्री कांतीरवा स्टेडियम, बेंगलुरु",
+        "नेहरू स्टेडियम, चेन्नई"
+    ],
+    answer: "गंगा एथलेटिक्स ग्राउंड, उत्तराखंड"
+},
+{
+    question: "जुलाई 2025 में, जनजातीय कार्य मंत्रालय ने छत्तीसगढ़ में 68 एकलव्य मॉडल आवासीय विद्यालयों (EMRS) का सहयोग प्रदान करने के लिए किस संगठन के साथ भागीदारी की है, जिससे 28,000 से अधिक जनजातीय विद्यार्थी लाभान्वित हुए?",
+    option: [
+        "राष्ट्रीय ताप विद्युत निगम",
+        "कोल इंडिया लिमिटेड",
+        "तेल और प्राकृतिक गैस निगम",
+        "स्टील अथॉरिटी ऑफ इंडिया लिमिटेड"
+    ],
+    answer: "कोल इंडिया लिमिटेड"
+},
+{
+    question: "निम्नलिखित में से किस केंद्रीय मंत्री ने अक्टूबर 2025 में भारत का राष्ट्रीय रेड लिस्ट रोडमैप लॉन्च किया था?",
+    option: [
+        "नितिन जयराम गडकरी",
+        "भूपेंद्र यादव",
+        "पीयूष गोयल",
+        "कीर्ति वर्धन सिंह"
+    ],
+    answer: "कीर्ति वर्धन सिंह"
+},
+{
+    question: "'मोंथा' मॉन, जो अक्टूबर 2025 में भारत में आया, किस प्रकार की प्राकृतिक घटना थी?",
+    option: [
+        "तटीय गुजरात को प्रभावित करने वाला उष्णकटिबंधीय तूफान",
+        "बंगाल की खाड़ी के ऊपर एक भयंकर चक्रवाती तूफान",
+        "कच्छ क्षेत्र में अत्यंत भीषण चक्रवाती तूफान",
+        "दक्षिण भारत में बारिश लाने वाला अरब सागर पर गहरा दबाव"
+    ],
+    answer: "बंगाल की खाड़ी के ऊपर एक भयंकर चक्रवाती तूफान"
+},
+{
+    question: "निम्नलिखित में से किसने चीनी ग्रैंड प्रिक्स, 2025 जीता?",
+    option: [
+        "चार्ल्स लेक्लर्क",
+        "लुईस हैमिल्टन",
+        "लैंडो नॉरिस",
+        "ऑस्कर पियास्त्री"
+    ],
+    answer: "ऑस्कर पियास्त्री"
+},
+{
+    question: "मई 2025 में आयोजित ऑपरेशन शील्ड नामक बड़े पैमाने पर नागरिक सुरक्षा मॉक ड्रिल का प्राथमिक उद्देश्य क्या है?",
+    option: [
+        "आंतरिक विद्रोहों के विरुद्ध तत्परता बढ़ाना",
+        "हिमालयी क्षेत्रों में प्राकृतिक आपदाओं के प्रति प्रतिक्रिया का अनुकरण करना",
+        "तटीय सुरक्षा प्रोटोकॉल की प्रभावशीलता का परीक्षण करना",
+        "राज्य की आपातकालीन तत्परता और प्रतिक्रिया प्रणालियों में सुधार करना"
+    ],
+    answer: "राज्य की आपातकालीन तत्परता और प्रतिक्रिया प्रणालियों में सुधार करना"
+},
+{
+    question: "निम्नलिखित में से किसने 2025 की पुस्तक “रॉकेट ड्रीम्स: मस्क, बेजोस, एंड द इनसाइड स्टोरी ऑफ द न्यू, ट्रिलियन-डॉलर स्पेस रेस” लिखी है, जो आधुनिक स्पेस रेस में अरबपतियों के बीच भयंकर प्रतिद्वंद्विता की पड़ताल करती है?",
+    option: [
+        "वाल्टर इसाकसन (Walter Isaacson)",
+        "एशली वेंस (Ashlee Vance)",
+        "क्रिश्चियन डेवनपोर्ट (Christian Davenport)",
+        "नील डीग्रास टायसन (Neil deGrasse Tyson)"
+    ],
+    answer: "क्रिश्चियन डेवनपोर्ट (Christian Davenport)"
+},
+{
+    question: "निम्नलिखित में से किस निकाय ने GRFC (ग्लोबल रिपोर्ट ऑन फूड क्राइसिस), 2025 प्रकाशित की?",
+    option: [
+        "यूनाइटेड नेशंस डेवलपमेंट प्रोग्राम (United Nations Development Programme - UNDP)",
+        "फ़ूड एंड एग्रीकल्चर ऑर्गनाइज़ेशन (Food and Agriculture Organization - FAO)",
+        "फूड सिक्योरिटी इन्फॉर्मेशन नेटवर्क (Food Security Information Network - FSIN)",
+        "वर्ल्ड फ़ूड प्रोग्राम अलोन (World Food Programme alone)"
+    ],
+    answer: "फूड सिक्योरिटी इन्फॉर्मेशन नेटवर्क (Food Security Information Network - FSIN)"
+},
+{
+    question: "अप्रैल 2025 में, विश्व बैंक/IMF के किस पूर्व अर्थशास्त्री को RBI का डिप्टी गवर्नर नियुक्त किया गया?",
+    option: [
+        "माइकल पात्रा",
+        "पूनम गुप्ता",
+        "रघुराम राजन",
+        "उर्जित पटेल"
+    ],
+    answer: "पूनम गुप्ता"
+},
+{
+    question: "मार्च 2025 में, नई दिल्ली में आयोजित कौन-सा शिखर सम्मेलन “सतत विकास और जलवायु समाधान में तेजी लाने के लिए साझेदारी” पर केंद्रित था?",
+    option: [
+        "संयुक्त राष्ट्र पर्यावरण सभा-5 (United Nations Environment Assembly-5)",
+        "विश्व सतत विकास शिखर सम्मेलन (World Sustainable Development Summit)",
+        "G20 पर्यावरण शिखर सम्मेलन (G20 Environment Summit)",
+        "पार्टियों का सम्मेलन (COP) 30 (Conference of the Parties (COP) 30)"
+    ],
+    answer: "विश्व सतत विकास शिखर सम्मेलन (World Sustainable Development Summit)"
+},
+{
+    question: "जनवरी 2025 में हरियाणा के किस व्यक्ति, जो पैरालंपिक स्वर्ण पदक विजेता हैं, को पद्म श्री से सम्मानित किया गया?",
+    option: [
+        "दीपा मलिक",
+        "विनोद कुमार",
+        "हरविंदर सिंह",
+        "मरियप्पन थंगावेलु"
+    ],
+    answer: "हरविंदर सिंह"
+},
+{
+    question: "किस केंद्रीय मंत्री ने अक्टूबर 2024 में भारत संचार निगम लिमिटेड (BSNL) के नए लोगो का अनावरण किया?",
+    option: [
+        "जितिन प्रसाद",
+        "ज्योतिरादित्य एम. सिंधिया",
+        "अमित शाह",
+        "गिरिराज सिंह"
+    ],
+    answer: "ज्योतिरादित्य एम. सिंधिया"
+},
+{
+    question: "वर्ष 2025 में, IDFC FIRST Bank ने कितने देशों में गैर-निवासी भारतीयों (NRI) के लिए यूनिफाइड पेमेंट्स इंटरफेस (UPI) एक्सेस की सुविधा प्रदान की?",
+    option: [
+        "11",
+        "13",
+        "12",
+        "10"
+    ],
+    answer: "12"
+},
+{
+    question: "भारतीय बीमा विनियामक और विकास प्राधिकरण (IRDAI) द्वारा वर्ष 2024-25 के लिए निम्नलिखित में से किन बीमा कंपनियों को घरेलू प्रणालीगत महत्वपूर्ण बीमाकर्ता (D-SII) के रूप में नामित किया गया था?",
+    option: [
+        "LIC, द न्यू इंडिया एश्योरेंस और GIC री",
+        "LIC, HDFC ERGO और रिलायंस जनरल",
+        "LIC, टाटा AIG और बजाज आलियांज",
+        "HDFC लाइफ, ICICI लोम्बार्ड और SBI लाइफ"
+    ],
+    answer: "LIC, द न्यू इंडिया एश्योरेंस और GIC री"
+},
+{
+    question: "2025 BCCI नमन अवार्ड्स में, किसे लाइफटाइम अचीवमेंट पुरस्कार प्राप्त हुआ?",
+    option: [
+        "विराट कोहली",
+        "सचिन तेंदुलकर",
+        "जसप्रीत बुमराह",
+        "स्मृति मंधाना"
+    ],
+    answer: "सचिन तेंदुलकर"
+},
+{
+    question: "वित्त वर्ष 2025-26 के लिए अनुमानित पूंजीगत व्यय आवंटन कितना है?",
+    option: [
+        "₹9 लाख करोड़",
+        "₹11.21 लाख करोड़",
+        "₹10 लाख करोड़",
+        "₹12.63 लाख करोड़"
+    ],
+    answer: "₹11.21 लाख करोड़"
+},
+{
+    question: "जुलाई 2025 में आयोजित किस अंतरराष्ट्रीय संस्था के 17वें शिखर सम्मेलन का थीम 'Strengthening Global South Cooperation for a More Inclusive and Sustainable Governance' था?",
+    option: [
+        "BRICS",
+        "G20",
+        "NATO",
+        "ASEAN"
+    ],
+    answer: "BRICS"
+},
+{
+    question: "एयरो इंडिया 2025 में DRDO द्वारा प्रदर्शित भारत के पहले 5.5 जेन स्टील्थ एयरक्राफ्ट (5.5 Gen stealth aircraft) का क्या नाम है?",
+    option: [
+        "LCA तेजस Mk-2 (LCA Tejas Mk-2)",
+        "एडवांस्ड लाइट वेट टारपीडो (Advanced Light Weight Torpedo)",
+        "उन्नत मध्यम लड़ाकू विमान (Advanced Medium Combat Aircraft)",
+        "TEDBF"
+    ],
+    answer: "उन्नत मध्यम लड़ाकू विमान (Advanced Medium Combat Aircraft)"
+},
+{
+    question: "केंद्रीय बजट 2025-26 के अनुसार, वित्त वर्ष 2025–26 के लिए अनुमानित राजकोषीय घाटा (projected fiscal deficit) कितना है?",
+    option: [
+        "सकल घरेलू उत्पाद का 3.9%",
+        "सकल घरेलू उत्पाद का 4.8%",
+        "सकल घरेलू उत्पाद का 5.1%",
+        "सकल घरेलू उत्पाद का 4.4%"
+    ],
+    answer: "सकल घरेलू उत्पाद का 4.4%"
+},
+{
+    question: "भारत में मान्यता के राष्ट्रीय संरक्षक, भारतीय गुणवत्ता परिषद (QCI) ने विश्व मान्यता दिवस (World Accreditation Day), 2025 किस शहर में मनाया?",
+    option: [
+        "भोपाल",
+        "इंदौर",
+        "जयपुर",
+        "नई दिल्ली"
+    ],
+    answer: "नई दिल्ली"
+},
+{
+    question: "जलवायु परिवर्तन प्रदर्शन सूचकांक (Climate Change Performance Index - CCPI) 2026 में भारत की रैंक क्या है?",
+    option: [
+        "23वीं",
+        "33वीं",
+        "13वीं",
+        "10वीं"
+    ],
+    answer: "23वीं"
+},
+{
+    question: "भारत में मार्च 2024 में लॉन्च किए जाने वाले उस प्लेटफॉर्म का नाम क्या है, जो व्यक्तियों को कॉल, टेक्स्ट और व्हाट्सएप मैसेजों सहित धोखाधड़ी वाले संचार की रिपोर्ट करने की सुविधा देता है?",
+    option: [
+        "प्रॉक्टर (Proctur)",
+        "रुजुकु (Ruzuku)",
+        "चक्षु (Chakshu)",
+        "पोडिया (Podia)"
+    ],
+    answer: "चक्षु (Chakshu)"
+},
+{
+    question: "जून 2025 में पश्चिम बंगाल विधानसभा द्वारा निजी अस्पतालों में स्वास्थ्य देखभाल खर्चों पर अधिकतम सीमा तय करने के लिए पारित विधेयक का नाम क्या है?",
+    option: [
+        "पश्चिम बंगाल चिकित्सा लागत पारदर्शिता (संशोधन) विधेयक, 2025",
+        "पश्चिम बंगाल क्लिनिकल एस्टैब्लिशमेंट (पंजीकरण, विनियमन और पारदर्शिता) (संशोधन) विधेयक, 2025",
+        "पश्चिम बंगाल स्वास्थ्य संरक्षण (संशोधन) विधेयक, 2025",
+        "पश्चिम बंगाल रोगी सुरक्षा (संशोधन) विधेयक, 2025"
+    ],
+    answer: "पश्चिम बंगाल क्लिनिकल एस्टैब्लिशमेंट (पंजीकरण, विनियमन और पारदर्शिता) (संशोधन) विधेयक, 2025"
+},
+{
+    question: "स्पोर्ट्स ब्रॉडकास्टिंग में लाइफटाइम अचीवमेंट के लिए दिया जाने वाला कौन-सा पुरस्कार, डेविड हिल ने 2025 में जीता?",
+    option: [
+        "स्पोर्ट्स एमी जर्नलिज्म अवॉर्ड (Sports Emmy Journalism Award)",
+        "स्पोर्ट्स बास्केटबॉल अवॉर्ड (Sports Basketball Award)",
+        "स्पोर्ट्स बिजनेस जर्नल्स लॉरियस मीडिया ऑनर (Sports Business Journal' Laureus Media Honour)",
+        "स्पोर्ट्स बिजनेस जर्नल्स लाइफटाइम अचीवमेंट अवॉर्ड (Sports Business Journal's Lifetime Achievement Award)"
+    ],
+    answer: "स्पोर्ट्स बिजनेस जर्नल्स लाइफटाइम अचीवमेंट अवॉर्ड (Sports Business Journal's Lifetime Achievement Award)"
+},
+{
+    question: "जून 2025 में शंघाई सहयोग संगठन (SCO) के रक्षा मंत्रियों के सम्मेलन में किस वरिष्ठ भारतीय प्राधिकारी (Indian official) ने भाग लिया?",
+    option: [
+        "राजनाथ सिंह",
+        "एस जयशंकर",
+        "नरेंद्र मोदी",
+        "अमित शाह"
+    ],
+    answer: "राजनाथ सिंह"
+},
+{
+    question: "भारत में जन्मी एक मादा चीता ने निम्नलिखित में से किस राष्ट्रीय उद्यान में नवंबर 2025 में पाँच शावकों को जन्म दिया, जो प्रोजेक्ट चीता के अंतर्गत एक महत्वपूर्ण उपलब्धि को चिह्नित करता है?",
+    option: [
+        "गिर राष्ट्रीय उद्यान",
+        "कूनो राष्ट्रीय उद्यान",
+        "बांदीपुर राष्ट्रीय उद्यान",
+        "रणथंभौर राष्ट्रीय उद्यान"
+    ],
+    answer: "कूनो राष्ट्रीय उद्यान"
+},
+{
+    question: "ICC महिला क्रिकेट विश्व कप 2025 में निम्नलिखित में से कौन प्लेयर ऑफ द टूर्नामेंट रही?",
+    option: [
+        "दीप्ति शर्मा",
+        "जेमिमा रोड्रिग्स",
+        "शेफाली वर्मा",
+        "स्मृति मंधाना"
+    ],
+    answer: "दीप्ति शर्मा"
+},
+{
+    question: "निम्नलिखित में से किस अनुभवी भारतीय गोलकीपर ने पेरिस ओलंपिक के बाद संन्यास लेने की घोषणा की, जिससे उनके 18 वर्ष के उस करियर का अंत हो गया, जिसमें उन्होंने टीम के कुछ ऐतिहासिक क्षणों में महत्वपूर्ण भूमिका निभाई थी?",
+    option: [
+        "रजनीश कर्माकर",
+        "रमेश बाबू",
+        "पी.आर. श्रीजेश",
+        "एम.एस. श्रीनाथ"
+    ],
+    answer: "पी.आर. श्रीजेश"
+},
+{
+    question: "अगस्त 2025 में, सीमा सुरक्षा बल द्वारा शुरू किए गए ऑपरेशन अलर्ट का मुख्य उद्देश्य किस भारतीय सीमा पर सुरक्षा को मजबूत करना था?",
+    option: [
+        "जम्मू और कश्मीर सीमा",
+        "राजस्थान सीमा",
+        "पंजाब सीमा",
+        "असम सीमा"
+    ],
+    answer: "राजस्थान सीमा"
+},
+{
+    question: "सरकार, उद्योग और शिक्षाविदों के बीच सहयोग के माध्यम से भारत के आर्टिफिशियल इंटेलिजेंस इकोसिस्टम को मजबूत करने के लिए वर्ष 2026 की शुरुआत से गिफ्ट (GIFT) सिटी, गांधीनगर में किस संगठन की स्थापना की जानी है?",
+    option: [
+        "इंडियन AI रिसर्च ऑर्गनाइजेशन (Indian AI Research Organization)",
+        "इंडियन इंस्टिट्यूट ऑफ आर्टिफिशियल इंटेलिजेंस (Indian Institute of Artificial Intelligence)",
+        "सेंटर फॉर एडवांस्ड आर्टिफिशियल इंटेलिजेंस रिसर्च (Centre for Advanced Artificial Intelligence Research)",
+        "नेशनल आर्टिफिशियल इंटेलिजेंस अथॉरिटी (National Artificial Intelligence Authority)"
+    ],
+    answer: "इंडियन AI रिसर्च ऑर्गनाइजेशन (Indian AI Research Organization)"
+},
+{
+    question: "2025 में साहित्य का नोबेल पुरस्कार निम्नलिखित में से किस लेखक को दिया गया?",
+    option: [
+        "लास्लो क्रास्नाहोरकाई (László Krasznahorkai)",
+        "अर्नेस्ट हेमिंग्वे (Ernest Hemingway)",
+        "जॉन स्टीनबेक (John Steinbeck)",
+        "जॉर्ज ऑरवेल (George Orwell)"
+    ],
+    answer: "लास्लो क्रास्नाहोरकाई (László Krasznahorkai)"
+},
+{
+    question: "शिकागो विश्वविद्यालय के ऊर्जा नीति संस्थान (EPIC) द्वारा जारी 2023 वायु गुणवत्ता जीवन सूचकांक (AQLI) रिपोर्ट के अनुसार, महीन कणों युक्त वायु प्रदूषण (PM2.5) के संपर्क में आने के कारण औसत भारतीय की जीवन प्रत्याशा में कितनी कमी आई है?",
+    option: [
+        "5.3 वर्ष",
+        "6.7 वर्ष",
+        "2.5 वर्ष",
+        "3.8 वर्ष"
+    ],
+    answer: "5.3 वर्ष"
+},
+{
+    question: "2025 WPA ग्रैंड प्रिक्स में जेवलिन F42 वर्ल्ड रिकॉर्ड (61.17 m) किसने बनाया?",
+    option: [
+        "गुर्जर महेंद्र",
+        "पिंगाने मीना विलास",
+        "रवि रंगोली",
+        "सुमित अंतिल"
+    ],
+    answer: "गुर्जर महेंद्र"
+},
+{
+    question: "किस देश ने जून 2025 में भारत को मूल्यांकन से छूट प्राप्त योग्यताओं की सूची (List of Qualifications Exempt from Assessment) में शामिल किया?",
+    option: [
+        "ऑस्ट्रेलिया",
+        "यूनाइटेड किंगडम",
+        "कनाडा",
+        "न्यूज़ीलैंड"
+    ],
+    answer: "न्यूज़ीलैंड"
+},
+{
+    question: "निम्नलिखित में से किस राष्ट्रीय उद्यान को मार्च 2025 में भारत के 58वें टाइगर रिजर्व के रूप में नामित किया गया था?",
+    option: [
+        "पन्ना राष्ट्रीय उद्यान",
+        "माधव राष्ट्रीय उद्यान",
+        "कुनो राष्ट्रीय उद्यान",
+        "पेंच राष्ट्रीय उद्यान"
+    ],
+    answer: "माधव राष्ट्रीय उद्यान"
+},
+
+{
+    question: "2025 में जाति जनगणना की मंजूरी से पहले, राष्ट्रीय स्तर पर जाति-आधारित आँकड़े एकत्र करने का अंतिम प्रमुख प्रयास किस प्रक्रिया के माध्यम से किया गया था?",
+    option: [
+        "राष्ट्रीय प्रतिदर्श सर्वेक्षण, 2005",
+        "भारत की जनगणना, 1971",
+        "सामाजिक-आर्थिक एवं जाति जनगणना (SECC), 2011",
+        "2001 की आर्थिक जनगणना"
+    ],
+    answer: "सामाजिक-आर्थिक एवं जाति जनगणना (SECC), 2011"
+},
+
+{
+    question: "स्वच्छ वायु सर्वेक्षण पुरस्कार 2025 के तहत शहरों को पुरस्कार किसने प्रदान किए?",
+    option: [
+        "भारत सरकार के वित्त मंत्री",
+        "भारत के प्रधानमंत्री",
+        "भारत के राष्ट्रपति",
+        "भारत सरकार के पर्यावरण मंत्री"
+    ],
+    answer: "भारत सरकार के पर्यावरण मंत्री"
+},
+
+{
+    question: "चैंपियंस ट्रॉफी की पारी के इतिहास में 165 रनों के साथ सर्वोच्च व्यक्तिगत स्कोर का रिकॉर्ड किसने बनाया?",
+    option: [
+        "इब्राहिम जादरान (Ibrahim Zadran)",
+        "बेन डकेट (Ben Duckett)",
+        "जोश इंगलिस (Josh Inglis)",
+        "एलेक्स कैरी (Alex Carey)"
+    ],
+    answer: "बेन डकेट (Ben Duckett)"
+},
+
+{
+    question: "डिजिटल कॉन्टेंट क्रिएटर के रूप में, Monk Entertainment के सह-संस्थापक एवं 2025 में एक प्रमुख हस्ती निम्नलिखित में से कौन हैं?",
+    option: [
+        "संचित पाटिल",
+        "जीत शाह",
+        "रणवीर इलाहाबादिया",
+        "अभिषेक मिश्रा"
+    ],
+    answer: "रणवीर इलाहाबादिया"
+},
+
+{
+    question: "26 जुलाई 2025 को पाकिस्तान पर भारत की विजय के उपलक्ष्य में कौन-सा महत्वपूर्ण दिवस मनाया गया?",
+    option: [
+        "गणतंत्र दिवस",
+        "कारगिल विजय दिवस",
+        "सीमा सुरक्षा दिवस",
+        "स्वतंत्रता दिवस"
+    ],
+    answer: "कारगिल विजय दिवस"
+},
+
+{
+    question: "दुबई, संयुक्त अरब अमीरात में आयोजित 7वें Future Food Forum 2025 का मुख्य फोकस क्या था?",
+    option: [
+        "डिजिटल प्लेटफार्मों के माध्यम से पर्यटन आधारित विकास को बढ़ावा देना",
+        "वित्तीय समावेशन और फिनटेक सहयोग को मजबूत करना",
+        "खाद्य सुरक्षा, व्यापार और नवाचार को बढ़ावा देना",
+        "वैश्विक विनिर्माण नेटवर्क के लिए चक्रीय अर्थव्यवस्था का निर्माण"
+    ],
+    answer: "खाद्य सुरक्षा, व्यापार और नवाचार को बढ़ावा देना"
+},
+
+{
+    question: "सितंबर 2025 में, काजीरंगा राष्ट्रीय उद्यान और बाघ अभयारण्य की किस रेंज को 2025-26 के पर्यटन सत्र के लिए सबसे पहले खोलने की घोषणा की गई थी?",
+    option: [
+        "अगरातोली रेंज (Agaratoli Range)",
+        "बागोरी रेंज (Bagori Range)",
+        "कोहोरा रेंज (Kohora Range)",
+        "बुरापहाड़ रेंज (Burapahar Range)"
+    ],
+    answer: "बागोरी रेंज (Bagori Range)"
+},
+
+{
+    question: "नवंबर 2025 में, राजनाथ सिंह द्वारा नई दिल्ली में उद्घाटित एक नए सुरक्षा केंद्र का नाम क्या है?",
+    option: [
+        "डीपीएसयू भवन",
+        "भारत रक्षा परिसर",
+        "राष्ट्रीय रक्षा केंद्र",
+        "रक्षा पीएसयू निलयम"
+    ],
+    answer: "डीपीएसयू भवन"
+},
+
+{
+    question: "भारत सरकार ने परमाणु ऊर्जा आयोग का पुनर्गठन कब किया, जिसमें टी.वी. सोमनाथन और मनोज गोविल को शामिल किया गया?",
+    option: [
+        "नवंबर 2024",
+        "जनवरी 2025",
+        "दिसंबर 2024",
+        "मार्च 2025"
+    ],
+    answer: "जनवरी 2025"
+},
+
+{
+    question: "फरवरी 2025 में अधिसूचित, दिल्ली-राष्ट्रीय राजधानी क्षेत्र में निर्माण श्रमिकों के लिए भारत की पहली वायु गुणवत्ता सूचकांक-आधारित पैरामीट्रिक बीमा पॉलिसी निम्नलिखित में से किस कंपनी ने शुरू की?",
+    option: [
+        "गो डिजिट जनरल इंश्योरेंस लिमिटेड (Go Digit General Insurance Limited)",
+        "टाटा एआईजी जनरल इंश्योरेंस (Tata AIG General Insurance)",
+        "नेशनल इंश्योरेंस कंपनी लिमिटेड (National Insurance Company Limited)",
+        "स्टार हेल्थ एंड एलाइड इंश्योरेंस (Star Health and Allied Insurance)"
+    ],
+    answer: "गो डिजिट जनरल इंश्योरेंस लिमिटेड (Go Digit General Insurance Limited)"
+},
+
+{
+    question: "अक्टूबर 2024 में, निम्नलिखित में से किस राज्य सरकार ने हेल्पलाइन, वेब पोर्टल और मोबाइल ऐप सहित कई चैनलों के माध्यम से शिकायतों के निवारण के लिए एक व्यापक केंद्र के रूप में कार्य करने हेतु भारत का पहला एकीकृत राज्य-स्तरीय साइबर कमांड और नियंत्रण केंद्र लॉन्च किया?",
+    option: [
+        "छत्तीसगढ़",
+        "महाराष्ट्र",
+        "केरल",
+        "हरियाणा"
+    ],
+    answer: "महाराष्ट्र"
+},
+
+{
+    question: "फरवरी 2025 में किस शहर ने प्रतिष्ठित मिशेलिन गाइड पुरस्कारों की मेजबानी की?",
+    option: [
+        "कार्डिफ, वेल्स",
+        "एडिनबर्ग, स्कॉटलैंड",
+        "ग्लासगो, स्कॉटलैंड",
+        "बर्मिंघम, इंग्लैंड"
+    ],
+    answer: "ग्लासगो, स्कॉटलैंड"
+},
+
+{
+    question: "11 जून 2025 तक, पंजाब नेशनल बैंक (PNB) ने शहीदों के परिवारों के लिए रक्षक प्लस स्कीम के तहत लगभग कितनी सहायता प्रदान की?",
+    option: [
+        "₹17 करोड़",
+        "₹37 करोड़",
+        "₹27 करोड़",
+        "₹7 करोड़"
+    ],
+    answer: "₹17 करोड़"
+},
+
+{
+    question: "जयपुर में आदर्श स्पोर्ट्स कॉम्प्लेक्स किसने विकसित किया, जिसका उद्घाटन अप्रैल 2025 में किया गया?",
+    option: [
+        "जयपुर विकास प्राधिकरण (JDA)",
+        "जयपुर नगर निगम - ग्रेटर (JMC-G)",
+        "राजस्थान खेल प्राधिकरण",
+        "युवा मामले और खेल मंत्रालय"
+    ],
+    answer: "जयपुर नगर निगम - ग्रेटर (JMC-G)"
+},
+
+{
+    question: "अक्टूबर 2025 में शुरू की गई किस छात्र-नेतृत्व वाली राष्ट्रीय केस प्रतियोगिता का उद्देश्य कुपोषण को दूर करना और SDG 2 (जीरो हंगर) तथा SDG 3 (अच्छे स्वास्थ्य और कल्याण) को बढ़ावा देना है?",
+    option: [
+        "विकसित भारत चैलेंज (Viksit Bharat Challenge)",
+        "उड़ान – एजुकेशन फॉर ऑल (Udaan – Education for All)",
+        "युक्ति – न्यूट्रिशन निर्माण (Yukti – Nutrition Nirmaan)",
+        "स्वस्थ इंडिया मिशन (Swasth India Mission)"
+    ],
+    answer: "युक्ति – न्यूट्रिशन निर्माण (Yukti – Nutrition Nirmaan)"
+},
+
+{
+    question: "अप्रैल 2025 में, किस अंतरराष्ट्रीय संगठन ने 171 मिलियन लोगों को अत्यधिक गरीबी से बाहर निकालने में भारत की उपलब्धि को स्वीकार किया?",
+    option: [
+        "अंतरराष्ट्रीय मुद्रा कोष",
+        "एशियाई विकास बैंक",
+        "संयुक्त राष्ट्र",
+        "विश्व बैंक"
+    ],
+    answer: "विश्व बैंक"
+},
+
+{
+    question: "जनवरी 2025 में, गुजरात के मुख्यमंत्री भूपेंद्र पटेल ने किस शहर में खेल महाकुंभ 3.0 का उद्घाटन किया?",
+    option: [
+        "सूरत",
+        "राजकोट",
+        "अहमदाबाद",
+        "वडोदरा"
+    ],
+    answer: "राजकोट"
+},
+
+{
+    question: "बिहार विधानसभा चुनाव 2025 में निम्नलिखित में से किस दल ने 5 सीटें जीतीं?",
+    option: [
+        "लोक जनशक्ति पार्टी (राम विलास)",
+        "बहुजन समाज पार्टी",
+        "जनता दल (यूनाइटेड)",
+        "हिन्दुस्तानी अवाम मोर्चा (सेक्युलर)"
+    ],
+    answer: "हिन्दुस्तानी अवाम मोर्चा (सेक्युलर)"
+},
+
+{
+    question: "सीनियर एशियाई कुश्ती चैंपियनशिप 2025 (Senior Asian Wrestling Championship 2025) कहाँ आयोजित की गई थी?",
+    option: [
+        "जॉर्डन (Jordan)",
+        "उज़्बेकिस्तान (Uzbekistan)",
+        "कतर (Qatar)",
+        "सऊदी अरब (Saudi Arabia)"
+    ],
+    answer: "जॉर्डन (Jordan)"
+},
+
+{
+    question: "जून 2025 में भारत के किस केंद्र शासित प्रदेश में दुनिया के सबसे ऊँचे रेल आर्च ब्रिज का उद्घाटन भारत के प्रधानमंत्री द्वारा किया गया था?",
+    option: [
+        "लद्दाख",
+        "चंडीगढ़",
+        "नई दिल्ली",
+        "जम्मू और कश्मीर"
+    ],
+    answer: "जम्मू और कश्मीर"
+},
+{
+    question: "मार्च 2025 में, पर्यावरण, वन और जलवायु परिवर्तन मंत्रालय ने ___________ में जलवायु परिवर्तन से संबंधित राष्ट्रीय अनुकूलन योजना के बारे में एक राष्ट्रीय स्तर की कार्यशाला आयोजित की।",
+    option: [
+        "बेंगलुरु",
+        "लखनऊ",
+        "नई दिल्ली",
+        "मुंबई"
+    ],
+    answer: "नई दिल्ली"
+},
+{
+    question: "अप्रैल 2024 में, भारतीय अंतरिक्ष अनुसंधान संगठन (ISRO) के अध्यक्ष एस. सोमनाथ ने वर्ष _____ तक मलबा मुक्त अंतरिक्ष मिशन हासिल करने की घोषणा की।",
+    option: [
+        "2030",
+        "2035",
+        "2028",
+        "2032"
+    ],
+    answer: "2030"
+},
+{
+    question: "केंद्रीय बजट 2025-26 के अनुसार, नई आयकर व्यवस्था के तहत कर-मुक्त आय सीमा क्या है?",
+    option: [
+        "₹13 लाख",
+        "₹15 लाख",
+        "₹10 लाख",
+        "₹12 लाख"
+    ],
+    answer: "₹12 लाख"
+},
+{
+    question: "2024 ओलंपिक में क्लीन एंड जर्क में 224 kg भार उठाकर पुरुषों की 89 kg भारोत्तोलन श्रेणी में नया विश्व रिकॉर्ड किसने बनाया?",
+    option: [
+        "अकबर जुराएव",
+        "साइमन मार्टिरोस्यान",
+        "ली फैबिन",
+        "कार्लोस नासर"
+    ],
+    answer: "कार्लोस नासर"
+},
+{
+    question: "निम्नलिखित में से कौन-सी एक ड्रोन-लॉन्च की जाने वाली सटीक-निर्देशित मिसाइल है जिसका रक्षा अनुसंधान और विकास संगठन (DRDO) द्वारा जुलाई 2025 में आंध्र प्रदेश के एक परीक्षण रेंज में सफलतापूर्वक परीक्षण किया गया?",
+    option: [
+        "अग्नि-P",
+        "ULPGM-V3",
+        "एस्ट्रा Mk-II",
+        "निर्भय-V3"
+    ],
+    answer: "ULPGM-V3"
+},
+{
+    question: "जून 2025 में G7 शिखर सम्मेलन किस कनाडाई प्रांत में आयोजित किया गया?",
+    option: [
+        "सस्केचेवान",
+        "ओंटारियो",
+        "ब्रिटिश कोलंबिया",
+        "अल्बर्टा"
+    ],
+    answer: "अल्बर्टा"
+},
+{
+    question: "हाल ही में जनवरी 2025 में भारतीय एथलेटिक्स महासंघ (AFI) एथलीट आयोग के अध्यक्ष के रूप में किसे नियुक्त किया गया?",
+    option: [
+        "पी.टी. उषा",
+        "अंजू बॉबी जॉर्ज",
+        "नीरज चोपड़ा",
+        "सौरव गांगुली"
+    ],
+    answer: "अंजू बॉबी जॉर्ज"
+},
+{
+    question: "नवंबर 2025 में, निम्नलिखित में से किस सरकारी निकाय ने दिल्ली की बिगड़ती वायु गुणवत्ता पर गंभीर चिंता व्यक्त की, यह कहते हुए कि मास्क पहनना भी अप्रभावी हो गया है?",
+    option: [
+        "भारत का सर्वोच्च न्यायालय",
+        "गृह मंत्रालय",
+        "स्वास्थ्य और परिवार कल्याण मंत्रालय",
+        "दिल्ली उच्च न्यायालय"
+    ],
+    answer: "भारत का सर्वोच्च न्यायालय"
+},
+{
+    question: "केरल के किस वन क्षेत्र में कीट-वैज्ञानिकों की एक टीम द्वारा 2025 में पहली बार शलभ (moth) की सात नई प्रजातियों को दर्ज किया गया?",
+    option: [
+        "रानीपुरम वन (Ranipuram forest)",
+        "वायनाड वन्यजीव अभयारण्य (Wayanad Wildlife Sanctuary)",
+        "साइलेंट वैली (Silent Valley)",
+        "पेरियार टाइगर रिजर्व (Periyar Tiger Reserve)"
+    ],
+    answer: "रानीपुरम वन (Ranipuram forest)"
+},
+{
+    question: "जून 2025 में किस संस्थान के शोधकर्ताओं ने pH-उत्तरदायी चिकित्सा अनुप्रयोगों के लिए स्मार्ट पेप्टाइड विकसित किए?",
+    option: [
+        "IIT दिल्ली",
+        "IIT गुवाहाटी",
+        "BIT मेसरा",
+        "BITS पिलानी"
+    ],
+    answer: "BIT मेसरा"
+},
+{
+    question: "जनवरी 2025 में जयपुर लिटरेचर फेस्टिवल में विमोचित 'ज्ञान सीपियां: पर्ल्स ऑफ विजडम' किसने लिखी?",
+    option: [
+        "जावेद अख्तर",
+        "सुधा मूर्ति",
+        "हर्ष देहेजिया",
+        "बेनॉय के. बहल"
+    ],
+    answer: "जावेद अख्तर"
+},
+{
+    question: "नवंबर 2025 में, नए श्रम सुधारों के तहत बीड़ी और सिगार श्रमिकों (beedi and cigar workers) के लिए कौन-सा प्रमुख श्रम लाभ सुनिश्चित किया गया है?",
+    option: [
+        "श्रमिक संरक्षण योजना (Labour Protection Scheme)",
+        "रोजगार सुरक्षा संहिता (Employment Safety Code)",
+        "श्रमिक कल्याण अधिनियम (Worker Welfare Act)",
+        "न्यूनतम वेतन गारंटी (Minimum Wage Guarantee)"
+    ],
+    answer: "न्यूनतम वेतन गारंटी (Minimum Wage Guarantee)"
+},
+{
+    question: "फरवरी 2025 में सुप्रीम कोर्ट के पूर्व निर्णयों में हाथ से मैला उठाने (manual scavenging) को किन संवैधानिक अनुच्छेदों के उल्लंघन के रूप में जोड़ा गया था?",
+    option: [
+        "अनुच्छेद 12 और 20",
+        "अनुच्छेद 22 और 32",
+        "अनुच्छेद 15 और 16",
+        "अनुच्छेद 17 और 21"
+    ],
+    answer: "अनुच्छेद 17 और 21"
+},
+{
+    question: "ठाणे से पहली बार सांसद बने किस व्यक्ति को 2025 में संसद रत्न पुरस्कार से सम्मानित किया गया?",
+    option: [
+        "राहुल शेवाले",
+        "नरेश म्हस्के",
+        "डॉ. वर्षा गायकवाड़",
+        "अरविंद सावंत"
+    ],
+    answer: "नरेश म्हस्के"
+},
+{
+    question: "नवंबर 2025 में, वायु गुणवत्ता प्रबंधन आयोग (CAQM) ने दिल्ली-NCR में ग्रेडेड रिस्पॉन्स एक्शन प्लान (GRAP) के चरण-II को लागू किया। यह चरण किस वायु गुणवत्ता श्रेणी और AQI सीमा के अनुरूप है?",
+    option: [
+        "गंभीर (AQI 401-450)",
+        "गंभीर + (AQI 451 और उससे अधिक)",
+        "खराब (AQI 201-300)",
+        "बहुत खराब (AQI 301-400)"
+    ],
+    answer: "बहुत खराब (AQI 301-400)"
+},
+{
+    question: "निम्नलिखित में से किस संगठन का मुख्य उद्देश्य सामूहिक रक्षा है, जहां एक सदस्य पर हमला सभी पर हमला माना जाता है?",
+    option: [
+        "उत्तरी अटलांटिक संधि संगठन (NATO)",
+        "विश्व स्वास्थ्य संगठन (WHO)",
+        "संयुक्त राष्ट्र शैक्षिक, वैज्ञानिक और सांस्कृतिक संगठन (UNESCO)",
+        "विश्व व्यापार संगठन (WTO)"
+    ],
+    answer: "उत्तरी अटलांटिक संधि संगठन (NATO)"
+},
+{
+    question: "जून 2025 में आंध्र प्रदेश के किस स्थान पर ग्रेटर विशाखापत्तनम नगर निगम (GVMC) द्वारा विकसित राजीव स्पोर्ट्स कॉम्प्लेक्स का उद्घाटन किया गया?",
+    option: [
+        "द्वारका नगर",
+        "गजुवाका",
+        "उषा नगर",
+        "कोम्मादी"
+    ],
+    answer: "गजुवाका"
+},
+{
+    question: "राष्ट्रीय ऑटोमोबाइल ओलंपियाड, 2025 को लॉन्च करने के लिए किस संगठन ने CBSE के साथ साझेदारी की?",
+    option: [
+        "ऑटोमोटिव कौशल विकास परिषद (Automotive Skills Development Council)",
+        "कौशल भारत मिशन (Skill India Mission)",
+        "राष्ट्रीय कौशल विकास निगम (National Skill Development Corporation)",
+        "नीति आयोग (NITI Aayog)"
+    ],
+    answer: "ऑटोमोटिव कौशल विकास परिषद (Automotive Skills Development Council)"
+},
+{
+    question: "केंद्रीय खेल मंत्री मनसुख मंडाविया ने मई 2025 में अरुणाचल प्रदेश के किस जिले में एक नए बहुउद्देश्यीय खेलो इंडिया हॉल का उद्घाटन किया?",
+    option: [
+        "कामले जिला",
+        "पूर्वी सियांग जिला",
+        "निचला सुबनसिरी जिला",
+        "पापुम पारे जिला"
+    ],
+    answer: "कामले जिला"
+},
+{
+    question: "जनवरी 2025 में, निम्नलिखित में से किसने बीमा क्षेत्र में नवाचार का समर्थन करने के लिए अपने सैंडबॉक्स फ्रेमवर्क का विस्तार किया?",
+    option: [
+        "भारतीय प्रतिभूति और विनिमय बोर्ड (SEBI)",
+        "भारतीय बीमा नियामक और विकास प्राधिकरण (IRDAI)",
+        "भारतीय रिजर्व बैंक (RBI)",
+        "कॉर्पोरेट मामलों का मंत्रालय (MCA)"
+    ],
+    answer: "भारतीय बीमा नियामक और विकास प्राधिकरण (IRDAI)"
+},
+{
+    question: "फिट इंडिया मूवमेंट का 'संडे ऑन साइकिल' कार्यक्रम, जिसका उद्देश्य स्वस्थ जीवन शैली को बढ़ावा देना है, फरवरी 2025 में आयोजित किया गया। यह मुंबई के किस प्रतिष्ठित स्थल पर आयोजित किया गया?",
+    option: [
+        "बांद्रा-वर्ली सी लिंक",
+        "गेटवे ऑफ इंडिया",
+        "छत्रपति शिवाजी महाराज टर्मिनस",
+        "मरीन ड्राइव"
+    ],
+    answer: "मरीन ड्राइव"
+},
+{
+    question: "22 अगस्त 2025 को SEBI ने सोशल मीडिया पर वित्तीय योजनाओं से संबंधित किस कार्रवाई की?",
+    option: [
+        "सभी सोशल मीडिया वित्तीय सामग्री पर प्रतिबंध लगाना",
+        "खुदरा निवेशक मुआवजा कोष बनाना",
+        "FPI से जुड़ी योजनाओं के खिलाफ परामर्श जारी करना",
+        "फिनफ्लुएंसर्स को पंजीकृत करना"
+    ],
+    answer: "FPI से जुड़ी योजनाओं के खिलाफ परामर्श जारी करना"
+},
+{
+    question: "26–27 मई 2025 को कुआलालंपुर में पूर्वी और दक्षिण-पूर्वी एशियाई क्षेत्रीय नेताओं की भागीदारी वाला कौन-सा शिखर सम्मेलन आयोजित हुआ?",
+    option: [
+        "पूर्वी एशिया शिखर सम्मेलन",
+        "हिंद-प्रशांत रणनीतिक मंच",
+        "आसियान-चीन शिखर सम्मेलन",
+        "APEC"
+    ],
+    answer: "पूर्वी एशिया शिखर सम्मेलन"
+},
+{
+    question: "दिल्ली का पहला ई-कचरा इको-पार्क कहाँ स्थापित किया जा रहा है?",
+    option: [
+        "रोहिणी",
+        "आनंद विहार",
+        "द्वारका",
+        "होलंबी कलां"
+    ],
+    answer: "होलंबी कलां"
+},
+{
+    question: "'Why the Constitution Matters' पुस्तक के लेखक कौन हैं?",
+    option: [
+        "बिबेक देबरॉय",
+        "आरिफ खान",
+        "नटवर सिंह",
+        "डी. वाई. चंद्रचूड़"
+    ],
+    answer: "डी. वाई. चंद्रचूड़"
+},
+{
+    question: "अक्टूबर 2025 में RBI की मौद्रिक नीति समिति (MPC) ने रेपो दर और नीतिगत रुख के संबंध में क्या निर्णय लिया?",
+    option: [
+        "रेपो दर घटाकर 5.25% करना और उदार रुख अपनाना",
+        "रेपो दर 5.50% पर बरकरार रखना और तटस्थ रुख अपनाना",
+        "रेपो दर 5.90% पर बरकरार रखना और उदार रुख अपनाना",
+        "रेपो दर बढ़ाकर 5.75% करना और आक्रामक रुख अपनाना"
+    ],
+    answer: "रेपो दर 5.50% पर बरकरार रखना और तटस्थ रुख अपनाना"
+},
+{
+    question: "मई 2025 में किस संगठन ने बेरोजगारी के बावजूद भारत में औद्योगिक और सेवा क्षेत्रों में मजबूत वृद्धि की पुष्टि की?",
+    option: [
+        "वित्त मंत्रालय",
+        "भारतीय रिजर्व बैंक",
+        "विश्व बैंक",
+        "नीति आयोग"
+    ],
+    answer: "वित्त मंत्रालय"
+},
+{
+    question: "सितंबर 2025 में गांधी सागर वन्यजीव अभयारण्य में छोड़ी गई मादा चीता कौन थी?",
+    option: [
+        "नामीब",
+        "साशा",
+        "धीरा",
+        "आशा"
+    ],
+    answer: "धीरा"
+},
+{
+    question: "विशेष ओलंपिक विश्व शीतकालीन खेल 2025 कहाँ आयोजित हुए?",
+    option: [
+        "कनाडा",
+        "इटली",
+        "चीन",
+        "आइसलैंड"
+    ],
+    answer: "इटली"
+},
+{
+    question: "DRDO की DURGA-2 परियोजना किस प्रकार के हथियार से संबंधित है?",
+    option: [
+        "हाइपरसोनिक मिसाइल",
+        "लेजर हथियार",
+        "प्लाज्मा गन",
+        "जैविक एजेंट"
+    ],
+    answer: "लेजर हथियार"
+},
+{
+    question: "11 मार्च 2025 को वित्त मंत्री ने मणिपुर के आकस्मिकता निधि के लिए कितनी राशि की घोषणा की?",
+    option: [
+        "₹750 करोड़",
+        "₹400 करोड़",
+        "₹600 करोड़",
+        "₹500 करोड़"
+    ],
+    answer: "₹500 करोड़"
+},
+{
+    question: "दिसंबर 2025 में TLMAL ने C-130J टेल असेंबली की कितनीवीं डिलीवरी का मील का पत्थर हासिल किया?",
+    option: [
+        "200वीं",
+        "300वीं",
+        "250वीं",
+        "100वीं"
+    ],
+    answer: "200वीं"
+},
+{
+    question: "जुलाई 2025 तक, ऋषभ पंत सहित कितने भारतीय क्रिकेटरों को Laureus World Sports Awards के लिए नामांकित किया गया था?",
+    option: [
+        "2",
+        "3",
+        "4",
+        "1"
+    ],
+    answer: "2"
+},
+{
+    question: "जून 2025 की GEP रिपोर्ट किस संगठन द्वारा प्रकाशित की गई?",
+    option: [
+        "विश्व आर्थिक मंच (WEF)",
+        "विश्व बैंक समूह",
+        "एशियाई विकास बैंक (ADB)",
+        "अंतरराष्ट्रीय मुद्रा कोष (IMF)"
+    ],
+    answer: "विश्व बैंक समूह"
+},
+{
+    question: "5 अगस्त 2025 को बादल फटने और बाढ़ से उत्तरकाशी का कौन-सा गाँव तबाह हुआ?",
+    option: [
+        "भवाली",
+        "पंगोट",
+        "धराली",
+        "कनाताल"
+    ],
+    answer: "धराली"
+},
+{
+    question: "IADWS के लिए उच्च-शक्ति वाला लेजर-आधारित निर्देशित ऊर्जा हथियार (DEW) DRDO की किस प्रयोगशाला ने विकसित किया?",
+    option: [
+        "DRDE",
+        "DRDL",
+        "RCI",
+        "CHESS"
+    ],
+    answer: "CHESS"
+},
+{
+    question: "26 सितंबर 2025 को NDMA के 21वें स्थापना दिवस की थीम क्या थी?",
+    option: [
+        "हिमालयी आपदाओं के प्रभाव",
+        "जागरूकता के माध्यम से समुदायों को सशक्त बनाना",
+        "जोखिम न्यूनीकरण के लिए प्रौद्योगिकी, सुरक्षित राष्ट्र",
+        "आपदा प्रबंधन में स्वयंसेवा"
+    ],
+    answer: "जोखिम न्यूनीकरण के लिए प्रौद्योगिकी, सुरक्षित राष्ट्र"
+},
+{
+    question: "विश्व बैंक की Poverty and Equity Brief 2025 के अनुसार, भारत में अत्यधिक गरीबी की दर 2011–12 में 16.2% से घटकर 2022–23 में कितनी हो गई?",
+    option: [
+        "2.8%",
+        "3.2%",
+        "2.3%",
+        "1.8%"
+    ],
+    answer: "2.3%"
+},
+{
+    question: "अनीमेश कुजूर ने किस ट्रैक स्पर्धा में अपना ही राष्ट्रीय रिकॉर्ड तोड़ा?",
+    option: [
+        "800 मीटर",
+        "100 मीटर",
+        "200 मीटर",
+        "400 मीटर"
+    ],
+    answer: "200 मीटर"
+},
+{
+    question: "NITI Aayog के Fiscal Health Index 2025 में वित्त वर्ष 2022–23 के लिए किस राज्य को पहला स्थान मिला?",
+    option: [
+        "कर्नाटक",
+        "महाराष्ट्र",
+        "ओडिशा",
+        "गुजरात"
+    ],
+    answer: "ओडिशा"
+},
+{
+    question: "IPL 2025 में चार IPL टीमों के विरुद्ध 1,000 रन बनाने वाले पहले भारतीय खिलाड़ी कौन बने?",
+    option: [
+        "शिखर धवन",
+        "विराट कोहली",
+        "सुरेश रैना",
+        "रोहित शर्मा"
+    ],
+    answer: "विराट कोहली"
+},
+
+{
+    question: "बिहार राज्य की राजधानी क्या है?",
+    option: [
+        "पटना",
+        "गया",
+        "भागलपुर",
+        "मुजफ्फरपुर"
+    ],
+    answer: "पटना"
+},
+
+{
+    question: "नवंबर 2025 में DRAP किस आयोजन के दौरान शुरू किया गया था?",
+    option: [
+        "स्वच्छता पखवाड़ा 2025",
+        "राष्ट्रीय विज्ञान दिवस",
+        "विश्व पर्यावरण दिवस",
+        "राष्ट्रीय युवा दिवस"
+    ],
+    answer: "स्वच्छता पखवाड़ा 2025"
+},
+
+{
+    question: "वर्ष 2024 का विज्ञान रत्न पुरस्कार किसे प्रदान किया गया?",
+    option: [
+        "सी. एन. आर. राव",
+        "गोविंदराजन पद्मनाभन",
+        "एम. एस. स्वामीनाथन",
+        "वेंकटरमन रामकृष्णन"
+    ],
+    answer: "गोविंदराजन पद्मनाभन"
+},
+
+{
+    question: "दिसंबर 2025 में किस अफ्रीकी देश ने रूस के पहले नौसैनिक अड्डे को मंजूरी दी?",
+    option: [
+        "लीबिया",
+        "सूडान",
+        "मिस्र",
+        "अल्जीरिया"
+    ],
+    answer: "सूडान"
+},
+
+{
+    question: "केंद्रीय बजट 2025–26 में 2030 तक ₹10 लाख करोड़ जुटाने के लक्ष्य से संबंधित पहल कौन-सी है?",
+    option: [
+        "राष्ट्रीय निवेश योजना",
+        "राष्ट्रीय अवसंरचना योजना",
+        "द्वितीय परिसंपत्ति मुद्रीकरण योजना",
+        "राष्ट्रीय विनिवेश योजना"
+    ],
+    answer: "द्वितीय परिसंपत्ति मुद्रीकरण योजना"
+},
+
+{
+    question: "विश्व बैंक की जून 2025 की रिपोर्ट के अनुसार, 2022–23 में भारत की अत्यधिक गरीबी दर कितनी थी?",
+    option: [
+        "2.3%",
+        "3.5%",
+        "4.8%",
+        "5.3%"
+    ],
+    answer: "2.3%"
+},
+
+{
+    question: "जून 2025 में प्रधानमंत्री नरेंद्र मोदी ने किस देश की यात्रा की?",
+    option: [
+        "बांग्लादेश",
+        "ब्राज़ील",
+        "न्यूज़ीलैंड",
+        "क्रोएशिया"
+    ],
+    answer: "क्रोएशिया"
+},
+
+{
+    question: "मई 2025 में उत्तर प्रदेश द्वारा घोषित SHe-Box पोर्टल किस वर्ग को कार्यस्थल पर सहायता प्रदान करने से संबंधित था?",
+    option: [
+        "ट्रांसजेंडर व्यक्ति",
+        "वरिष्ठ नागरिक",
+        "किसान",
+        "विद्यार्थी"
+    ],
+    answer: "ट्रांसजेंडर व्यक्ति"
+},
+
+{
+    question: "जून 2025 में विश्व टेस्ट चैंपियनशिप (WTC) का फाइनल ऑस्ट्रेलिया को 5 विकेट से हराकर किस देश ने जीता?",
+    option: [
+        "भारत",
+        "दक्षिण अफ्रीका",
+        "न्यूज़ीलैंड",
+        "इंग्लैंड"
+    ],
+    answer: "दक्षिण अफ्रीका"
+},
+
+{
+    question: "जून 2025 में किस भारतीय शहर ने 3,000 वर्ग मीटर से बड़े भवनों के लिए एंटी-स्मॉग गन अनिवार्य की?",
+    option: [
+        "मुंबई",
+        "चेन्नई",
+        "दिल्ली",
+        "कोलकाता"
+    ],
+    answer: "दिल्ली"
+},
+
+{
+    question: "‘The Chola Tigers: Avengers of Somnath’ पुस्तक के लेखक कौन हैं?",
+    option: [
+        "विक्रम चंद्र",
+        "अमिताव घोष",
+        "चेतन भगत",
+        "अमीश त्रिपाठी"
+    ],
+    answer: "अमीश त्रिपाठी"
+},
+
+{
+    question: "जनवरी 2025 के IMF World Economic Outlook अपडेट में वैश्विक GDP वृद्धि का अनुमान कितना था?",
+    option: [
+        "2.8%",
+        "4.2%",
+        "3.3%",
+        "3.7%"
+    ],
+    answer: "3.3%"
+},
+
+{
+    question: "जनवरी 2025 में National Essential Diagnostics List का दूसरा मसौदा किस संगठन ने जारी किया?",
+    option: [
+        "WHO",
+        "ICMR",
+        "UNICEF",
+        "NITI Aayog"
+    ],
+    answer: "ICMR"
+},
+
+];
+
+// =====================================================
+// --- English Question Banks ---
+// =====================================================
+
+const mathQuestionsEn = [
+{
+    question: "If any number of three-fivevaan (3/5) part us number of aadhe from 4 more is, to vh number kaun-see is?",
+    option: [
+        "45",
+        "40",
+        "30",
+        "35"
+    ],
+    answer: "40"
+},
+{
+    question: "one aadmee to each maah ₹1,890 of vetn praapt is is vh each maah apne vetn of 30% of bcht krtaa is usof maasik khrch find ofjie",
+    option: [
+        "₹1,323",
+        "₹1,269",
+        "₹1,418",
+        "₹1,336"
+    ],
+    answer: "₹1,323"
+},
+{
+    question: "A and B any ofry to 6 2/5 days in pooraa kr skte isn, B and C ifrom 7 1/9 days in pooraa kr skte isn tthaa A and C ifrom 5 1/3 days in pooraa kr skte isn If A, B and C milkr ofry do, to ve us ofry to how many dayson in pooraa kr skte isn?",
+    option: [
+        "5 2/31",
+        "6 3/31",
+        "4 4/31",
+        "8 1/21"
+    ],
+    answer: "4 4/31"
+},
+{
+    question: "one vstu to 36% and 10% of two krmik discount of baad ₹7,200 in bechaa jaataa is vstu of ankit price (₹ in) how much is?",
+    option: [
+        "12,500",
+        "12,561",
+        "12,596",
+        "12,594"
+    ],
+    answer: "12,500"
+},
+{
+    question: "one ofr 70 km of distance 60 km/hr of speed from, phir 80 km of distance 80 km/hr of speed from and ant in 50 km of distance 40 km/hr of speed from ty krtee is pooree ortraa of average speed how much is? (answer to 2 dshmlv sthaanon tk poornaankit do)",
+    option: [
+        "58.54 km/hr",
+        "50.45 km/hr",
+        "65.75 km/hr",
+        "55.63 km/hr"
+    ],
+    answer: "58.54 km/hr"
+},
+{
+    question: "If two numberon of HCF, 12 is and unof product 2160 is, to both numberon of LCM how much is?",
+    option: [
+        "180",
+        "200",
+        "190",
+        "184"
+    ],
+    answer: "180"
+},
+{
+    question: "one person one khilaune of ankit price on nkd bhugtaan of lie 10% of discount detaa is and phir bhee ufrom 10% of profit is is us khilaune of purchase price how much is jisof ankit price ₹880 is?",
+    option: [
+        "₹720",
+        "₹620",
+        "₹420",
+        "₹520"
+    ],
+    answer: "₹720"
+},
+{
+    question: "P and Q milkr one tnof to 15 hours in paanee from bhr skte isn If P aofle usee tnof to 24 hours in paanee from bhr sktaa is, to Q aofle usee tnof of one-chauthaaee part to how many hours in paanee from bhregaa?",
+    option: [
+        "10",
+        "11",
+        "20",
+        "21"
+    ],
+    answer: "10"
+},
+{
+    question: "△ABC in, D on BD ⟂ AC is and ∠DBC = 21° is E, BC on one bindu is profr from is ki ∠CAE = 27° is ∠AEB of maap find ofjie",
+    option: [
+        "104°",
+        "81°",
+        "97°",
+        "96°"
+    ],
+    answer: "96°"
+},
+{
+    question: "√(144 × 49) + √(64 × 25) − √(100 × 36) to srl do",
+    option: [
+        "64",
+        "48",
+        "50",
+        "32"
+    ],
+    answer: "64"
+},
+{
+    question: "60 from 70 of beech abhaajy numberon of average tthaa 50 from 58 of beech 4 of gunjon of average in difference find ofjie",
+    option: [
+        "9",
+        "1",
+        "11",
+        "10"
+    ],
+    answer: "10"
+},
+{
+    question: "3.5 gm/cm³ cubetv vaalee dhaatu of one golaaofr gend of total drvymaan 3.168 kg is gend to ₹5.6 prti cm² of rate from pent doing of khrch find do (π = 22/7 of upsum ofjie)",
+    option: [
+        "₹3,235.20",
+        "₹2,534.40",
+        "₹3,534.70",
+        "₹2,830.60"
+    ],
+    answer: "₹2,534.40"
+},
+{
+    question: "496 m and 490 m lnbee two trenen A and B respectively 12 m/s and 22 m/s of speed from parallel ptriyon on one-doosre of or aa rhee isn ve one-doosre to how many time in paar dogee?",
+    option: [
+        "26 fromknd",
+        "22 fromknd",
+        "30 fromknd",
+        "29 fromknd"
+    ],
+    answer: "29 fromknd"
+},
+{
+    question: "one person apnee aay of 60% bcht krtaa is If usof vyy ₹560 is, to usof aay (₹ in) how much is?",
+    option: [
+        "1,400",
+        "1,336",
+        "1,224",
+        "1,440"
+    ],
+    answer: "1,400"
+},
+{
+    question: "9 phrvree 2023 from 23 aprail 2023 tk of avdhi of lie ₹2,000 on 7% vaarshik interest rate from saadhaarn interest (₹ in) find ofjie",
+    option: [
+        "28",
+        "29",
+        "26",
+        "27"
+    ],
+    answer: "28"
+},
+{
+    question: "469 from 474 of beech how much abhaajy numberen isn?",
+    option: [
+        "0",
+        "3",
+        "2",
+        "1"
+    ],
+    answer: "0"
+},
+{
+    question: "one election in, total votedaataaon in from 60% ne votedaan kior inin from 75% ne candidate A to and shesh ne candidate B to vot given If candidate B to 7500 vot mile, to pnjeekrit votedaataaon of total number find ofjie",
+    option: [
+        "45,000",
+        "60,000",
+        "50,000",
+        "40,000"
+    ],
+    answer: "50,000"
+},
+{
+    question: "aath year phle, amn of age and rior of age of ratio 4 : 3 thaa ab from aath year baad, unof age of ratio 5 : 4 hogaa amn of vrtmaan age how much is?",
+    option: [
+        "76 year",
+        "70 year",
+        "56 year",
+        "72 year"
+    ],
+    answer: "72 year"
+},
+{
+    question: "If a + 1/a = 6 is, to a² + 1/a² of maan find ofjie",
+    option: [
+        "38",
+        "36",
+        "40",
+        "34"
+    ],
+    answer: "34"
+},
+{
+    question: "one khurateaa vikretaa khreedaaron of lie any vstu on following discount sofm prdaan krtaa is\n\nI. 14% of two krmik discount\nII. 22% of discount of baad 29% of discount\nIII. 22% and 7% of krmik discount\nIV. 14% of discount of baad 6% of discount\n\nkaun-see sofm of tht, moretm selling price praapt hogaa?",
+    option: [
+        "IV",
+        "I",
+        "II",
+        "III"
+    ],
+    answer: "IV"
+},
+{
+    question: "If following vynjk of maan find ofjie:\n\n(2√(cosec²A − 1) / (1 + tan²A)) × (√(1 − cos²A) / (3√(1 − sin²A)))",
+    option: [
+        "2cosA/3",
+        "cosA/(2sinA)",
+        "2sinA/3",
+        "2/3"
+    ],
+    answer: "2cosA/3"
+},
+{
+    question: "any gole of prishtheey area 144π square iofee is gole of radius how much hogee?",
+    option: [
+        "6 iofee",
+        "10 iofee",
+        "8 iofee",
+        "5 iofee"
+    ],
+    answer: "6 iofee"
+},
+{
+    question: "prekshnon 47, 71, 82, 59, 22, 43, 46, 96 and 56 of smaantr maadhy how much is?",
+    option: [
+        "58",
+        "64",
+        "66",
+        "60"
+    ],
+    answer: "58"
+},
+{
+    question: "If x and 147 of maadhornupaatee 63 is, to x of maan find ofjie",
+    option: [
+        "28",
+        "25",
+        "27",
+        "29"
+    ],
+    answer: "27"
+},
+{
+    question: "If 241 ofle three bnrateon in 7/9 : 3/2 : 2/5 of ratio in vitrit kie ge, to teesre bnrate to how many ofle mile?",
+    option: [
+        "36",
+        "38",
+        "34",
+        "35"
+    ],
+    answer: "36"
+},
+
+{
+    question: "following in from kaun-see number, 45 from vibhaajy is?",
+    option: [
+        "555555",
+        "20475",
+        "306999",
+        "25436"
+    ],
+    answer: "20475"
+},
+{
+    question: "one person to 40 km of distance 5 hours in ty krnee is If vh one-chauthaaee distance, total time of one-tihaaee time in ty krtaa is, to ufrom theek time on apne gntvy tk phunchne of lie shesh distance to shesh time in kis speed (km/h in) from ty krnee hogee?",
+    option: [
+        "13",
+        "9",
+        "4",
+        "6"
+    ],
+    answer: "9"
+},
+{
+    question: "one skool in 8 am on two ghntiorn bjtee isn one ghntee hr 30 mint of baad bjtee is and doosree ghntee hr 40 mint of baad bjtee is If skool 2 pm on bnd is is, to days in how much baar ghntiorn one saath bjtee isn?",
+    option: [
+        "3",
+        "2",
+        "4",
+        "5"
+    ],
+    answer: "4"
+},
+{
+    question: "tm one nee baaik of lie paifrom bchaa rhaa is and usof bcht khaate in ₹12,000 isn vh hr hphte ₹1,500 and bchaane of phaislaa krtaa is tm to total ₹21,000 jmaa doing in how many hphte lgenge?",
+    option: [
+        "8 sptaah",
+        "6 sptaah",
+        "5 sptaah",
+        "7 sptaah"
+    ],
+    answer: "6 sptaah"
+},
+{
+    question: "one duofndaar any vstu on ₹x ankit krtaa is and ankit price on 63% of discount detaa is vh discount of baad 25% vait lgaakr vstu to ₹481 in bechtaa is x of maan how much is?",
+    option: [
+        "1,040",
+        "1,100",
+        "1,300",
+        "1,200"
+    ],
+    answer: "1,040"
+},
+{
+    question: "A and B of vrtmaan age of ratio 5 : 1 is ab from five year poorv, yh ratio 6 : 1 thaa B of vrtmaan age find ofjie",
+    option: [
+        "30 year",
+        "25 year",
+        "20 year",
+        "35 year"
+    ],
+    answer: "25 year"
+},
+{
+    question: "one election in, three candidate A, B and C isn A to 18% vot mile and B to 43% vot mile, jbki C doosre sthaan on rhaa If B ne 6,996 voton from election jeetaa, to total voton of number find ofjie",
+    option: [
+        "1,61,230",
+        "1,57,980",
+        "1,55,545",
+        "1,74,900"
+    ],
+    answer: "1,74,900"
+},
+{
+    question: "rtnesh of maasik aay and vyy of ratio 12 : 7 is usof aay in 40% vriddhi huee and vyy in 50% of vriddhi huee usof aay and vyy of nor ratio how much is?",
+    option: [
+        "11 : 6",
+        "4 : 3",
+        "10 : 7",
+        "8 : 5"
+    ],
+    answer: "8 : 5"
+},
+{
+    question: "one bhubhuj of sbhee aantrik angleon of sum 4500° is bhubhuj in how much bhujaaen hongee?",
+    option: [
+        "26",
+        "24",
+        "25",
+        "27"
+    ],
+    answer: "27"
+},
+{
+    question: "tan⁴ θ + tan² θ to srl ofjie",
+    option: [
+        "sec⁴ θ + 2sec² θ",
+        "sec⁴ θ + sec² θ",
+        "sec⁴ θ − 2sec² θ",
+        "sec⁴ θ − sec² θ"
+    ],
+    answer: "sec⁴ θ − sec² θ"
+},
+{
+    question: "₹6,200 of mooldhn on vaarshik roop from snyojit hone vaale 20% vaarshik chkrvriddhi interest of rate from 2 yearon in praapt mishrdhn find ofjie",
+    option: [
+        "₹8,036",
+        "₹8,928",
+        "₹8,670",
+        "₹9,928"
+    ],
+    answer: "₹8,928"
+},
+{
+    question: "paaip A and paaip B milkr one tnof to 8 hours in bhr skte isn paaip B, paaip A from 25% more ofrykshm is If paaip A, tnof to 5 leetr prti mint of rate from bhrtaa is, to tnof of dhaaritaa find ofjie",
+    option: [
+        "5400 leetr",
+        "7000 leetr",
+        "4200 leetr",
+        "8240 leetr"
+    ],
+    answer: "5400 leetr"
+},
+{
+    question: "one ofr, shhr X from shhr Y tk of ortraa krtee is, jisin phle 120 km of distance 50 km/h of speed from and shesh 180 km of distance 80 km/h of speed from ty krtee is snpoorn ortraa of lie average speed of gnnaa ofjie (apne answer to dshmlv of two sthaanon tk poornaankit ofjie)",
+    option: [
+        "63.52 km/h",
+        "64.52 km/h",
+        "64.12 km/h",
+        "64.92 km/h"
+    ],
+    answer: "64.52 km/h"
+},
+{
+    question: "29% and 28% of two krmik discount of braabr onel discount find ofjie",
+    option: [
+        "46.03%",
+        "48.88%",
+        "47.39%",
+        "51.29%"
+    ],
+    answer: "48.88%"
+},
+{
+    question: "ofshv ne one duofn from ₹1,120 in 52 pustofn and one any duofn from ₹915 in 47 pustofn khreedeen usof dvaaraa bhugtaan kior gone prti pustk average price (₹ in, two dshmlv sthaanon tk poornaankit) find ofjie",
+    option: [
+        "21.56",
+        "23.56",
+        "22.56",
+        "20.56"
+    ],
+    answer: "20.56"
+},
+{
+    question: "(x − 2)² following in from kisof braabr is?",
+    option: [
+        "x² − 4x + 2",
+        "x² − 2x + 4",
+        "x² − 4x + 4",
+        "x² + 4x + 4"
+    ],
+    answer: "x² − 4x + 4"
+},
+{
+    question: "one duofndaar any vstu of price ₹2,000 ankit krtaa is and us on 10% of discount detaa is vstu of selling price find ofjie",
+    option: [
+        "₹1,950",
+        "₹1,850",
+        "₹1,900",
+        "₹1,800"
+    ],
+    answer: "₹1,800"
+},
+{
+    question: "one election in, 8640 logon or paatr votedaataaon in from 72% votedaataaon ne apnaa vote daalaa If agle year paatr votedaataaon of number in 8% of vriddhi is is, to agle year total paatr votedaataaon of number how much hogee?",
+    option: [
+        "12,960",
+        "12,860",
+        "13,860",
+        "13,960"
+    ],
+    answer: "12,960"
+},
+{
+    question: "one dhaatvik belnaaofr paaip of baahree radius 7 cm, aantrik radius 5 cm and length 14 cm is paaip in pryukt dhaatu of volume find ofjie",
+    option: [
+        "342π cm³",
+        "336π cm³",
+        "346π cm³",
+        "352π cm³"
+    ],
+    answer: "336π cm³"
+},
+{
+    question: "toee knpnee profit arjit krtee is jifrom knpnee of three saajhedaaron of beech 7 : 13 : 9 of ratio in vitrit kior jaataa is If nyoontm and moretm sheyr of difference ₹58,326 is, to knpnee of total profit how much is?",
+    option: [
+        "2,81,811",
+        "2,81,955",
+        "2,81,909",
+        "2,81,934"
+    ],
+    answer: "2,81,909"
+},
+{
+    question: "√2061 − √1268 + √850 − 66 of maan find ofjie",
+    option: [
+        "44",
+        "46",
+        "45",
+        "47"
+    ],
+    answer: "45"
+},
+{
+    question: "one paaip any taink to 6 mint in bhr sktaa is, jbki doosraa paaip pooree trh from bhre taink to 24 mint in khaalee kr sktaa is If taink khaalee hone on both paaip one saath khol die jaaen, to taink of half hissaa bhrne in how many mint lgenge?",
+    option: [
+        "4",
+        "5",
+        "8",
+        "9"
+    ],
+    answer: "4"
+},
+{
+    question: "one smlnb of smaantr bhujaaon of lnbaaiorn respectively 20 cm and 10 cm isn two asmaantr bhujaaon in from each of length 13 cm is smlnb of area (cm² in) find ofjie",
+    option: [
+        "140",
+        "120",
+        "180",
+        "160"
+    ],
+    answer: "180"
+},
+{
+    question: "prthm 14 vishm praakritik numberon of average find ofjie",
+    option: [
+        "13.5",
+        "14",
+        "15",
+        "14.5"
+    ],
+    answer: "14"
+},
+{
+    question: "If P = 5 : 2 and Q = 3 : 7 is, to P and Q of tulnaa ofjie",
+    option: [
+        "P = Q",
+        "P > Q",
+        "P = 2Q",
+        "P < Q"
+    ],
+    answer: "P > Q"
+},
+{
+    question: "one krioftr of 7 paariyon in average 90 rn is 8veen paaree in usne 176 rn bnaae usof average stor in ______ of vriddhi huee (apne answer to nikttm poornaank tk poornaankit do)",
+    option: [
+        "20",
+        "7",
+        "11",
+        "14"
+    ],
+    answer: "11"
+},
+
+{
+    question: "two rekhaaen is profr kheenchee gee isn ki unof pthon to niroopit doing vaale smeekrn: (k−4)x + 2y = 6 and 2x + y = 4 isn If rekhaaon of one-doosre of parallel rchnaa of jaanee is, to k of kaun-saa maan yh sunishchit kregaa?",
+    option: [
+        "8",
+        "10",
+        "7",
+        "6"
+    ],
+    answer: "8"
+},
+
+{
+    question: "₹5,500 of raashi on saadhaarn interest how much hogaa, If phle 4 yearon of lie interest rate 6% vaarshik is tthaa antim 2 yearon of lie 5% vaarshik is?",
+    option: [
+        "₹1,660",
+        "₹1,750",
+        "₹1,920",
+        "₹1,870"
+    ],
+    answer: "₹1,870"
+},
+
+{
+    question: "one vikretaa ₹12,000 in one vshing msheen khreedtaa is vh ifrom one khurateaa vikretaa to 10% of profit on bechtaa is, and khurateaa vikretaa ifrom one graahk to 15% of loss on bechtaa is antim selling price how much is?",
+    option: [
+        "₹11,420",
+        "₹11,220",
+        "₹11,620",
+        "₹11,000"
+    ],
+    answer: "₹11,220"
+},
+
+{
+    question: "eendhn of ofvote three krmaagt mheenon in 10%, 50% and 10% less ho jaatee is, lekin chauthe months in 45% bdh jaatee is chauthe months in eendhn of ofvote in usof mool ofvote of tulnaa in how many percent of vriddhi/lessee huee? (apne answer to dshmlv of two sthaanon tk poornaankit do)",
+    option: [
+        "42.91% of vriddhi",
+        "46.86% of vriddhi",
+        "44.56% of lessee",
+        "41.28% of lessee"
+    ],
+    answer: "41.28% of lessee"
+},
+
+{
+    question: "one square of perimeter one aifrom circle of radius of aadhe of braabr is jisof area 39424 cm² is square of area find ofjie (π = 22/7 maanie)",
+    option: [
+        "169 cm²",
+        "196 cm²",
+        "204 cm²",
+        "135 cm²"
+    ],
+    answer: "196 cm²"
+},
+
+{
+    question: "abhishek apne ghr from apnee saamaany speed of 3/4 speed from chlkr apne ofrorly jaataa is, to ufrom phunchne in 11 mint of vilnb ho jaataa is usof dvaaraa apne ghr and ofrorly of beech of distance ty doing in lgne vaalaa saamaany time how much is?",
+    option: [
+        "32 mint",
+        "29 mint",
+        "33 mint",
+        "26 mint"
+    ],
+    answer: "33 mint"
+},
+
+{
+    question: "poornaank 80 vaalee one oneekshaa in, B to 50 ank mile jbki A to 75 ank mile B of ank A of anton of how much percent thaa? (answer to two dshmlv sthaanon tk poornaankit do)",
+    option: [
+        "66.67%",
+        "93.75%",
+        "150.46%",
+        "80.33%"
+    ],
+    answer: "66.67%"
+},
+
+{
+    question: "any sm pnchbhuj of each aantrik angle of maap how much hogaa?",
+    option: [
+        "108°",
+        "78°",
+        "118°",
+        "128°"
+    ],
+    answer: "108°"
+},
+
+{
+    question: "₹13,403 to S, B and C of beech is profr vibhaajit kior jaataa is ki If unof respectively ₹40, ₹83 and ₹68 oft lie jaaen, to unof paas 21:11:4 of ratio in dhnraashi bchtee is B and C of mool sheyron of beech difference find ofjie",
+    option: [
+        "₹2,584",
+        "₹2,719",
+        "₹2,519",
+        "₹2,669"
+    ],
+    answer: "₹2,584"
+},
+
+{
+    question: "A, bindu X from 9:00 AM on nikltaa is and bindu Y on 1:00 PM on phunchtaa is B, bindu Y from 9:00 AM on nikltaa is and bindu X on 3:00 PM on phunchtaa is ve kis time on milenge?",
+    option: [
+        "10:24 AM",
+        "12:36 PM",
+        "1:24 PM",
+        "11:24 AM"
+    ],
+    answer: "11:24 AM"
+},
+
+{
+    question: "number 8,33,525 following in from kisfrom vibhaajy not is?",
+    option: [
+        "35",
+        "15",
+        "25",
+        "55"
+    ],
+    answer: "15"
+},
+
+{
+    question: "one gol khol of volume (cm³ in, 1 dshmlv sthaan tk poornaankit) how much hogaa jisof aantrik and baahree diameter respectively 10 cm and 12 cm is? (π = 22/7 leejie)",
+    option: [
+        "401.5",
+        "323.9",
+        "381.3",
+        "345.7"
+    ],
+    answer: "381.3"
+},
+
+{
+    question: "one pnsaaree ne apnee vstuon to purchase price from 50% more price on ankit kior and unhen X% of discount on bechaa If ufrom 35% profit huaa, to X of maan find ofjie",
+    option: [
+        "11",
+        "12",
+        "10",
+        "9"
+    ],
+    answer: "10"
+},
+
+{
+    question: "following vynjk in x of maan find ofjie",
+    option: [
+        "2",
+        "1",
+        "3",
+        "4"
+    ],
+    answer: "2"
+},
+
+{
+    question: "one paaip any tnof to 7 mint in bhr sktaa is, jbki doosraa paaip pooree trh from bhree huee tnof to 56 mint in khaalee kr sktaa is If tnof khaalee hone on both paaip one saath khol die jaaen, to tnof to half bhrne in how many mint lgenge?",
+    option: [
+        "4",
+        "5",
+        "9",
+        "8"
+    ],
+    answer: "4"
+},
+
+{
+    question: "If any number of 20% to 66 in jodaa jaae, to oninaam vhee number hogee usee number of 60% how much is?",
+    option: [
+        "59.5",
+        "79.5",
+        "49.5",
+        "69.5"
+    ],
+    answer: "49.5"
+},
+
+{
+    question: "two numberon of mhttm smaapvrtk (HCF) find doing of lie following in from kaun-saa mdl correct is?",
+    option: [
+        "ghtaav mdl: both numberon to ghtaaen and ubhynishth gunnkhnd of jaanch do",
+        "vibhaajn mdl: uchchtm gunnkhnd find doing of lie both numberon to one equal number from vibhaajit do",
+        "abhaajy gunnkhnd mdl: both numberon of abhaajy gunnkhnd find do, phir nyoontm ghaaton vaale ubhynishth abhaajy gunnkhndon to gunaa do",
+        "jod mdl: two numberon to joden and sum of ubhynishth gunnkhndon of jaanch do"
+    ],
+    answer: "abhaajy gunnkhnd mdl: both numberon of abhaajy gunnkhnd find do, phir nyoontm ghaaton vaale ubhynishth abhaajy gunnkhndon to gunaa do"
+},
+
+{
+    question: "renu and kshish of age of ratio 9:8 is 5 year baad unof age of ratio 10:9 hogaa unof vrtmaan age of beech of difference find ofjie",
+    option: [
+        "6 year",
+        "4 year",
+        "7 year",
+        "5 year"
+    ],
+    answer: "5 year"
+},
+
+{
+    question: "If 75 and Z of triteeornupaatee 12 is, to Z of maan find ofjie",
+    option: [
+        "30",
+        "27",
+        "32",
+        "28"
+    ],
+    answer: "30"
+},
+
+{
+    question: "If 2x + 2/x = 3 is, to x² + 1/x² of maan find ofjie",
+    option: [
+        "1",
+        "1/4",
+        "1/3",
+        "1/2"
+    ],
+    answer: "1/4"
+},
+
+{
+    question: "two paaip, P and Q, one tnof to respectively 30 hours and 40 hours in bhr skte isn If paaip P to aofle 15 hours of lie kholaa jaataa is and phir bnd kr given jaataa is, jisof baad paaip Q tnof to pooraa bhrtaa is, to paaip Q dvaaraa bhre ge part of saapeksh paaip P dvaaraa tnof of how much percent bhraa gone is?",
+    option: [
+        "120%",
+        "150%",
+        "100%",
+        "50%"
+    ],
+    answer: "100%"
+},
+
+{
+    question: "one kkshaa of 24 vidorrthiyon of average age 17 year is If shikshk of age bhee shaamil kr lee jaae, to poore smooh of average age 18 year ho jaatee is shikshk of age (yearon in) how much is?",
+    option: [
+        "42",
+        "43",
+        "44",
+        "45"
+    ],
+    answer: "42"
+},
+
+{
+    question: "If sin²x + K = 1 is, to nimn in from kaun-saa K of braabr is?",
+    option: [
+        "cot²x",
+        "sec²x",
+        "tan²x",
+        "cos²x"
+    ],
+    answer: "cos²x"
+},
+
+{
+    question: "one vikretaa ne any vstu on 77% of discount dee and phir bhee ufrom 49% of profit praapt huaa purchase price and ankit price of ratio find ofjie",
+    option: [
+        "20 : 150",
+        "23 : 149",
+        "26 : 152",
+        "25 : 154"
+    ],
+    answer: "23 : 149"
+},
+{
+    question: "one square of area 15.21 cm² is is square of perimeter (cm in) find ofjie",
+    option: [
+        "13.8",
+        "15.6",
+        "12.4",
+        "16.5"
+    ],
+    answer: "15.6"
+},
+{
+    question: "one election in, total votedaataaon in from 70% votedaataaon ne votedaan kior inin from, 60% votedaataaon ne candidate X to, and shesh votedaataaon ne candidate Y to apnaa vote given If candidate Y to 8400 vote mile, to pnjeekrit votedaataaon of total number find ofjie",
+    option: [
+        "25,000",
+        "40,000",
+        "30,000",
+        "32,000"
+    ],
+    answer: "30,000"
+},
+{
+    question: "vh sbfrom bdee number find ofjie jisfrom 1005, 244 and 1343 to vibhaajit doing on respectively 5, 4 and 3 remainder praapt is is",
+    option: [
+        "25",
+        "20",
+        "30",
+        "15"
+    ],
+    answer: "20"
+},
+{
+    question: "one khurateaa vikretaa khreedaaron to one vstu on dee gee discount sofin prdaan krtaa is following in from kaun-see sofm graahk of lie sbfrom less profitdaayk hogee?\ni. 34% of discount\nii. 37% of discount of baad 8% of discount\niii. 7% and 27% of krmik discounten",
+    option: [
+        "sofm ii",
+        "sofm ii and sofm iii both",
+        "sofm i",
+        "sofm iii"
+    ],
+    answer: "sofm iii"
+},
+{
+    question: "P and Q milkr any tnof to 6 hours in paanee from bhr skte isn If P aofle usee tnof to 12 hours in paanee from bhr sktaa is, to Q aofle usee tnof of one-chauthaaee part to how many hours in paanee from bhregaa?",
+    option: [
+        "4",
+        "6",
+        "7",
+        "3"
+    ],
+    answer: "3"
+},
+{
+    question: "one taink in three paaip isn: A, B and C paaip A taink to 4 hours in bhrtaa is, paaip B ifrom 6 hours in bhrtaa is and paaip C ifrom 12 hours in khaalee krtaa is If threeon paaipon to baaree-baaree from 1 hours of lie kholaa jaae (phle A, phir B, phir C), to taink to bhrne in how much time lgegaa?",
+    option: [
+        "11 hours",
+        "9 hours",
+        "10 2/3 hours",
+        "7 1/2 hours"
+    ],
+    answer: "7 1/2 hours"
+},
+{
+    question: "₹1,800 of mooldhn on 10% of vaarshik chkrvriddhi interest of rate (vaarshik roop from snyojit hone on) from 2 yearon in praapt mishrdhn find ofjie",
+    option: [
+        "₹2,506",
+        "₹2,178",
+        "₹2,820",
+        "₹3,118"
+    ],
+    answer: "₹2,178"
+},
+{
+    question: "√(√(24² − 16² + 2²) + √(2 × 3² + √169)) to srl do",
+    option: [
+        "2",
+        "3",
+        "7",
+        "5"
+    ],
+    answer: "5"
+},
+{
+    question: "one stor ghreloo saamaanon on '5 khreeden, 16 mupht paaen' phr de rhaa is stor dvaaraa dee jaa rhee shuddh discount (lgbhg) of percent how much is?",
+    option: [
+        "78.42%",
+        "74.52%",
+        "74.24%",
+        "76.19%"
+    ],
+    answer: "76.19%"
+},
+{
+    question: "If one gole of radius in 25% of vriddhi of jaae, to isof prishtheey area in percent vriddhi find ofjie",
+    option: [
+        "42.36%",
+        "56.25%",
+        "50.48%",
+        "38.15%"
+    ],
+    answer: "56.25%"
+},
+{
+    question: "following detaa of bhulk how much is?\n55, 45, 44, 48, 42, 45, 52, 53, 42, 50, 54, 49, 52, 45, 47, 43, 45, 48",
+    option: [
+        "45",
+        "44",
+        "48",
+        "55"
+    ],
+    answer: "45"
+},
+{
+    question: "If 25, 29, 25, 32, 24 and x of maadhy 26 is, to detaa of maadhyiof how much is?",
+    option: [
+        "29",
+        "25",
+        "24",
+        "27"
+    ],
+    answer: "25"
+},
+{
+    question: "one person apnee aay of 50% bcht krtaa is If usof vyy ₹360 is, to usof aay (₹ in) how much is?",
+    option: [
+        "800",
+        "180",
+        "760",
+        "720"
+    ],
+    answer: "720"
+},
+{
+    question: "one person apnee ortraa of aadhee distance to 60 km/h of speed from and aadhee distance to 30 km/h of speed from ty krtaa is pooree ortraa of dauraan usof average speed how much is?",
+    option: [
+        "45 km/h",
+        "55 km/h",
+        "50 km/h",
+        "40 km/h"
+    ],
+    answer: "40 km/h"
+},
+{
+    question: "1 hours tk 70 km/hr and 1/2 hours tk 'p' km/hr of speed from chlne vaalee one ofr of average speed 58 km/hr is p of maan find ofjie",
+    option: [
+        "67.5",
+        "70",
+        "50",
+        "62.5"
+    ],
+    answer: "50"
+},
+{
+    question: "one tokree in aam and sntre milaakr 96 phl isn If sntron of tulnaa in aam 48 more isn, to total how many aam isn?",
+    option: [
+        "72",
+        "64",
+        "88",
+        "96"
+    ],
+    answer: "72"
+},
+{
+    question: "9.73 × 9.73 × 9.73 + 7.27 × 7.27 × 7.27 to hl do\n────────────────────────────────────\n9.73 × 9.73 − 9.73 × 7.27 + 7.27 × 7.27",
+    option: [
+        "18",
+        "17",
+        "16",
+        "15"
+    ],
+    answer: "17"
+},
+{
+    question: "sec²50° − tan²50° of maan find ofjie",
+    option: [
+        "2",
+        "0",
+        "1",
+        "0.5"
+    ],
+    answer: "1"
+},
+{
+    question: "38 hours of 2 days from ratio inin from kisof braabr is?",
+    option: [
+        "12:19",
+        "19:24",
+        "22:27",
+        "21:27"
+    ],
+    answer: "19:24"
+},
+{
+    question: "If number 2X73Y5, number 11 from vibhaajy is, to (X−Y) of maan find ofjie",
+    option: [
+        "1",
+        "3",
+        "5",
+        "6"
+    ],
+    answer: "1"
+},
+{
+    question: "If any number of 4/7 of 20% of 10%, 648 is, to vh number find ofjie",
+    option: [
+        "57140",
+        "60230",
+        "56700",
+        "57580"
+    ],
+    answer: "56700"
+},
+{
+    question: "one maataa apnee putree from 25 year bdee is 15 year baad, maataa of umr putree of umr from twogunee ho jaaegee putree of vrtmaan umr find ofjie",
+    option: [
+        "20 year",
+        "25 year",
+        "10 year",
+        "35 year"
+    ],
+    answer: "10 year"
+},
+{
+    question: "△ABC in, bindu D on BD ⟂ AC is and ∠DBC = 65° is BC on one bindu E is profr is ki ∠CAE = 30° is ∠AEB of maap how much is?",
+    option: [
+        "53°",
+        "56°",
+        "50°",
+        "55°"
+    ],
+    answer: "55°"
+},
+{
+    question: "poonm ne mohinee to one kitaab 5% of loss on bechee and mohinee ne ufrom roopshee to 8% of profit on bechaa If roopshee ne kitaab ₹1,539 in khreedee, to poonm of lie kitaab of purchase price (₹ in) how much thaa?",
+    option: [
+        "1,600",
+        "1,650",
+        "1,500",
+        "1,550"
+    ],
+    answer: "1,500"
+},
+{
+    question: "If 896 ofle three bnrateon in 4/6 : 2/2 : 2/2 of ratio in vitrit kie ge, to teesre bnrate to how many ofle mile?",
+    option: [
+        "334",
+        "336",
+        "338",
+        "335"
+    ],
+    answer: "336"
+},
+{
+    question: "raahul 15 hours in 225 km of distance ty krtaa is If vh apnee mool speed from 20% tej draaiv kre, to ufrom 40% less distance ty doing in how many hours lgenge?",
+    option: [
+        "8",
+        "7",
+        "8.5",
+        "7.5"
+    ],
+    answer: "8"
+},
+{
+    question: "X, Y and Z milkr any ofry to 8 dayson in pooraa kr skte isn, jbki X aofle usee ofry to 24 dayson in, and Y aofle usee ofry to 36 dayson in pooraa kr sktaa is Z aofle usee ofry to how many dayson in pooraa kr sktaa is?",
+    option: [
+        "18 days",
+        "12 days",
+        "48 days",
+        "28 days"
+    ],
+    answer: "18 days"
+},
+{
+    question: "one vorpaaree apne maal of ankit price, purchase price from 25% more ankit krtaa is and ankit price on 28% of discount detaa is usof profit or loss percent how much is?",
+    option: [
+        "11% loss",
+        "10% loss",
+        "8% loss",
+        "7% profit"
+    ],
+    answer: "10% loss"
+},
+{
+    question: "If P : 17 :: 42 : 6 is, to P of maan find ofjie",
+    option: [
+        "116",
+        "122",
+        "119",
+        "118"
+    ],
+    answer: "119"
+},
+{
+    question: "If any pustk in chhpee 4 pnktiyon vaale one klm in 36 shbd isn, to 50 pnktiyon vaale one klm in how many shbd honge?",
+    option: [
+        "460",
+        "450",
+        "454",
+        "446"
+    ],
+    answer: "450"
+},
+
+{
+    question: "one person apnee aay of 10% of bcht krtaa is If usof vyy ₹360 is, to usof aay (₹ in) find ofjie",
+    option: [
+        "324",
+        "400",
+        "36",
+        "440"
+    ],
+    answer: "400"
+},
+{
+    question: "prekshnon 22, 21, 22, 20, 33, 34, 22, 29, 29, 31, 23, 23, 28, 32, 22, 26 and 27 of bhulk find ofjie",
+    option: [
+        "33",
+        "21",
+        "20",
+        "22"
+    ],
+    answer: "22"
+},
+{
+    question: "one gole of volume numbertmk roop from usof prishtheey area of braabr is isof radius (iofee in) find ofjie",
+    option: [
+        "4",
+        "5",
+        "6",
+        "3"
+    ],
+    answer: "3"
+},
+
+{
+    question: "two relgaadiorn equal speed from vioneet dishaaon in chl rhee isn If each relgaadee of length 444 m is and ve one-doosre to 37 fromknd in paar krtee isn, to each relgaadee of speed how much is?",
+    option: [
+        "8 m/s",
+        "9 m/s",
+        "12 m/s",
+        "10 m/s"
+    ],
+    answer: "12 m/s"
+},
+{
+    question: "three numberon of ratio 12 : 21 : 5 is If phlee number of 50 percent 78 is, to teesree and doosree number of poorn difference of 50 percent how much hogaa?",
+    option: [
+        "103",
+        "102",
+        "104",
+        "105"
+    ],
+    answer: "104"
+},
+{
+    question: "75,000 votedaataaon vaale one ksbe in, 95% votedaataaon ne apne vot daale, and sbhee vot vaidh the us election in A, B and C naam of three candidate the candidate A to vaidh voton of 40% milaa, jbki candidate B to A from 12% less vot mile candidate C to vaidh voton of how much percent milaa?",
+    option: [
+        "15.2%",
+        "24.8%",
+        "48%",
+        "52%"
+    ],
+    answer: "24.8%"
+},
+{
+    question: "two bhnon of vrtmaan age in 3 yearon of difference is 2 year baad, bdee bhn, chhotee bhn of 2 year poorv of age of twogunee ho jaaegee ab from 8 year baad unof age of sum find ofjie",
+    option: [
+        "37 year",
+        "33 year",
+        "31 year",
+        "39 year"
+    ],
+    answer: "37 year"
+},
+{
+    question: "tyohaaron of dauraan, prsaad of roop in 32 cm radius vaalaa one bdaa lddoo bnaaor jaataa is poojaa of baad, bhkton in prsaad baantne of lie bde lddoo from chhote lddoo bnaae jaane of nirny lior jaataa is 2 cm radius vaale how many lddoo bnaae jaa skte isn?",
+    option: [
+        "4096",
+        "3964",
+        "3896",
+        "4132"
+    ],
+    answer: "4096"
+},
+{
+    question: "45 of 60%, 55 of from how much more is?",
+    option: [
+        "14",
+        "16",
+        "13",
+        "10"
+    ],
+    answer: "28"
+},
+{
+    question: "△ABC in, bindu D on BD ⟂ AC is and ∠DBC = 66° is BC on one bindu E is profr is ki ∠CAE = 35° is ∠AEB of maap how much hogee?",
+    option: [
+        "65°",
+        "59°",
+        "47°",
+        "66°"
+    ],
+    answer: "59°"
+},
+{
+    question: "A, B and C any ofm to respectively 3, 9 and 18 dayson in pooraa kr skte isn one saath ofm krte hue, usee ofm of twogunaa ofm doing in unhen how much time (days in) lgegaa?",
+    option: [
+        "5",
+        "8",
+        "4",
+        "12"
+    ],
+    answer: "4"
+},
+{
+    question: "prthm 6 vishm praakritik numberon of average find ofjie",
+    option: [
+        "5.5",
+        "6.5",
+        "7",
+        "6"
+    ],
+    answer: "6"
+},
+{
+    question: "22 phrvree 2024 from 23 aprail 2024 tk of avdhi of lie ₹4,000 on 6% vaarshik interest rate from saadhaarn interest (₹ in) find ofjie",
+    option: [
+        "38",
+        "39",
+        "40",
+        "41"
+    ],
+    answer: "40"
+},
+{
+    question: "one knpyootr ne one days in 1,76,400 laainen print ofn If printr days in 6 hours chlaa, to usne prti mint how much laainen print ofn?",
+    option: [
+        "460",
+        "450",
+        "420",
+        "490"
+    ],
+    answer: "490"
+},
+
+{
+    question: "one aadmee ne ₹300 in 10 sntre of ret from kuchh sntre khreede and unhen ₹175 in 5 sntre of ret on bech die usof profit percent how much is (two dshmlv sthaanon tk correct answer deejie)?",
+    option: [
+        "15.67%",
+        "14.67%",
+        "18.67%",
+        "16.67%"
+    ],
+    answer: "16.67%"
+},
+{
+    question: "11%, 18% and 20% of three krmik discounton of baad ankit price of prbhaavee price percent find ofjie (two dshmlv sthaanon tk poornaankit do)",
+    option: [
+        "62.14%",
+        "61.4%",
+        "58.38%",
+        "58.88%"
+    ],
+    answer: "58.38%"
+},
+{
+    question: "15 m lnbee one oordhvaadhr chhdee, bhoomi on 5 m lnbee chhaaor bnaatee is usee time, one meenaar bhoomi on 46.5 m lnbee chhaaor bnaatee is meenaar of oonchaaee find ofjie",
+    option: [
+        "137.5 m",
+        "141.5 m",
+        "139.5 m",
+        "135.5 m"
+    ],
+    answer: "139.5 m"
+},
+{
+    question: "20 kg chaavl ₹50 prti kg of rate from khreedaa gone and ₹45 prti kg of rate from bechaa gone loss percent find ofjie",
+    option: [
+        "13%",
+        "12%",
+        "10%",
+        "11%"
+    ],
+    answer: "10%"
+},
+
+{
+    question: "one vstu on respectively 20%, 5% and 21% of discount dee jaatee is If prbhaavee price percent find krnaa ho, to correct option chunie",
+    option: [
+        "60.04%",
+        "63.04%",
+        "58.66%",
+        "62.04%"
+    ],
+    answer: "60.04%"
+},
+
+{
+    question: "two trenen X from Y of or subh 8 bje 50 km/h of gti from tthaa Y from X of or subh 9 bje 60 km/h of gti from chltee isn ve subh 9:45 bje miltee isn X and Y of beech of distance find ofjie",
+    option: [
+        "30 km",
+        "32 km",
+        "33.125 km",
+        "35 km"
+    ],
+    answer: "33.125 km"
+},
+
+{
+    question: "one paaip tnof to 20 mint in and doosraa paaip 35 mint in bhr sktaa is both paaip khole jaate isn and phlaa paaip kuchh time baad bnd kr given jaataa is If tnof 28 mint in bhr jaatee is, to phlaa paaip how many mint tk khulaa rhaa?",
+    option: [
+        "2 mint",
+        "3 mint",
+        "4 mint",
+        "5 mint"
+    ],
+    answer: "4 mint"
+},
+
+{
+    question: "one paaip tnof to 4 mint in bhr sktaa is and one niofsee paaip ufrom 8 mint in khaalee kr sktaa is both one saath khole jaane on aadhee tnof bhrne in how much time lgegaa?",
+    option: [
+        "2 mint",
+        "3 mint",
+        "4 mint",
+        "5 mint"
+    ],
+    answer: "4 mint"
+},
+
+{
+    question: "77,792 following in from kis number from vibhaajit is is?",
+    option: [
+        "14",
+        "13",
+        "12",
+        "15"
+    ],
+    answer: "13"
+},
+
+{
+    question: "443 in sbfrom chhotee kaun-see number jodee jaae ki praapt number 12, 5 and 6 from vibhaajit ho jaae?",
+    option: [
+        "17",
+        "27",
+        "37",
+        "47"
+    ],
+    answer: "37"
+},
+
+{
+    question: "one chaachaa of vrtmaan age usof bhteeje of age of 6 gunaa is 20 year baad chaachaa of age bhteeje of age of twogunee hogee bhteeje of vrtmaan age find ofjie",
+    option: [
+        "4 year",
+        "6 year",
+        "5 year",
+        "8 year"
+    ],
+    answer: "5 year"
+},
+
+{
+    question: "₹2,288 of raashi pnkj, meeraa and ashok in baantee gee respectively ₹39, ₹47 and ₹40 ghtaane on shesh raashiyon of ratio 17:15:14 ho jaataa is meeraa to mool roop from how much raashi milee?",
+    option: [
+        "₹752",
+        "₹705",
+        "₹745",
+        "₹712"
+    ],
+    answer: "₹752"
+},
+
+{
+    question: "one gole of diameter 18 cm is usof volume find ofjie",
+    option: [
+        "2504.6 cm³",
+        "1807.2 cm³",
+        "3013.2 cm³",
+        "1506.6 cm³"
+    ],
+    answer: "PDF in die ge optionon/volume of expression of pushti aavshyk is"
+},
+
+{
+    question: "one vstu of ankit price ₹6,420 is If 20% of discount dee jaatee is, to selling price how much hogaa?",
+    option: [
+        "₹5,126",
+        "₹5,136",
+        "₹5,146",
+        "₹5,156"
+    ],
+    answer: "₹5,136"
+},
+
+{
+    question: "2 m + 3 s = 1980 tthaa 3 m + 2 s = 1920 is m + s of maan find ofjie",
+    option: [
+        "760",
+        "780",
+        "800",
+        "820"
+    ],
+    answer: "780"
+},
+
+{
+    question: "one tren 126 km/h of gti from chltee is and 300 m lnbee tren 12 fromknd in one pletphrm paar krtee is one boy usee pletphrm to 15 fromknd in paar krtaa is ldof of gti find ofjie",
+    option: [
+        "6 m/s",
+        "7 m/s",
+        "8 m/s",
+        "9 m/s"
+    ],
+    answer: "8 m/s"
+},
+
+{
+    question: "31, 36, 83, 84, 93, 47, 17, 45 and 50 of average find ofjie",
+    option: [
+        "54",
+        "56",
+        "58",
+        "60"
+    ],
+    answer: "54"
+},
+
+{
+    question: "one person of vyy usof bcht from 100% more is If vyy in 4% of lessee and bcht in 26% of vriddhi ho, to aay in how many percent of vriddhi hogee?",
+    option: [
+        "4%",
+        "6%",
+        "8%",
+        "10%"
+    ],
+    answer: "6%"
+},
+
+{
+    question: "one number in 40% of two krmik vriddhi and 40% of two krmik lessee of oninaamon of tulnaa ofjie",
+    option: [
+        "25%",
+        "40%",
+        "50%",
+        "60%"
+    ],
+    answer: "50%"
+},
+
+{
+    question: "one chturbhuj IJKL in ∠I = 35° and ∠J = 24° is K tthaa L of angleon of smdvibhaajk Z on milte isn ∠LZK find ofjie",
+    option: [
+        "29.5°",
+        "30°",
+        "31.5°",
+        "32°"
+    ],
+    answer: "29.5°"
+},
+
+{
+    question: "one kshaitij belnaaofr paaip of aantrik radius 3.5 cm is paanee 2 m/s of gti from bhtaa is and paaip half bhraa is 5 mint in bhne vaale paanee of volume leetr in find ofjie",
+    option: [
+        "1050 L",
+        "1155 L",
+        "1250 L",
+        "1350 L"
+    ],
+    answer: "1155 L"
+},
+
+{
+    question: "If 63 : A :: A : 175 is, to A of maan find ofjie",
+    option: [
+        "95",
+        "105",
+        "115",
+        "125"
+    ],
+    answer: "105"
+},
+
+{
+    question: "₹2,600 of mool raashi on 10% vaarshik chkrvriddhi interest of rate from 2 year baad total raashi how much hogee?",
+    option: [
+        "₹3,146",
+        "₹3,120",
+        "₹3,160",
+        "₹3,200"
+    ],
+    answer: "₹3,146"
+},
+
+{
+    question: "phlee four praakritik numberon of squareon of average find ofjie",
+    option: [
+        "6.5",
+        "7",
+        "8",
+        "7.5"
+    ],
+    answer: "7.5"
+},
+];
+
+const reasoningQuestionsEn = [
+
+{
+    question: "What should replace the question mark (?) in the given series?\n\n1, 2, 8, 16, 64, ?",
+    option: [
+        "136",
+        "124",
+        "128",
+        "132"
+    ],
+    answer: "128"
+},
+{
+    question: "Seven boxes, A, B, C, D, E, F, and G, are placed one above another, but not necessarily in the same order. Only two boxes are placed between A and E. Only F is placed above G. No box is placed below E. C is placed below D but above B. How many boxes are placed above D?",
+    option: [
+        "2",
+        "4",
+        "3",
+        "1"
+    ],
+    answer: "2"
+},
+{
+    question: "Based on the English alphabetical order, three of the following four letter groups are similar in a certain way and form a group. Which letter group does not belong to that group?\n\n(Note: The odd letter group is not based on the number or position of consonants/vowels.)",
+    option: [
+        "LNR",
+        "NPV",
+        "TVZ",
+        "JLP"
+    ],
+    answer: "NPV"
+},
+{
+    question: "Which of the following letter-number groups will replace the question mark (?) to logically complete the given series?\n\nQRP 64, STR 54, UVT 44, WXV 34, ?",
+    option: [
+        "YYW 23",
+        "YGP 23",
+        "YZX 24",
+        "YAW 24"
+    ],
+    answer: "YZX 24"
+},
+{
+    question: "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to differ from commonly known facts, determine which of the given conclusions logically follow from the statements.\n\nStatements:\nAll trees are boats.\nNo pen is a boat.\nAll combs are trees.\n\nConclusions:\n(I) All combs are boats.\n(II) No pen is a comb.",
+    option: [
+        "Only conclusion (II) follows.",
+        "Only conclusion (I) follows.",
+        "Both conclusions (I) and (II) follow.",
+        "Neither conclusion (I) nor (II) follows."
+    ],
+    answer: "Both conclusions (I) and (II) follow."
+},
+{
+    question: "Five people, L, M, N, O, and P, are sitting in a row facing north. N sits third from the right end of the row. M is not an immediate neighbour of N. P sits immediately to the left of N. P sits immediately to the right of O. Who sits between N and M?",
+    option: [
+        "O",
+        "L",
+        "N",
+        "P"
+    ],
+    answer: "L"
+},
+{
+    question: "Select the set in which the numbers are related in the same way as the numbers in the following sets.\n\n(Note: Operations must be performed on the complete numbers without breaking them into their constituent digits. For example, take 13—operations such as addition, subtraction, or multiplication involving 13 must be performed only on 13. Breaking 13 into 1 and 3 and then performing mathematical operations on 1 and 3 is not allowed.)\n\n(6, 3, 19)\n(4, 3, 13)",
+    option: [
+        "(5, 4, 16)",
+        "(3, 7, 22)",
+        "(8, 3, 26)",
+        "(5, 8, 40)"
+    ],
+    answer: "(3, 7, 22)"
+},
+{
+    question: "What should replace the question mark (?) in the given series?\n\n16, 28, 42, 58, 76, ?",
+    option: [
+        "90",
+        "96",
+        "88",
+        "94"
+    ],
+    answer: "96"
+},
+{
+    question: "Based on the English alphabetical order, YUTU is related to XTST in a certain way. Similarly, FBAB is related to EAZA. Following the same logic, GCBC is related to which of the following?",
+    option: [
+        "FBAB",
+        "FBZB",
+        "FCZG",
+        "FAZB"
+    ],
+    answer: "FBAB"
+},
+{
+    question: "Refer to the following number series and answer the question based on it. All numbers are single-digit numbers. Counting is to be done only from left to right.\n\n(Left) 3 5 6 4 4 6 2 6 5 2 8 2 8 3 6 3 1 4 8 7 3 5 2 7 3 2 3 (Right)\n\nHow many odd numbers are there, each of which is immediately preceded by an odd number and immediately followed by an even number?",
+    option: [
+        "6",
+        "4",
+        "3",
+        "5"
+    ],
+    answer: "4"
+},
+{
+    question: "In a certain code language,\n'A + B' means 'A is the son of B',\n'A − B' means 'A is the father of B',\n'A × B' means 'A is the brother of B', and\n'A ÷ B' means 'A is the daughter of B'.\n\nIf 'P + Q × S ÷ T − R', then what is P's relation to R?",
+    option: [
+        "Son of sister",
+        "Son of daughter",
+        "Brother of mother",
+        "Son of brother"
+    ],
+    answer: "Son of brother"
+},
+{
+    question: "A, B, C, D, E, and F are sitting around a circular table facing the centre. B is third to the right of F. D is second to the left of C. A is third to the right of C. E sits immediately to the left of B. How many people are sitting between E and A when counted from the left of A?",
+    option: [
+        "One",
+        "Two",
+        "None",
+        "Four"
+    ],
+    answer: "One"
+},
+{
+    question: "Vishal starts driving south from point A for 10 km. He then turns right and drives for 4 km, turns right again, and drives for 12 km. He then turns right and drives for 7 km. Finally, he turns right, drives for 2 km, and stops at point P. In which direction and for what minimum distance must he drive to return to point A?\n\n(Unless specified otherwise, all turns are 90-degree turns.)",
+    option: [
+        "3 km east",
+        "3 km west",
+        "4 km east",
+        "4 km west"
+    ],
+    answer: "3 km west"
+},
+{
+    question: "Refer to the following series and answer the question based on it. All numbers are single-digit numbers. Counting is to be done only from left to right.\n\n(Left) 1 9 3 7 9 8 7 7 6 2 9 1 6 2 7 4 8 5 5 6 5 (Right)\n\nHow many odd digits are there, each of which is immediately preceded by an odd digit and immediately followed by a perfect square?\n\n(Note: 1 is also a perfect square.)",
+    option: [
+        "2",
+        "1",
+        "3",
+        "4"
+    ],
+    answer: "1"
+},
+{
+    question: "The digits of the number 78352416 are arranged in descending order from left to right. What is the product of the third digit from the left and the second digit from the right in the new number formed?",
+    option: [
+        "12",
+        "24",
+        "18",
+        "16"
+    ],
+    answer: "12"
+},
+{
+    question: "Based on the English alphabetical order, what should replace the question mark (?) in the given series?\n\nCRB, ZOY, WLV, TIS, ?",
+    option: [
+        "QFP",
+        "QFO",
+        "QPF",
+        "QFR"
+    ],
+    answer: "QFP"
+},
+{
+    question: "Seven boxes, B, D, E, P, S, T, and W, are placed one above another, but not necessarily in the same order. Only three boxes are placed above B. Only one box is placed between P and B. Only three boxes are placed between P and T. T is placed above B. D is placed immediately below T. E is placed above S. W is not placed immediately above or below P. How many boxes are placed between S and D?",
+    option: [
+        "Three",
+        "Four",
+        "Two",
+        "One"
+    ],
+    answer: "Three"
+},
+{
+    question: "If '+' and '−' are interchanged and '×' and '÷' are interchanged, what will replace the question mark (?) in the following equation?\n\n6 ÷ 3 + 16 × 4 − 9 = ? + 5",
+    option: [
+        "28",
+        "26",
+        "24",
+        "30"
+    ],
+    answer: "28"
+},
+{
+    question: "In a certain code language, 'life offers hope' is written as 'sc tp gb' and 'hope shapes future' is written as 'hk mp tp'. How is 'hope' written in that language?",
+    option: [
+        "hk",
+        "gb",
+        "tp",
+        "sc"
+    ],
+    answer: "tp"
+},
+{
+    question: "Refer to the following number series and answer the question based on it. All numbers are single-digit numbers. Counting is to be done only from left to right.\n\n(Left) 4 9 4 8 3 3 3 1 4 7 8 7 1 7 2 9 1 3 5 1 5 9 6 4 8 4 6 (Right)\n\nHow many odd numbers are there, each of which is immediately preceded by an odd number and immediately followed by an odd number?",
+    option: [
+        "10",
+        "8",
+        "7",
+        "9"
+    ],
+    answer: "8"
+},
+
+{
+    question: "If ‘P’ means ‘×’, ‘Q’ means ‘÷’, ‘R’ means ‘−’ and ‘S’ means ‘+’, what should replace the question mark (?) in the following equation?\n78 P 3 R 15 Q 5 S 126 Q 3 S 117 Q 9 S 125 Q 5 = ?",
+    option: [
+        "332",
+        "311",
+        "351",
+        "384"
+    ],
+    answer: "311"
+},
+{
+    question: "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to differ from commonly known facts, determine which of the given conclusions logically follow from the statements.\n\nStatements:\nAll jacks are hammers.\nAll jacks are keys.\nAll jacks are drillers.\n\nConclusions:\n(I) All hammers are drillers.\n(II) Some drillers are keys.",
+    option: [
+        "Neither conclusion (I) nor (II) follows.",
+        "Both conclusions (I) and (II) follow.",
+        "Only conclusion (II) follows.",
+        "Only conclusion (I) follows."
+    ],
+    answer: "Only conclusion (II) follows."
+},
+{
+    question: "Based on the English alphabetical order, DRBH is related to SGQW in a certain way. Similarly, LZJP is related to AOYE. Following the same logic, ESCI is related to which of the following options?",
+    option: [
+        "THDR",
+        "THYU",
+        "THRX",
+        "THRE"
+    ],
+    answer: "THRX"
+},
+{
+    question: "Select the set in which the numbers are related in the same way as the numbers in the following sets.\n(Note: Operations should be performed on the whole numbers without breaking them into their constituent digits. For example, consider 13—operations such as addition, subtraction, or multiplication involving 13 must be performed on 13 only. Breaking 13 into 1 and 3 and then performing mathematical operations on 1 and 3 is not allowed.)\n(55, 11, 5)\n(36, 3, 12)",
+    option: [
+        "(42, 15, 3)",
+        "(65, 5, 13)",
+        "(56, 14, 3)",
+        "(70, 5, 16)"
+    ],
+    answer: "(65, 5, 13)"
+},
+{
+    question: "O, P, Q, R, W, X and Y are seated in a straight line facing north. Only three people sit between W and Y. P sits immediately to the left of Y. No one sits to the right of Q. Only two people sit between Q and P. X sits immediately to the right of O. How many people sit between R and X?",
+    option: [
+        "Two",
+        "One",
+        "Four",
+        "Three"
+    ],
+    answer: "Two"
+},
+{
+    question: "What should replace the question mark (?) in the following alphabetical series?\nARB YVZ WZX UDV ?",
+    option: [
+        "RHS",
+        "RGT",
+        "TGU",
+        "SHT"
+    ],
+    answer: "SHT"
+},
+{
+    question: "Which of the following letter-number groups will replace the question mark (?) to logically complete the given series?\nYCG 87 IMQ 95 SWA 103 CGK 111 ?",
+    option: [
+        "MRX 118",
+        "MRT 119",
+        "MPT 118",
+        "MQU 119"
+    ],
+    answer: "MQU 119"
+},
+{
+    question: "Refer to the following number and symbol series and answer the question based on it. Counting is to be done from left to right only.\n(Left) 9 @ 3 $ 2 ! 1 6 ^ & 9 3 ! @ # 3 $ 5 + ! (Right)\nIf all the symbols are removed from the series, what will be the seventh element from the right?",
+    option: [
+        "9",
+        "2",
+        "3",
+        "6"
+    ],
+    answer: "2"
+},
+{
+    question: "What should replace the question mark (?) in the following series?\n71, 59, 46, 32, 17, ?",
+    option: [
+        "−1",
+        "2",
+        "3",
+        "1"
+    ],
+    answer: "1"
+},
+{
+    question: "In a certain coded language, ‘SOUP’ is written as ‘5179’ and ‘PACE’ is written as ‘2418’. What is the code for ‘P’ in the given coded language?",
+    option: [
+        "2",
+        "9",
+        "7",
+        "1"
+    ],
+    answer: "1"
+},
+{
+    question: "In a school campus, Building A is south of Building B. Building E is east of Building B. Building D is west of Building A. Building C is south of Building E. What is the position of Building C with respect to Building B?",
+    option: [
+        "South",
+        "West",
+        "East",
+        "South-East"
+    ],
+    answer: "South-East"
+},
+{
+    question: "A, B, C, D, E and F are seated around a circular table facing the centre. B sits second to the left of D. F is an immediate neighbour of A. B sits immediately to the right of A. C sits second to the left of E. What is the position of C with respect to A?",
+    option: [
+        "Immediately to the right",
+        "Second to the left",
+        "Third to the left",
+        "Second to the right"
+    ],
+    answer: "Second to the right"
+},
+{
+    question: "Based on the English alphabetical order, three of the following four letter-group pairs follow a certain pattern and form a group. Which letter-group pair does not belong to that group? (Note: The odd letter-group pair is not based on the number or position of consonants/vowels.)",
+    option: [
+        "LP - KO",
+        "IM - HL",
+        "MQ - LP",
+        "OS - NS"
+    ],
+    answer: "OS - NS"
+},
+{
+    question: "A, B, C, D, E, F and G are seated around a circular table facing the centre. When counted to the left of A, only one person sits between E and A. B sits third to the right of C. D sits third to the left of F. B sits immediately to the right of D. G is not an immediate neighbour of D. How many people sit between C and F when counted to the right of F?",
+    option: [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    answer: "1"
+},
+{
+    question: "In a certain coded language, A + B means ‘A is the son of B’, A - B means ‘A is the brother of B’, A × B means ‘A is the wife of B’, and A & B means ‘A is the father of B’. If ‘K-T+R×Z&V’ is given, what is K’s relation to V?",
+    option: [
+        "Father",
+        "Husband",
+        "Son",
+        "Brother"
+    ],
+    answer: "Brother"
+},
+{
+    question: "If ‘+’ and ‘−’ are interchanged and ‘×’ and ‘÷’ are interchanged, what should replace the question mark (?) in the following equation?\n96 + 15 ÷ 5 − 154 × 14 = ?",
+    option: [
+        "32",
+        "29",
+        "34",
+        "30"
+    ],
+    answer: "32"
+},
+{
+    question: "Refer to the following number series and answer the question that follows. (All numbers are single-digit numbers.)\n(Left) 2 4 5 7 1 9 3 6 8 4 7 2 5 9 3 1 8 6 2 4 7 9 (Right)\nHow many unique numbers less than 5 are present in the series? (Each number is to be counted only once, regardless of how many times it is repeated.)",
+    option: [
+        "One",
+        "Three",
+        "Four",
+        "Two"
+    ],
+    answer: "Four"
+},
+{
+    question: "JPUG is related to OLXE in a certain way. Similarly, TMQK is related to YITI. Following the same logic, NOLT is related to which of the following?",
+    option: [
+        "TJPQ",
+        "SKPR",
+        "TJOQ",
+        "SKOR"
+    ],
+    answer: "SKOR"
+},
+{
+    question: "In a certain coded language, VERL is coded as 102 and GZQT is coded as 76. What will be the code for BXNO in that language?",
+    option: [
+        "89",
+        "110",
+        "106",
+        "96"
+    ],
+    answer: "106"
+},
+{
+    question: "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to differ from commonly known facts, determine which conclusions logically follow from the statements.\nStatements: Some chromium are gallium. No gallium is gold. All gold are steel.\nConclusions:\nI: Some gold are gallium.\nII: Some gallium are steel.",
+    option: [
+        "Neither conclusion (I) nor (II) follows.",
+        "Both conclusions (I) and (II) follow.",
+        "Only conclusion (II) follows.",
+        "Only conclusion (I) follows."
+    ],
+    answer: "Neither conclusion (I) nor (II) follows"
+},
+{
+    question: "Refer to the following number and symbol series and answer the question based on it. Counting is to be done from left to right only.\n(Left) 4 © 7 # 3 $ 7 6 4 £ 8 $ 2 * £ & $ # % 1 * 2 (Right)\nHow many numbers are there, each of which is immediately preceded by a number and immediately followed by a symbol?",
+    option: [
+        "0",
+        "1",
+        "2",
+        "3"
+    ],
+    answer: "1"
+},
+
+{
+    question: "Which of the following letter-number groups will replace the question mark (?) to logically complete the given series?\nYVW 58 VST 69 SPQ 80 PMN 91 ?",
+    option: [
+        "MIJ 101",
+        "MJK 102",
+        "MRX 101",
+        "MKJ 102"
+    ],
+    answer: "MJK 102"
+},
+{
+    question: "What should replace the question mark (?) in the following series?\n5 8 14 26 ? 98",
+    option: [
+        "50",
+        "45",
+        "51",
+        "49"
+    ],
+    answer: "50"
+},
+{
+    question: "What should replace the question mark (?) in the following alphabetical series?\nFRU HTW JVY LXA ?",
+    option: [
+        "NDS",
+        "NZS",
+        "NCZ",
+        "NZC"
+    ],
+    answer: "NZC"
+},
+{
+    question: "Select the set in which the numbers are related in the same way as the numbers in the following sets. (Note: Operations should be performed only on the whole numbers without breaking them into their constituent digits. For example, consider 13—operations such as addition, subtraction, or multiplication involving 13 must be performed on 13 only. Breaking 13 into 1 and 3 and then performing mathematical operations on 1 and 3 is not allowed.) (25, 37, 53) (40, 52, 68)",
+    option: [
+        "(9, 21, 33)",
+        "(32, 44, 28)",
+        "(39, 27, 43)",
+        "(26, 38, 54)"
+    ],
+    answer: "(26, 38, 54)"
+},
+{
+    question: "This question is based on the following five three-digit numbers. (Left) 351 369 458 517 619 (Right). (Example: In 697, the first digit = 6, the second digit = 9, and the third digit = 7.) (Note: All operations are to be performed from left to right.) If the second digit of the largest number is added to the second digit of the smallest number, what will be the resulting value?",
+    option: [
+        "5",
+        "4",
+        "6",
+        "7"
+    ],
+    answer: "6"
+},
+{
+    question: "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to differ from commonly known facts, determine which conclusion(s) logically follow from the statements. Statements: All hammers are screwdrivers. No screwdriver is a wrench. Some wrenches are pliers. Conclusions: (I): No hammer is a wrench. (II): No plier is a screwdriver.",
+    option: [
+        "Neither conclusion (I) nor (II) is true",
+        "Only conclusion (I) is true",
+        "Both conclusions (I) and (II) are true",
+        "Only conclusion (II) is true"
+    ],
+    answer: "Only conclusion (I) is true"
+},
+{
+    question: "Select the pair that follows the same pattern as the two pairs given below. Both pairs follow the same pattern. ELP : CJN, IQW : GOU",
+    option: [
+        "NRT : FSE",
+        "HWZ : FUX",
+        "BTS : AWP",
+        "BTD : VRY"
+    ],
+    answer: "HWZ : FUX"
+},
+{
+    question: "In a certain coded language, ‘nice large land’ is coded as ‘cd ak pi’, ‘land is fertile’ is coded as ‘rf pc ak’, and ‘cost is high’ is coded as ‘si ig pc’. How is ‘fertile’ coded in that language?",
+    option: [
+        "rf",
+        "cd",
+        "pc",
+        "ak"
+    ],
+    answer: "rf"
+},
+{
+    question: "Seven boxes L, M, N, O, Q, R and S are stacked one above another, but not necessarily in the same order. M is placed second from the bottom. Only one box is placed between M and N. Only three boxes are placed between M and S, with S above M. L is placed immediately below S. Q is placed at one of the positions above O. R is not placed immediately above or below M. How many boxes are placed below O?",
+    option: [
+        "None",
+        "One",
+        "Three",
+        "Two"
+    ],
+    answer: "None"
+},
+{
+    question: "Based on the English alphabetical order, three of the following four letter-group pairs follow a certain pattern and form a group. Which letter-group pair does not belong to that group? (Note: The odd letter-group pair is not based on the number or position of consonants/vowels.)",
+    option: [
+        "MJ−LI",
+        "XU−WT",
+        "HE−FF",
+        "OL−NK"
+    ],
+    answer: "HE−FF"
+},
+{
+    question: "If ‘A’ means ‘÷’, ‘B’ means ‘×’, ‘C’ means ‘+’ and ‘D’ means ‘−’, what should replace the question mark (?) in the following equation?\n9 B 3 D 56 A 4 C 6 = ?",
+    option: [
+        "24",
+        "19",
+        "27",
+        "15"
+    ],
+    answer: "19"
+},
+{
+    question: "Seven boxes D, E, F, U, V, W and X are stacked one above another, but not necessarily in the same order. Only U is placed above D. Only V is placed between D and F. No box is placed below E. Only three boxes are placed between D and W. How many boxes are placed between X and E?",
+    option: [
+        "Four",
+        "Two",
+        "One",
+        "Three"
+    ],
+    answer: "One"
+},
+{
+    question: "According to a certain logic, TM 13 is related to WR 16. Following the same logic, MF 18 is related to PK 21. Following the same logic, QJ 26 is related to which of the following options?",
+    option: [
+        "TM 28",
+        "UM 28",
+        "TO 29",
+        "UP 29"
+    ],
+    answer: "TO 29"
+},
+{
+    question: "If ‘+’ means ‘−’, ‘−’ means ‘×’, ‘×’ means ‘÷’, and ‘÷’ means ‘+’, what should replace the question mark (?) in the following equation?\n20 × 2 ÷ 2 − 3 + 7 = ?",
+    option: [
+        "9",
+        "11",
+        "5",
+        "14"
+    ],
+    answer: "9"
+},
+{
+    question: "What should replace the question mark (?) in the following series?\n34 44 57 73 92 ?",
+    option: [
+        "118",
+        "114",
+        "116",
+        "112"
+    ],
+    answer: "114"
+},
+{
+    question: "What should replace the question mark (?) in the following series?\n57 67 82 102 127 ?",
+    option: [
+        "157",
+        "159",
+        "158",
+        "156"
+    ],
+    answer: "157"
+},
+{
+    question: "Seven people, A, B, C, D, E, F and G, are seated in a row facing north. No one sits to the right of G. Only three people sit between G and D. Only two people sit between D and C. E sits third to the left of F. B sits immediately to the right of F. How many people sit to the right of C?",
+    option: [
+        "4",
+        "3",
+        "1",
+        "2"
+    ],
+    answer: "1"
+},
+{
+    question: "Building X is south of Building Y, and Building Z is east of Building Y. In which direction is Building X located with respect to Building Z?",
+    option: [
+        "North-West",
+        "South-West",
+        "North-East",
+        "South-East"
+    ],
+    answer: "South-West"
+},
+{
+    question: "Refer to the following series and answer the question that follows. (All numbers are single-digit numbers.) (Left) 3 6 8 9 1 5 7 3 2 4 6 1 9 7 8 2 5 3 9 6 1 4 2 7 (Right). How many unique even numbers are present in the series?",
+    option: [
+        "None",
+        "Two",
+        "Four",
+        "Three"
+    ],
+    answer: "Four"
+},
+{
+    question: "Tarun starts walking from point A and drives 65 km east. He then turns left and drives 42 km, turns left and drives 78 km. Then he turns left and drives 71 km. Finally, he turns left, drives 13 km, and stops at point P. How far (minimum distance) and in which direction should he drive to reach point A again? (Unless specified, all turns are 90-degree turns.)",
+    option: [
+        "26 km, South",
+        "27 km, South",
+        "29 km, North",
+        "28 km, North"
+    ],
+    answer: "29 km, North"
+},
+{
+    question: "Each digit of the number 21786539 is arranged in ascending order from left to right. How many digits will remain in the same position as in the original number?",
+    option: [
+        "One",
+        "Two",
+        "Three",
+        "None"
+    ],
+    answer: "None"
+},
+{
+    question: "Refer to the following letter series and answer the question that follows. (Counting is to be done from left to right only.)\n\n(Left) D M X A G N R L W O T P Y E F Q K Z J V U H (Right)\n\nHow many consonants are there, each of which is immediately preceded by a consonant and immediately followed by a vowel?",
+    option: [
+        "One",
+        "Three",
+        "Two",
+        "More than three"
+    ],
+    answer: "One"
+},
+
+{
+    question: "If ‘A’ means ‘÷’, ‘B’ means ‘×’, ‘C’ means ‘+’ and ‘D’ means ‘−’, then what will come in place of the question mark (?) in the following equation?\n\n(84 A 12) B 5 C 13 B 2 D 11 B 5 C 28 = ?",
+    option: [
+        "54",
+        "49",
+        "34",
+        "27"
+    ],
+    answer: "54"
+},
+{
+    question: "Based on the English alphabetical order, three of the following four are alike in a certain way and thus form a group. Which of the following does not belong to that group?\n\n(Note: The odd letter-group is not based on the number or position of consonants/vowels.)",
+    option: [
+        "ILQ",
+        "JMQ",
+        "CFK",
+        "YBG"
+    ],
+    answer: "YBG"
+},
+{
+    question: "This question is based on the following five three-digit numbers.\n\n(Left) 654 842 684 714 385 (Right)\n\nIf all the numbers are arranged in ascending order, how many numbers will retain their original positions?",
+    option: [
+        "Two",
+        "One",
+        "Four",
+        "Three"
+    ],
+    answer: "Two"
+},
+{
+    question: "Which of the following letter-groups will replace the question mark (?) to logically complete the given series?\n\nKDG, MFI, OHK, QJM, ?",
+    option: [
+        "SKO",
+        "SLP",
+        "SLO",
+        "SKP"
+    ],
+    answer: "SLO"
+},
+{
+    question: "In a certain code language,\nP + Q means ‘P is the husband of Q’,\nP # Q means ‘P is the brother of Q’,\nP & Q means ‘P is the mother of Q’, and\nP % Q means ‘P is the sister of Q’.\n\nIf ‘F # N + O & V % E’, then what is F’s relation to E?",
+    option: [
+        "Father’s brother",
+        "Sister’s husband",
+        "Father’s sister",
+        "Sister’s son"
+    ],
+    answer: "Father’s brother"
+},
+{
+    question: "Refer to the given number series and answer the question below. (All numbers are single-digit numbers. Counting is to be done only from left to right.)\n\n(Left) 4 2 1 5 7 9 8 5 3 6 2 1 5 7 3 7 8 4 3 6 9 7 4 5 2 4 1 (Right)\n\nHow many even numbers are there, each of which is immediately preceded by an even number and immediately followed by an odd number?",
+    option: [
+        "More than three",
+        "Three",
+        "One",
+        "Two"
+    ],
+    answer: "Three"
+},
+{
+    question: "Seven friends, L, M, N, O, Q, R and S, are sitting in a straight line facing north. No one is sitting to the right of S. S sits immediately to the right of Q. Only three people sit between S and N. R sits third to the left of M. O sits immediately to the right of M. How many people sit between L and Q?",
+    option: [
+        "None",
+        "Two",
+        "One",
+        "Three"
+    ],
+    answer: "One"
+},
+{
+    question: "All 46 people are standing in a row facing north. Z is 12th from the right end, while G is 9th from the left end. How many people are standing between Z and G?",
+    option: [
+        "21",
+        "24",
+        "25",
+        "23"
+    ],
+    answer: "25"
+},
+{
+    question: "Which of the following letter-number groups will replace the question mark (?) in the given sequence to logically complete it?\n\nCYB 48, DZC 53, EAD 58, FBE 63, ?",
+    option: [
+        "GCF 68",
+        "GBE 67",
+        "GHJ 67",
+        "GDE 68"
+    ],
+    answer: "GCF 68"
+},
+{
+    question: "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to differ from generally known facts, decide which of the given conclusions logically follows from the statements.\n\nStatements:\nSome hydrogen is oxygen.\nAll oxygen is nitrogen.\nAll nitrogen is carbon.\n\nConclusion I: All oxygen is carbon.\nConclusion II: Some nitrogen is hydrogen.",
+    option: [
+        "Both conclusions I and II follow",
+        "Only conclusion I follows",
+        "Only conclusion II follows",
+        "Neither conclusion I nor II follows"
+    ],
+    answer: "Both conclusions I and II follow"
+},
+{
+    question: "Read the given statements and conclusions carefully. Assuming that the information given in the statements is true, even if it appears to differ from generally known facts, decide which of the given conclusions logically follows from the statements.\n\nStatements:\nAll bags are shoes.\nAll bags are caps.\nAll bags are laptops.\n\nConclusions:\n(I) All shoes are laptops.\n(II) Some laptops are caps.",
+    option: [
+        "Both conclusions (I) and (II) follow",
+        "Only conclusion (I) follows",
+        "Only conclusion (II) follows",
+        "Neither conclusion (I) nor (II) follows"
+    ],
+    answer: "Only conclusion (II) follows"
+},
+{
+    question: "Vikas starts walking from point Y and drives 81 km towards the south. Then he turns right and drives 77 km. Then he turns right and drives 27 km. Then he turns right and drives 35 km. Then he turns right and drives 39 km, and then turns left and drives 42 km before stopping at point Z. What minimum distance should he drive, and in which direction, to reach point Y again? (All turns are 90-degree turns unless specified otherwise.)",
+    option: [
+        "89 km towards the north",
+        "93 km towards the north",
+        "94 km towards the south",
+        "97 km towards the south"
+    ],
+    answer: "89 km towards the north"
+},
+{
+    question: "If ‘A’ means ‘÷’, ‘B’ means ‘×’, ‘C’ means ‘+’ and ‘D’ means ‘−’, then what will come in place of the question mark (?) in the following equation?\n\n12 C 52 A 13 B 7 D 31 = ?",
+    option: [
+        "5",
+        "7",
+        "9",
+        "8"
+    ],
+    answer: "9"
+},
+{
+    question: "What will come in place of the question mark (?) in the given series?\n\n17, 22, 32, 47, 67, ?",
+    option: [
+        "92",
+        "94",
+        "93",
+        "91"
+    ],
+    answer: "92"
+},
+{
+    question: "Based on the English alphabetical order, three of the following four pairs of letter-groups are alike in a certain way and thus form a group. Which pair of letter-groups does not belong to that group?\n\n(Note: The odd letter-group pair is not based on the number or position of consonants/vowels in the letter-groups.)",
+    option: [
+        "GE−ZA",
+        "MK−GE",
+        "CA−WU",
+        "SQ−MK"
+    ],
+    answer: "CA−WU"
+},
+{
+    question: "Select the set in which the numbers are related in the same way as the numbers in the following sets are related.\n\n(5, 14, 25)\n(4, 13, 24)\n\n(Note: Operations must be performed on the whole numbers, without breaking the numbers into their component digits.)",
+    option: [
+        "(10, 31, 42)",
+        "(9, 18, 23)",
+        "(8, 17, 6)",
+        "(6, 15, 26)"
+    ],
+    answer: "(6, 15, 26)"
+},
+{
+    question: "Based on the English alphabetical order, YEVA is related to JPGL in a certain way. Similarly, QWNS is related to BHYD. Following the same logic, XDUZ is related to which of the following?",
+    option: [
+        "FIKO",
+        "IOFJ",
+        "IOFK",
+        "FOKI"
+    ],
+    answer: "IOFK"
+},
+{
+    question: "Refer to the following number-symbol series and answer the given question. Counting is to be done only from left to right.\n\n(Left) 4 8 @ 3 € 8 & 6 * 6 © 6 $ £ & 5 7 $ $ # 8 $ (Right)\n\nHow many numbers are there, each of which is immediately preceded by a symbol and immediately followed by a symbol?",
+    option: [
+        "7",
+        "5",
+        "8",
+        "6"
+    ],
+    answer: "6"
+},
+{
+    question: "All 54 people are standing in a row facing north. Mr. Akte is 8th from the right end, while Mr. Memi is 21st from the left end. How many people are standing between Mr. Akte and Mr. Memi?",
+    option: [
+        "26",
+        "24",
+        "23",
+        "25"
+    ],
+    answer: "25"
+},
+{
+    question: "In a certain code language, ‘go there now’ is coded as ‘lb gt de’ and ‘go to school’ is coded as ‘kj ft de’. How is ‘go’ coded in the given language? (All codes are two-letter codes.)",
+    option: [
+        "kj",
+        "lf",
+        "de",
+        "gt"
+    ],
+    answer: "de"
+},
+{
+    question: "In a certain code language, ‘AUTO’ is coded as ‘2683’ and ‘TOUR’ is coded as ‘8136’. What is the code for ‘R’ in that language?",
+    option: [
+        "6",
+        "1",
+        "8",
+        "3"
+    ],
+    answer: "1"
+},
+{
+    question: "A, B, C, D, E and F are sitting around a circular table facing the centre. D sits third to the right of C. A sits second to the left of C. E sits second to the right of F. B sits immediately to the right of E. Counting from the left of A, how many people sit between A and F?",
+    option: [
+        "None",
+        "Four",
+        "Two",
+        "One"
+    ],
+    answer: "Two"
+},
+
+{
+    question: "What should come in place of the question mark (?) in the given series?\n\n6, 8, ?, 18, 26, 36",
+    option: [
+        "12",
+        "14",
+        "11",
+        "13"
+    ],
+    answer: "12"
+},
+{
+    question: "Kartik starts from point A and drives 9 km towards the east. Then he turns right and drives 5 km, then turns right and drives 11 km. Then he turns right and drives 12 km. Finally, he turns right, drives 2 km and stops at point P. What minimum distance should he drive, and in which direction, to reach point A again? (All turns are 90° unless specified otherwise.)",
+    option: [
+        "6 km towards the north",
+        "7 km towards the south",
+        "6 km towards the south",
+        "7 km towards the north"
+    ],
+    answer: "6 km towards the north"
+},
+{
+    question: "Five people, A, B, C, D and E, are sitting in a row facing north. Only two people sit between A and D. B sits third from the left end of the row. B sits immediately to the right of A. B sits immediately to the left of E. How many people are sitting between E and A?",
+    option: [
+        "Two",
+        "None",
+        "One",
+        "Three"
+    ],
+    answer: "One"
+},
+{
+    question: "Based on the English alphabetical order, JTUB is related to HRSZ in a certain way. Similarly, MXNP is related to KVLN. Following the same logic, LRYH is related to which of the following?",
+    option: [
+        "IOVE",
+        "JPWF",
+        "KQXG",
+        "JPXF"
+    ],
+    answer: "JPWF"
+},
+{
+    question: "Select the pair that follows the same pattern as the two pairs given below. Both pairs follow the same pattern.\n\nPSQ−MPN\nGJH−DGE",
+    option: [
+        "TVS−PSQ",
+        "TWU−QTR",
+        "TVS−QTR",
+        "TWU−PTQ"
+    ],
+    answer: "TWU−PTQ"
+},
+{
+    question: "What should come in place of the question mark (?) in the given series?\n\n1, 5, 11, 19, ?, 41",
+    option: [
+        "29",
+        "28",
+        "27",
+        "30"
+    ],
+    answer: "29"
+},
+{
+    question: "Find the sum of the second digit of the second-largest number and the third digit of the smallest number among 496, 357, 256, 547 and 413.",
+    option: [
+        "12",
+        "13",
+        "14",
+        "15"
+    ],
+    answer: "15"
+},
+{
+    question: "Find the missing number in the series: 1, 2, 10, ?, 101, 226",
+    option: [
+        "40",
+        "30",
+        "37",
+        "19"
+    ],
+    answer: "37"
+},
+{
+    question: "How many letters in the given letter series are immediately followed by a vowel?\n\nR B M Y A C T F K W N J Z Q L X O P E D H V",
+    option: [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    answer: "3"
+},
+{
+    question: "Find the sum of the third digit of the largest number and the second digit of the smallest number among 826, 117, 681, 964 and 529.",
+    option: [
+        "3",
+        "4",
+        "5",
+        "6"
+    ],
+    answer: "5"
+},
+{
+    question: "Find the next number in the series: 129, 143, 154, 168, 179, ?",
+    option: [
+        "189",
+        "191",
+        "193",
+        "195"
+    ],
+    answer: "193"
+},
+{
+    question: "If DWXK is coded as LEFS and JCDQ is coded as RKLY, then how will HABO be coded?",
+    option: [
+        "PIJW",
+        "QIKW",
+        "PJIV",
+        "PIJW"
+    ],
+    answer: "PIJW"
+},
+{
+    question: "A person walks 47 km towards the north from point A, then 48 km towards the east, 51 km towards the south, 56 km towards the west and finally 4 km towards the north. In which direction and at what distance is the person now from point A?",
+    option: [
+        "8 km towards the east",
+        "8 km towards the west",
+        "8 km towards the north",
+        "8 km towards the south"
+    ],
+    answer: "8 km towards the west"
+},
+{
+    question: "Find the next number in the series: 84, 85, 87, 91, 99, ?",
+    option: [
+        "111",
+        "113",
+        "115",
+        "117"
+    ],
+    answer: "115"
+},
+{
+    question: "Select the option that shows the same relationship as the given group:\n\n(9, 25, 17), (13, 33, 25)",
+    option: [
+        "(14, 35, 27)",
+        "(15, 31, 23)",
+        "(16, 34, 26)",
+        "(12, 29, 21)"
+    ],
+    answer: "(14, 35, 27)"
+},
+{
+    question: "Which of the following letter-groups is different from the other three?",
+    option: [
+        "JFG",
+        "XTV",
+        "EAB",
+        "PLM"
+    ],
+    answer: "XTV"
+},
+{
+    question: "If OGAR is coded as 123 and ZAPQ is coded as 180, then what will be the code for WVDL?",
+    option: [
+        "180",
+        "183",
+        "186",
+        "189"
+    ],
+    answer: "183"
+},
+{
+    question: "Which of the following letter-groups is different from the other three?",
+    option: [
+        "SPN",
+        "WTR",
+        "TRO",
+        "BYW"
+    ],
+    answer: "TRO"
+},
+{
+    question: "If ‘+’ and ‘−’, and ‘×’ and ‘÷’ are interchanged, find the value of ‘?’ in the following equation:\n\n10 ÷ 2 + 21 × 7 − 8 = ? + 5",
+    option: [
+        "22",
+        "28",
+        "30",
+        "25"
+    ],
+    answer: "30"
+},
+{
+    question: "If A means '+', B means '−', C means '×' and D means '÷', find the value of the following:\n\n42 B 3 D 70 A 2 C 9 B (36 A 6) B 3",
+    option: [
+        "109",
+        "119",
+        "129",
+        "139"
+    ],
+    answer: "109"
+},
+{
+    question: "Seven people A, B, C, D, E, F and G are sitting in a row facing north. Only two people sit to the left of B. Exactly three people sit between C and F, and neither of them sits at an end. E sits immediately to the right of D, and A sits immediately to the left of C. How many people are sitting to the right of C?",
+    option: [
+        "4",
+        "5",
+        "3",
+        "2"
+    ],
+    answer: "5"
+},
+{
+    question: "A person is 15th from the top and 10th from the bottom in a row. How many people are there in total in the row?",
+    option: [
+        "24",
+        "25",
+        "26",
+        "23"
+    ],
+    answer: "24"
+},
+{
+    question: "Find the next term in the series:\n\nDEA48, CDZ55, BCY62, ABX69, ?",
+    option: [
+        "ZAW75",
+        "ZAW76",
+        "YAW76",
+        "ZAX76"
+    ],
+    answer: "ZAW76"
+},
+{
+    question: "Statements:\nAll hotels are restaurants. All restaurants are cafés. Some restaurants are bars.\n\nConclusions:\nI. Some cafés are bars.\nII. Some hotels are bars.\n\nWhich conclusion(s) follow?",
+    option: [
+        "Only conclusion I",
+        "Only conclusion II",
+        "Both conclusions",
+        "Neither I nor II"
+    ],
+    answer: "Only conclusion I"
+},
+{
+    question: "If MKO is coded as KIM and RPT is coded as PNR, then how will FDH be coded?",
+    option: [
+        "DBF",
+        "EAG",
+        "CEG",
+        "DBE"
+    ],
+    answer: "DBF"
+},
+{
+    question: "In a code language, ‘lets move on’ is written as ‘rk ts jn’ and ‘move on the’ is written as ‘pl jn ts’. What is the code for ‘lets’?",
+    option: [
+        "pl",
+        "jn",
+        "rk",
+        "ts"
+    ],
+    answer: "rk"
+},
+{
+    question: "A person walks 8 km towards the north from point M, then turns left and walks 3 km, then turns right and walks 5 km, then turns right and walks 3 km, and finally turns right and walks 1 km. In which direction and at what distance is the person from point M?",
+    option: [
+        "10 km towards the north",
+        "11 km towards the north",
+        "12 km towards the north",
+        "12 km towards the south"
+    ],
+    answer: "12 km towards the north"
+},
+{
+    question: "If all symbols are removed from the given series, which digit will be fifth from the right?\n\n1, 7, 5, 2, 6, 4, 9, 5",
+    option: [
+        "6",
+        "2",
+        "4",
+        "9"
+    ],
+    answer: "2"
+},
+{
+    question: "Find the next term in the series:\n\nODH, QFJ, SHL, UJN, ?",
+    option: [
+        "VKO",
+        "WLP",
+        "XMQ",
+        "YNR"
+    ],
+    answer: "WLP"
+},
+{
+    question: "Seven people E, F, G, H, I, J and K are sitting in a row facing north. Four people sit to the left of J. Exactly three people sit between J and E. K sits second to the left of F. G and J are the immediate neighbors of H. Who sits second to the left of J?",
+    option: [
+        "I",
+        "F",
+        "G",
+        "K"
+    ],
+    answer: "I"
+},
+{
+    question: "Statements:\nAll models are actors. Some actors are directors. All directors are producers.\n\nConclusions:\nI. Some actors are producers.\nII. All models are directors.\n\nWhich conclusion(s) follow?",
+    option: [
+        "Only conclusion I",
+        "Only conclusion II",
+        "Both conclusions",
+        "Neither I nor II"
+    ],
+    answer: "Only conclusion I"
+},
+{
+    question: "If A ± B means A is the wife of B; A * B means A is the sister of B; A ₹ B means A is the father of B; and A # B means A is the brother of B, then what is D’s relation to O in D * R # A ± C ₹ O?",
+    option: [
+        "Maternal aunt",
+        "Sister",
+        "Grandmother",
+        "Daughter"
+    ],
+    answer: "Maternal aunt"
+},
+{
+    question: "When the digits of the number 7483516 are arranged in ascending order, how many digits will remain in their original positions?",
+    option: [
+        "2",
+        "3",
+        "4",
+        "5"
+    ],
+    answer: "2"
+},
+{
+    question: "If DINS is coded as GLQV and HMRW is coded as KPUZ, then how will BGLQ be coded?",
+    option: [
+        "DINS",
+        "EJOT",
+        "FKPU",
+        "GLQV"
+    ],
+    answer: "EJOT"
+},
+{
+    question: "There are 51 people in a row. Mahesh is 18th from the right, and Valli is 22nd from the left. How many people are sitting between them?",
+    option: [
+        "11",
+        "12",
+        "10",
+        "13"
+    ],
+    answer: "11"
+},
+{
+    question: "Eight people are sitting around a circular table facing the centre. According to the given seating conditions of Fakhar, Deepu, Hari, Aman, Chotu, Babu, Guna and Ehsan, who sits second to the right of Aman?",
+    option: [
+        "Deepu",
+        "Hari",
+        "Guna",
+        "Ehsan"
+    ],
+    answer: "Guna"
+},
+
+];
+
+const scienceQuestionsEn = [
+{
+    question: "A ray of light on a plane mirror with the normal 30° at an angle of strikes incident ray and reflected ray angle between will be?",
+    option: [
+        "90°",
+        "60°",
+        "120°",
+        "30°"
+    ],
+    answer: "60°"
+},
+{
+    question: "kidney of tubules and salivary gland tubules lining epithelial tissue which of the following is?",
+    option: [
+        "columnar epithelium (Columnar epithelium)",
+        "stratified epithelium (Stratified epithelium)",
+        "ciliated epithelium (Ciliated epithelium)",
+        "cuboidal epithelium (Cuboidal epithelium)"
+    ],
+    answer: "cuboidal epithelium (Cuboidal epithelium)"
+},
+{
+    question: "respiration of bare in following kthnon of nof shi visheshtan from milan kren\n\na. vayviy respiration\nb. ksijn of nupsthiti in glutoj of vightn hota is\nc. ksijn of psthiti in paruvet of vightn hota is\nd. vayviy respiration\n\ni. ksijn of vshykta not hoti is\nii. matokndrior\niii. cell drvy\niv. ksijn of vshykta hoti is",
+    option: [
+        "a - i, b - iii, c - ii, d - iv",
+        "a - iv, b - i, c - ii, d - iii",
+        "a - i, b - iv, c - ii, d - iii",
+        "a - iv, b - i, c - iii, d - ii"
+    ],
+    answer: "a - iv, b - i, c - ii, d - iii"
+},
+{
+    question: "svposhi to khady shrnkhla in prthm poshn str on kyon rkha jata is?",
+    option: [
+        "kyonki ve ofrbnik matteron from bhojn bnate are",
+        "kyonki ve jaivik pshisht matteron of pbhog krte are",
+        "kyonki ve bhojn of li shaofhari jivon on nirbhr hote are",
+        "kyonki ve mt jivon to pghtit krte are"
+    ],
+    answer: "kyonki ve ofrbnik matteron from bhojn bnate are"
+},
+{
+    question: "following in from which-sa atom of ofr nirdharit krta is?",
+    option: [
+        "lektrn megh (Electron Clouds)",
+        "nyutrn (Neutrons)",
+        "nabhik (Nucleus)",
+        "protn (Protons)"
+    ],
+    answer: "lektrn megh (Electron Clouds)"
+},
+{
+    question: "kriorshilta shreni in chch metaln to kis prkrior dvara nishkrshit kior ja skta is?",
+    option: [
+        "vaidyutpghtni pchyn (Electrolytic reduction)",
+        "only tapn (Heating)",
+        "ofrbn of sath tapn",
+        "nistapn (Calcination)"
+    ],
+    answer: "vaidyutpghtni pchyn (Electrolytic reduction)"
+},
+{
+    question: "one ptthr to 49 m/s of prarnbhik veg from rdhvadhr on of r phenof jata is kshnik thhrav from purv sof dhiktm height of gnna ofji (g = 9.8 m/s² liji)",
+    option: [
+        "245 m",
+        "122.5 m",
+        "49 m",
+        "9.8 m"
+    ],
+    answer: "122.5 m"
+},
+{
+    question: "padpon in prtan motion (Tendril movement) ny nuvrtni motionyon (Tropic movements) from kis profr sman is?",
+    option: [
+        "yh only ordchchhik and ksmat dbav hota is",
+        "sin ddipn of prtikrior in dishatmk vddhi shamil hoti is",
+        "yh ntrik water on dharit is",
+        "yh sdaiv rat of time hoti is"
+    ],
+    answer: "sin ddipn of prtikrior in dishatmk vddhi shamil hoti is"
+},
+{
+    question: "one 7 V of baitri five prtirodhton 0.1 Ω, 0.4 Ω, 0.5 Ω, 0.6 Ω and 12.4 Ω of sath shreni krm in judi hu is 12.4 Ω prtirodhk from prvahit hone vali dhara jat ofji",
+    option: [
+        "1 A",
+        "0.75 A",
+        "0.5 A",
+        "2 A"
+    ],
+    answer: "0.5 A"
+},
+{
+    question: "pchyn bhikrior what is?",
+    option: [
+        "nyutrnon of hani",
+        "lektrnon of hani",
+        "protnon of lbdhi",
+        "lektrnon of lbdhi"
+    ],
+    answer: "lektrnon of lbdhi"
+},
+{
+    question: "ghrelu onipth in, vishesh rup from metal pkrnon of li, hre rng of electricrodhi rth tar of prathmik surksha work what is?",
+    option: [
+        "lp prtirodh vala pth prdan krna taki risav dhara sadhitr of vibhv to bhumi of vibhv of brabr rkhe and tivr electric ghathenn from surkshit bcha ja sof",
+        "voltej to 220 V on sthir rkhna",
+        "ofla tar khrab hone on ttsth tar of rup in work krna",
+        "tirikt dhara to bhumi in modne of li chch prtirodh pth prdan krna"
+    ],
+    answer: "lp prtirodh vala pth prdan krna taki risav dhara sadhitr of vibhv to bhumi of vibhv of brabr rkhe and tivr electric ghathenn from surkshit bcha ja sof"
+},
+{
+    question: "following stnbhon to sumelit ofji\n\nstnbh A (onisthiti)\nA. acid yeara\nB. pch\nC. dntkshy\nD. mdhumkkhi of dnk\n\nstnbh B (prbhav)\n1. yh tb hota is jb mukh in pH < 5.5 hota is\n2. prtiacid tirikt acid to prbhavhin krte are\n3. pH < 5.6, wateriy jivn of li haniofrk is\n4. beking soda dvara nishprbhavi kior jata is",
+    option: [
+        "A-3; B-2; C-1; D-4",
+        "A-4; B-3; C-2; D-1",
+        "A-2; B-4; C-1; D-3",
+        "A-1; B-2; C-3; D-4"
+    ],
+    answer: "A-3; B-2; C-1; D-4"
+},
+{
+    question: "str __________ vale matter hote are",
+    option: [
+        "khtti-gndh",
+        "mithi-gndh",
+        "tivr-gndh",
+        "tikhi-gndh"
+    ],
+    answer: "mithi-gndh"
+},
+{
+    question: "kisi vstu in sof sthiti or vinors of ofrn snchit energy to what khte are?",
+    option: [
+        "sthitij energy",
+        "dhvni energy",
+        "shmiy energy",
+        "motionj energy"
+    ],
+    answer: "sthitij energy"
+},
+{
+    question: "veg-time graph of ntrgt kshetr what drshata is?",
+    option: [
+        "vstu dvara lior gor time",
+        "vstu of tvrn",
+        "vstu of chal",
+        "s time ntral of dauran vstu of viswaspn"
+    ],
+    answer: "s time ntral of dauran vstu of viswaspn"
+},
+{
+    question: "following in from which-sa kthn laingik prjnn of visheshta drshata is?",
+    option: [
+        "sin only one jnk shamil hota is",
+        "sin two jnk shamil hote are",
+        "nuvnshik rup from vividh sntti tpnn hoti are",
+        "sin yugmton of vshykta hoti is"
+    ],
+    answer: "sin only one jnk shamil hota is"
+},
+{
+    question: "srl swasyi tissue jo plants of bhagon jaifrom tne and prtan to orntrik lnb (Mechanical support) and lchilapn prdan krta is, __________ is",
+    option: [
+        "jalm (Xylem)",
+        "tolenofma (Collenchyma)",
+        "pairenofma (Parenchyma)",
+        "sklerenofma (Sclerenchyma)"
+    ],
+    answer: "tolenofma (Collenchyma)"
+},
+{
+    question: "gainde, vhel and hathi snfour of li kis shreni of dhvni vtti of pyog krte are?",
+    option: [
+        "onashrvy dhvni",
+        "tidhvni (Ultrasound)",
+        "shrvy dhvni (Audible sound)",
+        "vshrvy dhvni (Infrasound)"
+    ],
+    answer: "vshrvy dhvni (Infrasound)"
+},
+{
+    question: "following in from which-sa vilyn of nirman of dauran bhautik onivrtn of dahrn is?",
+    option: [
+        "mashy in bhojn of pachn",
+        "water in salt of vilyn",
+        "salt vilyn in lohe of jng lgna",
+        "ninbu of rs dalne on dudh of phtna"
+    ],
+    answer: "water in salt of vilyn"
+},
+{
+    question: "vtl drpn dvara nirmit prtibinb of bare in following in from which-sa/from kthn sty is/are?\n\n(i) vtl drpn sdaiv vastvik twas lta prtibinb bnata is, chahe binb of sthiti kuchh bhi ho\n(ii) jb binb to vtl drpn of phoks and vkrta ofndr of bich rkha jata is, then drpn vastvik, lta and chhota prtibinb bnata is\n(iii) jb binb to nnt on rkha jata is, then vtl drpn pne phoks on vastvik, lta and bindu ofr of prtibinb bnata is",
+    option: [
+        "only (iii)",
+        "(ii) and (iii) twonon",
+        "only (i)",
+        "(i) and (ii) twonon"
+    ],
+    answer: "only (iii)"
+},
+{
+    question: "sman tvrn from motionman kisi vstu of veg-time graph of ofr of bare in what kha ja skta is?",
+    option: [
+        "yh one vkr rekha hoti is",
+        "yh sdaiv one kshaitij rekha hoti is",
+        "yh sdaiv niche of r jhuof hu rekha hoti is",
+        "yh sdaiv one sidhi rekha hoti is"
+    ],
+    answer: "yh one vkr rekha hoti is"
+},
+{
+    question: "one purush rogi in shukranu motionshilta km is s mamle in following in from kin grnthiyon of thik from ofm n krne of srvadhik snbhavna is?",
+    option: [
+        "gnorshy and dhikidney grnthiorn",
+        "wasrksin and piniyl grnthiorn",
+        "prostet grnthi and shukrashy",
+        "vshn and mutrashy"
+    ],
+    answer: "prostet grnthi and shukrashy"
+},
+{
+    question: "bor-bri (Bohr-Bury) according to, M-tosh in dhiktm how many lektrn smayojit ho skte are?",
+    option: [
+        "8",
+        "18",
+        "2",
+        "20"
+    ],
+    answer: "18"
+},
+{
+    question: "which-sa gundhrm kisi compound to mixture from vibhedit krta is?",
+    option: [
+        "nishchit snghtn and gundhrm hote are",
+        "kisi bhi vswas in vidyman ho skta is",
+        "sdaiv thos hota is",
+        "one from dhik matteron from nirmit hota is"
+    ],
+    answer: "nishchit snghtn and gundhrm hote are"
+},
+{
+    question: "laingik jnn krne vale paudhon in vividhta kyon mhtvpurn is?",
+    option: [
+        "sfrom jnsnkhor in nuvnshik vividhta km ho jati is",
+        "yh onorvrniy onivrtnon of prti nukuln to skshm bnakr jivit rhne of snbhavnan to bdhata is",
+        "yh prjatiyon of bdlte vatavrn of prti nukuln kshmta to simit krta is",
+        "yh sunishchit krta is ki all sntanen mata-pita of sman hon, jisfrom onerupta bni rhe"
+    ],
+    answer: "yh onorvrniy onivrtnon of prti nukuln to skshm bnakr jivit rhne of snbhavnan to bdhata is"
+},
+
+{
+    question: "glji pkrn in hone vali which-si prkrior snshleshn in pni bhumiof drshati is?",
+    option: [
+        "rabosom from nyuklik sid of snshleshn",
+        "srl shrkra from jtil shrkra of nirman",
+        "onasrn of madhym from water of vshoshn",
+        "protin of mino sid in rupantrn"
+    ],
+    answer: "srl shrkra from jtil shrkra of nirman"
+},
+{
+    question: "pis phlorior (Apis florae) of samany nam what is?",
+    option: [
+        "dvarph bi (dwarf bee)",
+        "jaynt bi (giant bee)",
+        "litil bi (little bee)",
+        "shiyn bi (Asian bee)"
+    ],
+    answer: "litil bi (little bee)"
+},
+{
+    question: "which-sa ofrk vashpikrn of dr to not bdhata is?",
+    option: [
+        "temperature in kmi",
+        "rdrta in kmi",
+        "pshthiy area in vddhi",
+        "air of motion in vddhi"
+    ],
+    answer: "temperature in kmi"
+},
+{
+    question: "if to kn prtyek 3 seconds in 12 m of distance ty krta is, then sof distance-time graph of prvnta what hogi?",
+    option: [
+        "3.0 m/s",
+        "12.0 m/s",
+        "4.0 m/s",
+        "0.25 m/s"
+    ],
+    answer: "4.0 m/s"
+},
+{
+    question: "following in from which-si energy kisi pind in sof sthiti, ofr and vinors of dhar on hoti is?",
+    option: [
+        "shmiy energy",
+        "peshiy energy",
+        "motionj energy",
+        "sthitij energy"
+    ],
+    answer: "sthitij energy"
+},
+{
+    question: "following in from which-si, India of rajswasn in water sngrhn of one parnonik vidhi is?",
+    option: [
+        "borvel (Borewell)",
+        "johd (Johad)",
+        "chek daim (Check dam)",
+        "ared pnp (Hand pump)"
+    ],
+    answer: "johd (Johad)"
+},
+{
+    question: "if kisi lens of kshmta −4 D is, then s lens of bare in following in from which-sa kthn shi is?",
+    option: [
+        "yh 0.4 m of phoks distance vala one vtl lens is",
+        "yh 25 cm of phoks distance vala one ttl lens is",
+        "yh 2.5 m of phoks distance vala one ttl lens is",
+        "yh 25 cm of phoks distance vala one vtl lens is"
+    ],
+    answer: "yh 25 cm of phoks distance vala one vtl lens is"
+},
+{
+    question: "following in from which-sa, mhilan of grbh-dharn vn svasthy of li srvadhik mhtvpurn is?",
+    option: [
+        "rojana dhumrpan krna",
+        "bhojn skip krna",
+        "chit har and prsv-purv dekhbhal krna",
+        "bhut dhik kaiphin of fromvn krna"
+    ],
+    answer: "chit har and prsv-purv dekhbhal krna"
+},
+{
+    question: "jb kisi vstu of distance-time graph one vkr rekha is, then yh what drshata is?",
+    option: [
+        "motion in to tvrn not is",
+        "vstu niyt chal from chl rhi is",
+        "vstu sthir vswas in is",
+        "vstu of chal time of sath onivrtit ho rhi is"
+    ],
+    answer: "vstu of chal time of sath onivrtit ho rhi is"
+},
+{
+    question: "kisi vstu to trl in nimjjit krne on s on lgne vale tplavn force of bare in following in from which-from kthn shi are?\n\n(i) jb all vstun kisi trl in nimjjit of jati are then n on tplavn force lgta is\n(ii) s tplavn force of oniman trl of ghntv on nirbhr krta is",
+    option: [
+        "only (ii)",
+        "only (i)",
+        "n then (i) and n hi (ii)",
+        "(i) and (ii) twonon"
+    ],
+    answer: "(i) and (ii) twonon"
+},
+{
+    question: "following in from which-si one snyojn bhikrior is?",
+    option: [
+        "2KClO₃ → 2KCl + 3O₂",
+        "AgNO₃ + NaCl → AgCl + NaNO₃",
+        "Fe + CuSO₄ → FeSO₄ + Cu",
+        "CaO + H₂O → Ca(OH)₂"
+    ],
+    answer: "CaO + H₂O → Ca(OH)₂"
+},
+{
+    question: "vh bhikrior jisin two ynik compoundon of dhnatmk and natmk yn ps in swasn bdlkr two n compound bnate are, kisof dahrn is?",
+    option: [
+        "snyojn bhikrior",
+        "pghtn bhikrior",
+        "twohri viswaspn bhikrior",
+        "viswaspn bhikrior"
+    ],
+    answer: "twohri viswaspn bhikrior"
+},
+{
+    question: "following in from which-sa viklp human in respiration of dauran air of pth to stik rup from drshata is?",
+    option: [
+        "mukh → mashy → phephde → lviyoli",
+        "nasadvar → knth → phephde → lviyoli",
+        "nasadvar → khady nli → heart → phephde",
+        "mukh → heart → phephde → daorphram"
+    ],
+    answer: "nasadvar → knth → phephde → lviyoli"
+},
+{
+    question: "following in from which-sa one vishmangi mixture is?",
+    option: [
+        "ret and water",
+        "air",
+        "shrkra vilyn",
+        "salt vilyn"
+    ],
+    answer: "ret and water"
+},
+{
+    question: "magnetic kshetr in rkhe dharavahi chalk on lgne vale force of disha of phchan krne in which-sa niym shayk hota is?",
+    option: [
+        "maiksvel of krkskru niym",
+        "dkshin-hst ngutha niym",
+        "phleming of vamhst niym",
+        "m of niym"
+    ],
+    answer: "phleming of vamhst niym"
+},
+{
+    question: "khndn dharit jnn of prkrior of dauran following chrnon to shi krm in vyvsthit kren:\n\n1. smsutrn dvara body of lupt ngon of vddhi\n2. body/tntu of khndon in vightit hona\n3. praudh jiv svtntr rup from rhta is\n4. prtyek khnd one purn jiv in viksit hota is",
+    option: [
+        "2 – 4 – 1 – 3",
+        "2 – 1 – 4 – 3",
+        "1 – 2 – 4 – 3",
+        "4 – 2 – 1 – 3"
+    ],
+    answer: "2 – 1 – 4 – 3"
+},
+{
+    question: "vh prkrior jisof dvara netr lens, nikt or dursth vstun on phoks krne of li pni phoks distance bdlta is, __________ khlati is",
+    option: [
+        "smayojn (Adjustment)",
+        "nukuln (Adaptation)",
+        "smnjn (Accommodation)",
+        "onavrtn (Reflection)"
+    ],
+    answer: "smnjn (Accommodation)"
+},
+{
+    question: "jb kisi dhvni srot of knpn of vtti in vddhi hoti is, then oninami dhvni in _________ hoga/hogi",
+    option: [
+        "dhik prforceta",
+        "nimn tartv",
+        "chch tartv",
+        "lghu orm"
+    ],
+    answer: "chch tartv"
+},
+{
+    question: "dahine hath of nguthe of niym according to, if hmare dahine hath of ngliyon to modne from magnetic kshetr of disha milti is, then hmare dahine hath of ngutha kis bhautik rashi of disha in snrekhit hota is?",
+    option: [
+        "chalk of siron on nupryukt electric kshetr",
+        "chalk on lgne vala force",
+        "chalk from prvahit hone vali dhara",
+        "chalk in prerit dhara"
+    ],
+    answer: "chalk from prvahit hone vali dhara"
+},
+{
+    question: "jb kon to air in grm krne on ksijn of sath bhikrior kra jati is, then following in from which-sa viklp, bnne vale tpad and sof rng to shi triof from drshata is?",
+    option: [
+        "kon (II) ksad (CuO) - ofle rng of",
+        "kon (II) ksad (CuO) - bhure rng of",
+        "kon (I) ksad (Cu₂O) - sphed rng of",
+        "kon (I) ksad (Cu₂O) - lal rng of"
+    ],
+    answer: "kon (II) ksad (CuO) - ofle rng of"
+},
+{
+    question: "following in from which-sa viklp, kisi element of drvyman snkhor to shi rup in nirupit krta is?",
+    option: [
+        "only protnon of snkhor",
+        "lektrnon of snkhor",
+        "protn and nyutrn of bich of ntr",
+        "protn and nyutrn of yog"
+    ],
+    answer: "protn and nyutrn of yog"
+},
+{
+    question: "metaln, samanyth shma of suchalk hoti are following in from which-sa, sof one pvad is?",
+    option: [
+        "lyuminiym",
+        "loha",
+        "tanba",
+        "para"
+    ],
+    answer: "para"
+},
+{
+    question: "one padp jnk, mtr of two shuddh-nsli padpon—one gol bij vala and dusra jhurridar bij vala—of bich snkrn krata is indl of nishkrshon of dhar on, F₁ pidhi of all bijon in which-sa lkshnrup prdrshit hoga?",
+    option: [
+        "jhurridar bij",
+        "gol bij",
+        "vibhinn nupathenn in gol and jhurridar of mixture",
+        "dhe gol, dhe jhurridar"
+    ],
+    answer: "gol bij"
+},
+{
+    question: "following in from which-sa kthn, sutrivibhajn of li shi is lekin rdhsutri vibhajn of li shi not is?",
+    option: [
+        "yh nuvnshik vividhta to bdhava deta is",
+        "yh jnn celln in hota is",
+        "sof oninamsvrup gunit celln bnti are",
+        "yh sman sntti celln tpnn krta is"
+    ],
+    answer: "yh sman sntti celln tpnn krta is"
+},
+{
+    question: "lohe in jng lgne of li following in from which-si onisthitiorn vshyk are?",
+    option: [
+        "only ksijn of psthiti",
+        "ksijn and pani (nmi) twonon of psthiti",
+        "only pani (nmi) of psthiti",
+        "ofrbn daksad of psthiti"
+    ],
+    answer: "ksijn and pani (nmi) twonon of psthiti"
+},
+
+{
+    question: "what kisi vstu of viswaspn ty of g distance from dhik ho skta is?",
+    option: [
+        "han, sdaiv",
+        "han, kbhi-kbhi",
+        "only tbhi jb vstu srl rekha in motion krti is",
+        "not, viswaspn kbhi bhi distance from dhik not ho skta is"
+    ],
+    answer: "not, viswaspn kbhi bhi distance from dhik not ho skta is"
+},
+{
+    question: "goliy lenson of chihn onipati according to, following in from which-from kthn shi not are?\n\n(i) mukhy ksh of smanantr all duriorn lens of phoks from mapi jati are\n(ii) mul-bindu of dan r mapi g all duriorn dhnatmk mani jati are\n(iii) mukhy ksh of lnbvt and on mapi g duriorn natmk mani jati are\n(iv) vstu hmesha lens of ban r rkhi jati is",
+    option: [
+        "(ii) and (iii) twonon",
+        "(ii) and (iv) twonon",
+        "(i) and (iv) twonon",
+        "(i) and (iii) twonon"
+    ],
+    answer: "(i) and (iii) twonon"
+},
+{
+    question: "swasyi vatavrn in laingik jnn from what labh milta is?",
+    option: [
+        "laingik vividhta",
+        "tivr and onesman jnn",
+        "nuvnshik vividhta",
+        "n vatavrn of nukuln"
+    ],
+    answer: "tivr and onesman jnn"
+},
+{
+    question: "shkti of SI matrk vat (W) is work-shkti snbndh according to, one vat _____________ of brabr hota is",
+    option: [
+        "1 jul prti seconds (1 J/s)",
+        "1 nyutn prti mitr (1 N/m)",
+        "1 jul-seconds (1 J·s)",
+        "one kilovat-ghnta (1 kWh)"
+    ],
+    answer: "1 jul prti seconds (1 J/s)"
+},
+{
+    question: "one pushp from dusre pushp tk onag kn of ntrn to what khte are?",
+    option: [
+        "svonagn (Self pollination)",
+        "to onagn (Auto pollination)",
+        "svyugmn (Autogamy)",
+        "on-onagn (Cross pollination)"
+    ],
+    answer: "on-onagn (Cross pollination)"
+},
+{
+    question: "following in from which-sa viklp kisi oninliof of bahr magnetic kshetr of disha of shi vrnn krta is?",
+    option: [
+        "sire from ofndr tk",
+        "dkshini dhruv from answeri dhruv",
+        "ofndr from sire tk",
+        "answeri dhruv from dkshini dhruv"
+    ],
+    answer: "answeri dhruv from dkshini dhruv"
+},
+{
+    question: "given viklpon in from samany ghrelu pshisht from snbndhit shi kthn of chyn ofji",
+    option: [
+        "snpurn pshisht jaiv-nimnikrniy hota is",
+        "pshisht of surkshit niptan nivary not is",
+        "snpurn pshisht jaiv-nimnikrniy hota is",
+        "pshisht in jaiv-nimnikrniy and jaiv-nimnikrniy twonon ghtk hote are"
+    ],
+    answer: "pshisht in jaiv-nimnikrniy and jaiv-nimnikrniy twonon ghtk hote are"
+},
+{
+    question: "trk and motrbs of tayr, ofr of tayron of tulna in jorda chaude dijan ki jate are, jbki krtn jaron and oflon of sire nuofle and chhote hote are dijan in yh ntr s siddhant to drshata is ki ___________",
+    option: [
+        "prnod, snonk area of nukrmanupati hota is",
+        "sman prnod chhote area on work krte hu dhik pressure dalta is",
+        "dhik prnod of oninti sdaiv km pressure in hoti is",
+        "pressure vstu of drvyman of vyutkrmanupati hota is"
+    ],
+    answer: "sman prnod chhote area on work krte hu dhik pressure dalta is"
+},
+{
+    question: "following in from which-si divas, dhvni trngon of bhu onavrtn of siddhant on work krti is?",
+    option: [
+        "thrmamitr",
+        "makrostop",
+        "megaphon",
+        "stethostop"
+    ],
+    answer: "stethostop"
+},
+{
+    question: "bksat from luminiym nishkrshn of li kis prkrm of pyog kior jata is?",
+    option: [
+        "bhrjn of bad pchyn",
+        "pighle hu luminiym ksad of electric pghtn",
+        "jsta dvara viswaspn",
+        "nistapn of bad ofrbn pchyn"
+    ],
+    answer: "pighle hu luminiym ksad of electric pghtn"
+},
+{
+    question: "following in from kis prkrior of oninamsvrup two sman sntti celln of nirman hota is?",
+    option: [
+        "rdhsutrivibhajn",
+        "smsutrivibhajn",
+        "nishechn",
+        "sutrivibhajn of bina cell vibhajn"
+    ],
+    answer: "smsutrivibhajn"
+},
+{
+    question: "if 50 g sadharn nmk to 300 g water in ghola jata is, then drvyman/drvyman percent (mass by mass percentage) of dhar on vilyn of sandrta of prakkln ofji",
+    option: [
+        "12%",
+        "14.28%",
+        "12.22%",
+        "14%"
+    ],
+    answer: "14.28%"
+},
+{
+    question: "following in from which-sa viklp nyutn of motion of tisre niym to srvottm rup from drshata is?",
+    option: [
+        "one roft jo gaison to niche of r phenkkr on of r bdhta is",
+        "gurutvakrshn of prbhav in girti hu gend",
+        "one pendulm ge-pichhe twoln kr rha is",
+        "njn of shkti of ofrn sdk on teji from tvrit hoti ofr"
+    ],
+    answer: "one roft jo gaison to niche of r phenkkr on of r bdhta is"
+},
+{
+    question: "following in from which-sa kthn srvottm rup from sof vorkhor krta is ki kyon kisi element of all atomn to one hi prtik dvara drshaor jata is?",
+    option: [
+        "kyonki nof nabhik in protnon of snkhor sman hoti is",
+        "kyonki nof bhautik gundhrm sman hote are",
+        "kyonki nof nabhik in nyutrnon of snkhor sman hoti is",
+        "kyonki nof drvyman snkhorn sdaiv sman hoti are"
+    ],
+    answer: "kyonki nof nabhik in protnon of snkhor sman hoti is"
+},
+{
+    question: "hadroofrbn ofrbnik compoundon in ___________________ element hote are",
+    option: [
+        "hadrojn and ofrbn twonon",
+        "ksijn",
+        "ofrbn",
+        "hadrojn"
+    ],
+    answer: "hadrojn and ofrbn twonon"
+},
+{
+    question: "following in from which-sa rasaynik smikrn shi rup from sntulit is?",
+    option: [
+        "Fe + H₂O → Fe₃O₄ + H₂",
+        "3Fe + 4H₂O → Fe₃O₄ + 4H₂",
+        "2Fe + 3H₂O → 2Fe₃O₄ + 3H₂",
+        "3Fe + 4H₂O → Fe₃O₄ + 2H₂"
+    ],
+    answer: "3Fe + 4H₂O → Fe₃O₄ + 4H₂"
+},
+{
+    question: "following in from which-sa compound, water in vilin hone on one vilyn bnata is?",
+    option: [
+        "ret",
+        "sodiym klorad",
+        "tel",
+        "lohe of burada"
+    ],
+    answer: "sodiym klorad"
+},
+{
+    question: "which-sa jiv svchchh wateriy paristhitiof tntr of prmukh snoftk is?",
+    option: [
+        "tilchtta",
+        "laofn",
+        "ofnchu",
+        "mchhli"
+    ],
+    answer: "mchhli"
+},
+{
+    question: "vibhjyotk tissue only vishisht kshetron in pa jate are sthiti of dhar on, which-sa vibhjyotk tissue of profr not is?",
+    option: [
+        "ntrvisht (Intercalary)",
+        "shirshsth (Apical)",
+        "dhari (Basal)",
+        "parshv (Lateral)"
+    ],
+    answer: "dhari (Basal)"
+},
+{
+    question: "sodiym klorad of wateriy vilyn in electric prvahit krof sodiym hadrksad taiorr kior jata is s prkrm to ___________ is called",
+    option: [
+        "hl-herlt (Hall-Héroult)",
+        "brn-habr (Born-Haber)",
+        "klor-lkli (Chlor-alkali)",
+        "da (Dow’s)"
+    ],
+    answer: "klor-lkli (Chlor-alkali)"
+},
+{
+    question: "mada jnn tntr of sndrbh in following in from which-from kthn shi are?\n\nkthn A: nda (egg), one ptli ndvahini or dinbvahini nli of madhym from ndashy from grbhashy tk le jaor jata is\nkthn B: grbhashy, grbhashygriva of madhym from yoni in khulta is",
+    option: [
+        "n then kthn A and n hi kthn B",
+        "kthn A and kthn B twonon",
+        "only kthn A",
+        "only kthn B"
+    ],
+    answer: "kthn A and kthn B twonon"
+},
+{
+    question: "following in from which-si viswaspn bhikriorn snbhv are?\n\nI. Fe₍s₎ + CuSO₄₍aq₎ → FeSO₄ + Cu\nII. Cu + FeSO₄₍aq₎ → CuSO₄ + Fe₍s₎\nIII. Na₂SO₄ + BaCl₂ → BaSO₄ + 2NaCl\nIV. AgCl + NaNO₃ → AgNO₃ + NaCl",
+    option: [
+        "only I and III",
+        "only I, II and III",
+        "only I, III and IV",
+        "only II and IV"
+    ],
+    answer: "only I and III"
+},
+{
+    question: "if voltej (V) sthir is, then shkti following in from kisof nukrmanupati hogi?",
+    option: [
+        "prtirodh",
+        "prtirodh of vrg",
+        "energy",
+        "dhara"
+    ],
+    answer: "dhara"
+},
+{
+    question: "chikni nthprdrvyi jaliof of shi work of chyn kren",
+    option: [
+        "lipid snshleshn (Lipid synthesis)",
+        "protin snshleshn (Protein synthesis)",
+        "ofrbohadret snshleshn (Carbohydrate synthesis)",
+        "nyuklik sid snshleshn (Nucleic acid synthesis)"
+    ],
+    answer: "lipid snshleshn (Lipid synthesis)"
+},
+{
+    question: "kisi lens of profshik ofndr and sof mukhy phoks of bich of distance what khlati is?",
+    option: [
+        "vrdhn",
+        "vkrta radius",
+        "phoks distance",
+        "dvark"
+    ],
+    answer: "phoks distance"
+},
+{
+    question: "jb kisi vstu to vtl drpn of vkrta ofndr (C) from one rkha jata is, then kis profr of prtibinb bnta is?",
+    option: [
+        "bhasi, sidha and vstu from bda",
+        "bhasi, lta and vstu from bda",
+        "vastvik, lta and vstu from chhota",
+        "vastvik, sidha and vstu of sman ofr of"
+    ],
+    answer: "vastvik, lta and vstu from chhota"
+},
+{
+    question: "jb hmari tvcha from psina (sweat) vashpit hota is, then hin thndk of nubhv kis ofrn hota is?",
+    option: [
+        "vashpn of dauran psina shma mukt krta is",
+        "psine from kristl bnte are jo tvcha to thnda krte are",
+        "vashpn of li psina hmari tvcha from shma vshoshit krta is",
+        "vashpn from purv psina brph in bdl jata is"
+    ],
+    answer: "vashpn of li psina hmari tvcha from shma vshoshit krta is"
+},
+{
+    question: "chndrma on kisi vstu of bhar pthvi on sof bhar of tulna in kaisa hota is?",
+    option: [
+        "yh pthvi on sof bhar of chhtha bhag hota is",
+        "yh pthvi on sof bhar of chhh guna hota is",
+        "yh pthvi on sof bhar of one tiha hota is",
+        "yh pthvi on bhi vaisa hi hota is"
+    ],
+    answer: "yh pthvi on sof bhar of chhtha bhag hota is"
+},
+{
+    question: "hm baithe or sote time bhi shvas kyon lete rhte are?",
+    option: [
+        "heart to vishram dene of li",
+        "jivn kriorn hetu ksijn of purti krne of li",
+        "respiration kriorn krne of li",
+        "pachn krior to jari rkhne of li"
+    ],
+    answer: "jivn kriorn hetu ksijn of purti krne of li"
+},
+{
+    question: "following in from which-sa onesman vttiy motion kr rhi vstu of dahrn is?",
+    option: [
+        "sidhi ptri on lg-lg chal from chlti one relgadi",
+        "onesman chal from pthvi of onikrma krta one pgrh",
+        "bhid-bhad vali sdk on chlti one ofr",
+        "park in jging krta one vykti"
+    ],
+    answer: "onesman chal from pthvi of onikrma krta one pgrh"
+},
+{
+    question: "20 Ω of prtirodhk on 40 V of vibhvantr pryukt krne on sin how much dhara prvahit hogi?",
+    option: [
+        "2 A",
+        "5 A",
+        "1/5 A",
+        "1/2 A"
+    ],
+    answer: "2 A"
+},
+{
+    question: "prjnn svasthy of li surkshit yaun snbndh bnana kyon mhtvpurn is?",
+    option: [
+        "yh grbhavswas of garnti deta is",
+        "yh prjnn kshmta bdhata is",
+        "yh HIV-AIDS jaifrom yaun snfourit rogon from bchata is",
+        "yh body in harmonl sntuln sunishchit krta is"
+    ],
+    answer: "yh HIV-AIDS jaifrom yaun snfourit rogon from bchata is"
+},
+{
+    question: "werenl of sodiym of sath bhikrior hone on kis profr of gais mukt hoti is?",
+    option: [
+        "ofrbn daksad",
+        "hadrojn",
+        "ksijn",
+        "meweren"
+    ],
+    answer: "hadrojn"
+},
+{
+    question: "dhatvik ksad and base of bich bhikrior of samany tpad what is/are?",
+    option: [
+        "salt and hadrojn",
+        "salt and water",
+        "only water",
+        "gais and water"
+    ],
+    answer: "salt and water"
+},
+{
+    question: "gais of knon of nirntr niymit motion of ofrn, kn patr of divaron from tkrate are gais dvara lgaor gor pressure, ___________ of brabr hota is",
+    option: [
+        "patr of tl of prti of area on gais of knon dvara lga g force",
+        "gais of knon dvara patr of divaron on lga g force",
+        "patr of divaron on prti of area on gais of knon dvara lga g force",
+        "patr of prti of volume on gais of knon dvara lga g force"
+    ],
+    answer: "patr of divaron on prti of area on gais of knon dvara lga g force"
+},
+{
+    question: "20 m of height on rkhe g 30 kg drvyman of blk of sthitij energy how much hogi? (g of man = 10 m/s² liji)",
+    option: [
+        "60 J",
+        "6000 J",
+        "6 J",
+        "600 J"
+    ],
+    answer: "6000 J"
+},
+{
+    question: "following in from which-sa kthn shi not is?",
+    option: [
+        "dhvni nirvathenn of tulna in gaison in mnd motion from chlti is",
+        "dhvni air of tulna in water in teji from chlti is",
+        "dhvni thos matteron in sbfrom tej chlti is",
+        "dhvni nirvat in bhi chl skti is"
+    ],
+    answer: "dhvni nirvat in bhi chl skti is"
+},
+{
+    question: "mnushyon jaifrom bhutoshiofy jivon in, pachn _________ in hota is",
+    option: [
+        "ofndrk (nucleus)",
+        "vishisht pachk ngon (specialised digestive organs)",
+        "khady rsdhaniyon (food vacuoles)",
+        "snpurn cell sth (entire cell surface)"
+    ],
+    answer: "vishisht pachk ngon (specialised digestive organs)"
+},
+{
+    question: "padp cell bhitti of mukhy snrchnatmk ghtk what is?",
+    option: [
+        "oftin (Chitin)",
+        "peptidoglakn (Peptidoglycan)",
+        "tolaijn (Collagen)",
+        "fromlyuloj (Cellulose)"
+    ],
+    answer: "fromlyuloj (Cellulose)"
+},
+{
+    question: "following in from which-sa, hmare body of ofndriy tntriof tntr of bhag is?",
+    option: [
+        "mashy",
+        "merurjju",
+        "gnorshy",
+        "ykt"
+    ],
+    answer: "merurjju"
+},
+{
+    question: "following in from what ghrelu srkit in mtaur on shrenikrm in juda hota is?",
+    option: [
+        "biwateri of forceb",
+        "all pkrn",
+        "pnkha",
+        "mukhy phyuj"
+    ],
+    answer: "mukhy phyuj"
+},
+{
+    question: "one kisan pni phsl from prapt naj to nmi twas grmi vale one kmre in bhndarit krta is kuchh sptah bad naj khrab ho jata is and sof matra km ho jati is sof sbfrom snbhavit ofrn what is?",
+    option: [
+        "naj pkshiyon and ofton dvara kha lior gor",
+        "kta from purv onorpt sincha",
+        "naj water in bh gor",
+        "bhndarn of nuchit onisthitiorn"
+    ],
+    answer: "bhndarn of nuchit onisthitiorn"
+},
+{
+    question: "which-sa shbd thos matteron in knon of niktta of vrnn krta is?",
+    option: [
+        "ghntv",
+        "ddhta",
+        "snpidyta",
+        "ntr-kn swasn"
+    ],
+    answer: "ghntv"
+},
+{
+    question: "mukhy ksh on vh bindu jhan mukhy ksh of smanantr kirnen drpn from onavrtn of bad bhisrit hoti are (or psrit hoti hu prtit hoti are), following in from what is called?",
+    option: [
+        "mukhy phoks",
+        "dvark",
+        "vkrta ofndr",
+        "dhruv"
+    ],
+    answer: "mukhy phoks"
+},
+{
+    question: "nukul onorvrniy onisthitiyon in bij from n plants of dbhv to ________ is called",
+    option: [
+        "photosynthesis",
+        "nishechn",
+        "nkurn",
+        "onagn"
+    ],
+    answer: "nkurn"
+},
+{
+    question: "following in from which-sa sbfrom chhota lofn is, jo one sthir vly bna skta is?",
+    option: [
+        "propen (Propane)",
+        "saklopropen (Cyclopropane)",
+        "weren (Ethane)",
+        "meweren (Methane)"
+    ],
+    answer: "saklopropen (Cyclopropane)"
+},
+{
+    question: "following matteron and nof ynon of milan kren\nstnbh A (matter)    stnbh B (tpadit yn)\nA. HCl    1. H₃O⁺ and Cl⁻\nB. NaOH    2. Na⁺ and OH⁻\nC. KOH    3. K⁺ and OH⁻\nD. Mg(OH)₂    4. Mg²⁺ and 2OH⁻",
+    option: [
+        "A-4; B-3; C-2; D-1",
+        "A-1; B-2; C-3; D-4",
+        "A-2; B-1; C-4; D-3",
+        "A-3; B-4; C-1; D-2"
+    ],
+    answer: "A-1; B-2; C-3; D-4"
+},
+{
+    question: "if ty of g distance dhi kr di ja twas time sman rhe, then raikhik veg _________ is",
+    option: [
+        "twoguna ho jata",
+        "sman bna rhta",
+        "shuny ho jata",
+        "dha ho jata"
+    ],
+    answer: "dha ho jata"
+},
+{
+    question: "vshnon of dr guha of bahr vshntosh in sthit hone of mukhy ofrn what is?",
+    option: [
+        "shukranu nirman to sugm bnane of li kyonki sof li body of temperature from km temperature of vshykta hoti is",
+        "shukranu and mutr of chit mixture sunishchit krne of li",
+        "snkrmn of jokhim to km krne of li",
+        "harmon srav to san bnane of li"
+    ],
+    answer: "shukranu nirman to sugm bnane of li kyonki sof li body of temperature from km temperature of vshykta hoti is"
+},
+{
+    question: "sntpt ofrbn, sntpt ofrbn compoundon of tulna in _______ hote are",
+    option: [
+        "km bhikriorshil",
+        "dhik sntpt",
+        "brabr bhikriorshil",
+        "dhik bhikriorshil"
+    ],
+    answer: "dhik bhikriorshil"
+},
+{
+    question: "srot of knpn shighrta from hone on dhvni on what prbhav pdta is?",
+    option: [
+        "tartv vhi rhta is, lekin vtti km ho jati is",
+        "vtti and tartv dhik ho jate are",
+        "vtti and tartv km ho jate are",
+        "dhvni, snpidn and virln tpnn krna bnd kr deti is"
+    ],
+    answer: "vtti and tartv dhik ho jate are"
+},
+{
+    question: "jb CO₂, kailshiym hadrksad of sath bhikrior krti is, then kailshiym ofrbonet and water deti is s bhikrior in CO₂ of which-sa gun dikha deta is?",
+    option: [
+        "dasin gun",
+        "ksiofrk gun",
+        "baseiy gun",
+        "acidiy gun"
+    ],
+    answer: "acidiy gun"
+},
+{
+    question: "matokndrior of sman plastidon in bhi svyn of __________ and __________ hoti/hote are",
+    option: [
+        "njam; rsdhani",
+        "putiofn; protin",
+        "nyukliys; gunsutr",
+        "DNA; rabosom"
+    ],
+    answer: "DNA; rabosom"
+},
+{
+    question: "water sngrhn (Water harvesting) mhtvpurn is, kyonki yh ______________",
+    option: [
+        "nuprvah kshetron in water purti to km krta is",
+        "water niofyon in khnij ghntv to km krta is",
+        "water niofyon of shuddhikrn krta is",
+        "bhuwater of punrbhrn krta is"
+    ],
+    answer: "bhuwater of punrbhrn krta is"
+},
+{
+    question: "following in from which-sa, ynik compoundon of gundhrm not is?",
+    option: [
+        "nof glnank and kvthnank samanyth chch hota is",
+        "ye kirosin and petrol jaifrom vilayton in viley hote are",
+        "ye wateriy/glit vswas in electric of chaln kr skte are",
+        "ye samanyth kmre of temperature on thos hote are"
+    ],
+    answer: "ye kirosin and petrol jaifrom vilayton in viley hote are"
+},
+{
+    question: "onivar niyojn in rasaynik grbhnirodhk vidhiyon of bhumiof of li following in from which-sa kthn sbfrom pyukt is?",
+    option: [
+        "ye harmon of str to bdlkr ndotsrjn and grbhashy of taiorri to badhit krte are",
+        "ve ndotsrg to bdhava dene of li strojn of str to bdhate are and nishechn of snbhavna to km krte are",
+        "ve yoni of bhitti to mota krof shukranun to grbhashy in prvesh krne from rokte are",
+        "ye phailopiyn tyub to orntrik rup from vruddh krof rjodhrm to puri trh from rok dete are"
+    ],
+    answer: "ye harmon of str to bdlkr ndotsrjn and grbhashy of taiorri to badhit krte are"
+},
+{
+    question: "following in from which-si sthiti nyutn of tisre niym to spsht rup from drshati is, jhan krior and prtikrior force two lg-lg vstun on work krte are and brabr and vionit hote are?",
+    option: [
+        "navik ge of r kudte hu nav to pichhe of r dhoflta is and nav from ge of r dhoflti is",
+        "njn of shkti of ofrn tvrit hoti ofr",
+        "jmin on rkha one ptthr",
+        "mej on rkhi one pustk sthir vswas in rhti is"
+    ],
+    answer: "navik ge of r kudte hu nav to pichhe of r dhoflta is and nav from ge of r dhoflti is"
+},
+{
+    question: "one tar of prtirodh 1 Ω is if from two brabr bhagon in ofta ja, then prtyek bhag of prtirodh will be?",
+    option: [
+        "0.5 Ω",
+        "1 Ω",
+        "4 Ω",
+        "2 Ω"
+    ],
+    answer: "0.5 Ω"
+},
+{
+    question: "laingik jnn dvara tpnn nuvnshik vividhta of oninam following in from what is?",
+    option: [
+        "viofs",
+        "smrup ymj (twins) of nirman",
+        "answerjivita of snbhavna in kmi",
+        "nuvnshik rup from smrup sntti of tptti"
+    ],
+    answer: "viofs"
+},
+{
+    question: "khady jal (Food web) vibhinn profr of _________ from milkr bna hota is",
+    option: [
+        "khady shnkhlan",
+        "poshi stron",
+        "khady matteron",
+        "paristhitiof tntron"
+    ],
+    answer: "khady shnkhlan"
+},
+{
+    question: "prokairiyotik celln, yuofriyotik celln from following in from kisin bhinn hoti are?",
+    option: [
+        "jhilliyukt ngk",
+        "one vastvik ofndrk",
+        "jhilliyukt ofndrk of bhav",
+        "rabosom"
+    ],
+    answer: "jhilliyukt ofndrk of bhav"
+},
+{
+    question: "one vstu of drvyman 11 kg is and from jmin from height on rkha gor is if sof sthitij energy 440 J is and g = 10 m/s² is, then height how much is?",
+    option: [
+        "8 m",
+        "4 m",
+        "48,400 m",
+        "2 m"
+    ],
+    answer: "4 m"
+},
+{
+    question: "pressure of gnna of li shi sutr what is, jhan prnod lgaor gor force is and area vh sth is jis on yh work krta is?",
+    option: [
+        "pressure = area ÷ prnod",
+        "pressure = prnod ÷ area",
+        "pressure = prnod + area",
+        "pressure = prnod × area"
+    ],
+    answer: "pressure = prnod ÷ area"
+},
+{
+    question: "ttl drpn hmesha ________ prtibinb bnata is",
+    option: [
+        "bhasi, sidha and nyunikt",
+        "vastvik, lta and vstu from chhota",
+        "vastvik, sidha and vstu of sman ofr vala",
+        "bhasi, sidha and vstu from bda"
+    ],
+    answer: "bhasi, sidha and nyunikt"
+},
+{
+    question: "jsta lepit lohe of vstu in, jste of ont on khronch lgne on bhi vh jng from kyon surkshit rhti is?",
+    option: [
+        "lohe on jng of one ptli ont bn jati is jo jng lgne from rokti is",
+        "khronchon from tel ndr ris skta is, jo jng lgne from rokta is",
+        "jsta, lohe of sath bhikrior krof yrn ksad of one rkshi ont bnata is",
+        "jsta, lohe of tulna in dhik bhikriorshil hota is and dhimany ksikrn from gujrta is, jo lohe to jng lgne from bchata is"
+    ],
+    answer: "jsta, lohe of tulna in dhik bhikriorshil hota is and dhimany ksikrn from gujrta is, jo lohe to jng lgne from bchata is"
+},
+{
+    question: "'nilnbn' of following in from which-sa gundhrm glt is?",
+    option: [
+        "nilnbn of knon to nisyndn prkrior dvara mixture from pthk kior ja skta is",
+        "nilnbn one vishmangi mixture is",
+        "nilnbn of kn ngn nkhon from dikha dete are",
+        "nilnbn of kn profsh of kirn to profrnit not krte are"
+    ],
+    answer: "nilnbn of kn profsh of kirn to profrnit not krte are"
+},
+{
+    question: "m of niym according to, kisi chalk in vibhvantr .................... hota is",
+    option: [
+        "dhara from svtntr",
+        "dhara of vyutkrmanupati",
+        "prtirodh of brabr",
+        "dhara of nukrmanupati"
+    ],
+    answer: "dhara of nukrmanupati"
+},
+{
+    question: "following in from which-si snyojn bhikrior shmakshepi bhikrior of dahrn is?",
+    option: [
+        "PDF in viklp dikha not di",
+        "PDF in viklp dikha not di",
+        "PDF in viklp dikha not di",
+        "PDF in viklp dikha not di"
+    ],
+    answer: "PDF of plbdh text from storpit not ho sof"
+},
+{
+    question: "human mukh in dnt kshy kis pH on shuru hone lgta is?",
+    option: [
+        "8 from dhik",
+        "7 and 8 of bich",
+        "thik 6.5",
+        "5.5 from km"
+    ],
+    answer: "5.5 from km"
+},
+{
+    question: "one matter of nirpeksh pvrtnank 4/3 is if air in profsh of chal 3 × 10⁸ m/s is, then s madhym (matter) in profsh of chal what hogi?",
+    option: [
+        "4 × 10⁸ m/s",
+        "2.25 × 10⁸ m/s",
+        "3 × 10⁸ m/s",
+        "1.33 × 10⁸ m/s"
+    ],
+    answer: "2.25 × 10⁸ m/s"
+},
+{
+    question: "kisi vishesh vilayk in ghule hu viley of matra to _____ of rup in onibhashit kior jata is",
+    option: [
+        "trlta (fluidity)",
+        "sandrta (concentration)",
+        "shornta (viscosity)",
+        "pshthiy tnav (surface tension)"
+    ],
+    answer: "sandrta (concentration)"
+},
+{
+    question: "lar in maujud which-sa njam, starch to thendne in shayk hota is?",
+    option: [
+        "tripsin (Trypsin)",
+        "pepsin (Pepsin)",
+        "malej (Amylase)",
+        "lapej (Lipase)"
+    ],
+    answer: "malej (Amylase)"
+},
+{
+    question: "which-si bhikrior, drvyman snrkshn of niym to srvottm rup from sport krti is?",
+    option: [
+        "khuli hva in lohe to grm krna",
+        "one silbnd kntenr in sirof and beking soda of mixture",
+        "khuli hva in ofgj waterana",
+        "khuli hva in ltohl of vashpn"
+    ],
+    answer: "one silbnd kntenr in sirof and beking soda of mixture"
+},
+{
+    question: "one kn 2 m/s² on onesman rup from tvrit hota is sof veg 5 m/s from 15 m/s ho jata is sin kitna time lgta is?",
+    option: [
+        "2 s",
+        "7 s",
+        "10 s",
+        "5 s"
+    ],
+    answer: "5 s"
+},
+{
+    question: "s viklp of chyn ofji, jo bhikthn (A) and ofrn (R) namk following two kthnon of snbndh in shi is\n\nbhikthn (A): ofyik prvrdhn n paudhon to gane in shayta krta is jo bij tpnn not krte are\nofrn (R): yh n plants gane of li pushpon of pyog krta is",
+    option: [
+        "A and R twonon shi are, and R, A of shi vorkhor is",
+        "A and R twonon shi are, lekin R, A of shi vorkhor not is",
+        "A sty is, lekin R sty is",
+        "A sty is, lekin R sty is"
+    ],
+    answer: "A sty is, lekin R sty is"
+},
+
+{
+    question: "jb brayophilm of pttiyon of kinaron from kliorn niklkr n plants in viksit hoti are then sin kis profr of prjnn shamil hota is?",
+    option: [
+        "laingik prjnn",
+        "stem nods of madhym from mukuln",
+        "bijanun dvara laingik prjnn",
+        "ofyik prvrdhn dvara laingik prjnn"
+    ],
+    answer: "ofyik prvrdhn dvara laingik prjnn"
+},
+{
+    question: "dhvni of chal of snbndh in following in from which-from kthn sty not are?\n\n(i) madhym of temperature in vddhi of sath dhvni of chal bdh jati is\n(ii) thos vswas in dhvni of chal gaisiy vswas in dhvni of chal from dhik hoti is\n(iii) madhym of temperature in vddhi of sath dhvni of chal km ho jati is\n(iv) dhvni of chal s madhym of gunon from svtntr hoti is jisfrom hokr vh gujrti is",
+    option: [
+        "(i) and (iv) twonon",
+        "(iii) and (iv) twonon",
+        "(i) and (ii) twonon",
+        "(ii) and (iii) twonon"
+    ],
+    answer: "(iii) and (iv) twonon"
+},
+{
+    question: "dharavahi oninaliof of ndr magnetic kshetr rekhan kis profr vinorsit hoti are?",
+    option: [
+        "vkrit and sman",
+        "ordchchhik",
+        "ofndr from riy",
+        "smanantr and sman distance on"
+    ],
+    answer: "smanantr and sman distance on"
+},
+{
+    question: "2 kg drvyman of one pind on 10 N of force work krta is sof tvrn .............. is",
+    option: [
+        "2 m/s²",
+        "5 m/s²",
+        "20 m/s²",
+        "10 m/s²"
+    ],
+    answer: "5 m/s²"
+},
+{
+    question: "pushpi padpon to gli pidhi in n padp gane in what mdd krta is?",
+    option: [
+        "jdon of nirman",
+        "bij of nirman and nkurn",
+        "pnkhudiyon of vddhi",
+        "vrtiofgr of nirman"
+    ],
+    answer: "bij of nirman and nkurn"
+},
+{
+    question: "following in from which-si, phsl kismon in vanchhniy gun tpnn krne of one vidhi not is?",
+    option: [
+        "ntrjatiy snkrn (Interspecific hybridisation)",
+        "ntrajini snkrn (Intragenic hybridisation)",
+        "nthpjatiy snkrn (Intervarietal hybridisation)",
+        "ntrvnshiy snkrn (Intergeneric hybridisation)"
+    ],
+    answer: "ntrajini snkrn (Intragenic hybridisation)"
+},
+{
+    question: "one bkfrom to 25 N force of disha in 3 m of distance tk le jane of li kitna work krna hoga?",
+    option: [
+        "0 J",
+        "25.0 J",
+        "75.0 J",
+        "750.0 J"
+    ],
+    answer: "75.0 J"
+},
+{
+    question: "if kisi prtibinb of height (h') to mukhy ksh of lnbvt and niche (-y-ksh of nudish) mapa jata is, then onipati according to sof man to which-sa chihn dior jata is?",
+    option: [
+        "dasin",
+        "natmk",
+        "dhnatmk",
+        "vrdhn on nirbhr krta is"
+    ],
+    answer: "natmk"
+},
+{
+    question: "jivon in n celln of nirman to __________ khte are",
+    option: [
+        "cell vibhajn",
+        "cell snlyn",
+        "cell respiration",
+        "cell srav"
+    ],
+    answer: "cell vibhajn"
+},
+{
+    question: "sukshm of drvyman of of what is?",
+    option: [
+        "mole",
+        "kg",
+        "g",
+        "u"
+    ],
+    answer: "u"
+},
+{
+    question: "gurutvakrshn of niym ne what siddh krne in shayta of?",
+    option: [
+        "sury, pthvi of fouron r onikrmn krta is",
+        "pthvi chpti is",
+        "pthvi on girte pindon and grhon of motion twonon to one hi force niyntrit krta is",
+        "gurutvakrshn only parthiv vstun on hi work krta is"
+    ],
+    answer: "pthvi on girte pindon and grhon of motion twonon to one hi force niyntrit krta is"
+},
+{
+    question: "following in from kis jiv in, khndn and bijanu nirman twonon hote are?",
+    option: [
+        "plenerior",
+        "kvk",
+        "yist",
+        "miba"
+    ],
+    answer: "kvk"
+},
+{
+    question: "following in from which-sa viklp, 'vilyn of sandrta' to sbfrom ywasrth rup from onibhashit krta is?",
+    option: [
+        "drvyman and veg of bich nupatik snbndh",
+        "vilayk of sapeksh viley matter of matra",
+        "air in onikshepit gaisiy knon of kul snkhor",
+        "vrn and phlevr jaisi snvedi visheshtan"
+    ],
+    answer: "vilayk of sapeksh viley matter of matra"
+},
+{
+    question: "bliching padr rasaynik rup from .................... dvara bnta is",
+    option: [
+        "NaOH of HCl acid of sath bhikrior",
+        "Ca(OH)₂ of Cl₂ gais of sath bhikrior",
+        "CaCO₃ of CO₂ gais of sath bhikrior",
+        "CaCl₂ of O₂ gais of sath bhikrior"
+    ],
+    answer: "Ca(OH)₂ of Cl₂ gais of sath bhikrior"
+},
+{
+    question: "following in from which-sa, paristhitiof tntr of jaiv ghtk not is?",
+    option: [
+        "yeara",
+        "pvn",
+        "temperature",
+        "sukshmjiv"
+    ],
+    answer: "sukshmjiv"
+},
+{
+    question: "lohe on jng kb lgti is?",
+    option: [
+        "jb yh shuddh hva of snonk in ta is",
+        "jb yh only shma of snonk in ta is",
+        "jb yh water and ksijn of snonk in ta is",
+        "jb yh ofrbn daksad of sath bhikrior krta is"
+    ],
+    answer: "jb yh water and ksijn of snonk in ta is"
+},
+{
+    question: "human body in peshiy tissue of mukhy work what is?",
+    option: [
+        "yh snkuchn and shithiln dvara snchln tpnn krta is",
+        "yh ngon to surksha and snrchnatmk shara prdan krta is",
+        "yh energy snchy krta is and body of temperature to bna rkhta is",
+        "yh body of vibhinn ngon of bich vegon of snfour krta is"
+    ],
+    answer: "yh snkuchn and shithiln dvara snchln tpnn krta is"
+},
+{
+    question: "jb kisi vstu to vtl drpn of samne vkrta ofndr (C) from one rkha jata is, then kis profr of prtibinb bnta is?",
+    option: [
+        "dhik vrdhit and bhasi",
+        "sman ofr, vastvik, and sidha",
+        "nyunikt, vastvik and lta",
+        "vrdhit, bhasi and sidha"
+    ],
+    answer: "nyunikt, vastvik and lta"
+},
+{
+    question: "viktgndhita (rancidity) what is?",
+    option: [
+        "jivanu vddhi of ofrn bhojn of sdne of prkrior",
+        "nmk or chini dalkr bhojn to snrkshit krne of prkrior",
+        "vh prkrior jisin bhojn in vsa and tel of ksikrn hota is, jisfrom gndh and svad in onivrtn hota is",
+        "sukhne of ofrn bhojn of basi hone of prkrior"
+    ],
+    answer: "vh prkrior jisin bhojn in vsa and tel of ksikrn hota is, jisfrom gndh and svad in onivrtn hota is"
+},
+{
+    question: "which-from tissue janvron to pne s-pas of onivrtnon on shighr prtikrior krne in mdd kr skte are?",
+    option: [
+        "sthi and pasthi one sath work krte are",
+        "tntriof veg and peshi tissue one sath work krte are",
+        "only peshi tissue",
+        "pachn and tsrjn tntr one sath work krte are"
+    ],
+    answer: "tntriof veg and peshi tissue one sath work krte are"
+},
+{
+    question: "tprerk of psthiti in werenok acid of sath ltohl of bhikrior hone on water and _____ bnta is",
+    option: [
+        "hadroofrbn",
+        "str",
+        "salt",
+        "ldihad"
+    ],
+    answer: "str"
+},
+{
+    question: "kisi vstu of sidhi rekha of nudish onesman motion of dauran __________",
+    option: [
+        "kisi bhi time ntral in veg in onivrtn shuny not hota is",
+        "veg time of sath lgatar bdlta rhta is",
+        "kisi bhi time ntral in veg in onivrtn shuny hota is",
+        "veg of man vibhinn kshnon on twas pth of vibhinn bindun on bhinn-bhinn hota is"
+    ],
+    answer: "kisi bhi time ntral in veg in onivrtn shuny hota is"
+},
+{
+    question: "following kthnon on vifour ofji and shi viklp chuni\n\nkthn A: ltohl, sodiym of sath bhikrior krof hadrojn mukt krta is\nkthn B: sodiym of werenl of sath bhikrior krne on to gais mukt not hoti",
+    option: [
+        "kthn A and B twonon shi are",
+        "kthn A shi is lekin B glt is",
+        "kthn A glt is lekin B shi is",
+        "kthn A and B twonon glt are"
+    ],
+    answer: "kthn A shi is lekin B glt is"
+},
+{
+    question: "if one tar of prtirodh R is and sin from dhara I prvahit ho rhi is, then tar in vyyit shkti to _______ dvara nirupit kior jata is",
+    option: [
+        "$P=V/I$",
+        "$P=I^2/R$",
+        "$P=V^2R$",
+        "$P=I^2R$"
+    ],
+    answer: "$P=I^2R$"
+},
+{
+    question: "metal ksad to grm krof tanba and chandi jaisi metaln of nishkrshn krne of li kis prkrm of pyog kior jata is?",
+    option: [
+        "prgln (Smelting)",
+        "bhrjn (Roasting)",
+        "tapiy pghtn (Thermal Decomposition)",
+        "electric pghtn (Electrolysis)"
+    ],
+    answer: "tapiy pghtn (Thermal Decomposition)"
+},
+
+];
+
+const currentAffairsQuestionsEn = [
+
+{
+    "question": "Who was the Most Valuable Player of Mumbai Indians in IPL 2025?",
+    "option": [
+        "Krunal Pandya",
+        "Suryakumar Yadav",
+        "Jasprit Bumrah",
+        "Rohit Sharma"
+    ],
+    "answer": "Suryakumar Yadav"
+},
+{
+    "question": "Which city served as the venue for the curtain raiser of the 18th Urban Mobility India (UMI) Conference and Exhibition 2025, organized by the Ministry of Housing and Urban Affairs (MoHUA)?",
+    "option": [
+        "Noida, Uttar Pradesh",
+        "Jaipur, Rajasthan",
+        "Gurugram, Haryana",
+        "New Delhi, Delhi"
+    ],
+    "answer": "Gurugram, Haryana"
+},
+{
+    "question": "What is the name of India's first AI-generated school teacher robot unveiled by Makerlabs Edutech at a school in Kerala?",
+    "option": [
+        "Vedika",
+        "Sophia",
+        "Iris",
+        "Esha"
+    ],
+    "answer": "Iris"
+},
+{
+    "question": "Which country officially became the first European nation to join the Comprehensive and Progressive Agreement for Trans-Pacific Partnership (CPTPP)?",
+    "option": [
+        "Germany",
+        "United Kingdom",
+        "France",
+        "Italy"
+    ],
+    "answer": "United Kingdom"
+},
+{
+    "question": "What was the name of the operation launched in May 2025 in response to the terrorist attack in Pahalgam?",
+    "option": [
+        "Operation Abhiman",
+        "Operation Vijay",
+        "Operation Sindoor",
+        "Operation Raksha"
+    ],
+    "answer": "Operation Sindoor"
+},
+{
+    "question": "At which venue did Jyothi Yarraji deliver a record-breaking performance during the National Games 2025?",
+    "option": [
+        "Ganga Athletics Ground, Uttarakhand",
+        "Kalinga Stadium, Odisha",
+        "Sree Kanteerava Stadium, Bengaluru",
+        "Nehru Stadium, Chennai"
+    ],
+    "answer": "Ganga Athletics Ground, Uttarakhand"
+},
+{
+    "question": "In July 2025, the Ministry of Tribal Affairs partnered with which organization to support 68 Eklavya Model Residential Schools (EMRS) in Chhattisgarh, benefiting more than 28,000 tribal students?",
+    "option": [
+        "National Thermal Power Corporation",
+        "Coal India Limited",
+        "Oil and Natural Gas Corporation",
+        "Steel Authority of India Limited"
+    ],
+    "answer": "Coal India Limited"
+},
+{
+    "question": "Which of the following Union Ministers launched India's National Red List Roadmap in October 2025?",
+    "option": [
+        "Nitin Jairam Gadkari",
+        "Bhupender Yadav",
+        "Piyush Goyal",
+        "Kirti Vardhan Singh"
+    ],
+    "answer": "Kirti Vardhan Singh"
+},
+{
+    "question": "What type of natural phenomenon was Cyclone Montha, which arrived in India in October 2025?",
+    "option": [
+        "A tropical storm affecting coastal Gujarat",
+        "A severe cyclonic storm over the Bay of Bengal",
+        "An extremely severe cyclonic storm in the Kutch region",
+        "A deep depression over the Arabian Sea bringing rainfall to southern India"
+    ],
+    "answer": "A severe cyclonic storm over the Bay of Bengal"
+},
+{
+    "question": "Who among the following won the Chinese Grand Prix 2025?",
+    "option": [
+        "Charles Leclerc",
+        "Lewis Hamilton",
+        "Lando Norris",
+        "Oscar Piastri"
+    ],
+    "answer": "Oscar Piastri"
+},
+{
+    "question": "What was the primary objective of the large-scale civil defence mock drill named Operation Shield, conducted in May 2025?",
+    "option": [
+        "Enhancing preparedness against internal insurgencies",
+        "Simulating responses to natural disasters in Himalayan regions",
+        "Testing the effectiveness of coastal security protocols",
+        "Improving state emergency preparedness and response systems"
+    ],
+    "answer": "Improving state emergency preparedness and response systems"
+},
+{
+    "question": "Who among the following authored the 2025 book \"Rocket Dreams: Musk, Bezos, and the Inside Story of the New, Trillion-Dollar Space Race,\" which explores the fierce rivalry between billionaires in the modern space race?",
+    "option": [
+        "Walter Isaacson",
+        "Ashlee Vance",
+        "Christian Davenport",
+        "Neil deGrasse Tyson"
+    ],
+    "answer": "Christian Davenport"
+},
+{
+    "question": "Which of the following bodies published the GRFC (Global Report on Food Crises) 2025?",
+    "option": [
+        "United Nations Development Programme (UNDP)",
+        "Food and Agriculture Organization (FAO)",
+        "Food Security Information Network (FSIN)",
+        "World Food Programme alone"
+    ],
+    "answer": "Food Security Information Network (FSIN)"
+},
+{
+    "question": "Which former World Bank/IMF economist was appointed Deputy Governor of the RBI in April 2025?",
+    "option": [
+        "Michael Patra",
+        "Poonam Gupta",
+        "Raghuram Rajan",
+        "Urjit Patel"
+    ],
+    "answer": "Poonam Gupta"
+},
+{
+    "question": "Which summit held in New Delhi in March 2025 focused on \"Partnerships for Accelerating Sustainable Development and Climate Solutions\"?",
+    "option": [
+        "United Nations Environment Assembly-5",
+        "World Sustainable Development Summit",
+        "G20 Environment Summit",
+        "Conference of the Parties (COP) 30"
+    ],
+    "answer": "World Sustainable Development Summit"
+},
+{
+    "question": "Which person from Haryana, who is a Paralympic gold medalist, was awarded the Padma Shri in January 2025?",
+    "option": [
+        "Deepa Malik",
+        "Vinod Kumar",
+        "Harvinder Singh",
+        "Mariyappan Thangavelu"
+    ],
+    "answer": "Harvinder Singh"
+},
+{
+    "question": "Which Union Minister unveiled the new logo of Bharat Sanchar Nigam Limited (BSNL) in October 2024?",
+    "option": [
+        "Jitin Prasada",
+        "Jyotiraditya M. Scindia",
+        "Amit Shah",
+        "Giriraj Singh"
+    ],
+    "answer": "Jyotiraditya M. Scindia"
+},
+{
+    "question": "In 2025, in how many countries did IDFC FIRST Bank facilitate Unified Payments Interface (UPI) access for Non-Resident Indians (NRIs)?",
+    "option": [
+        "11",
+        "13",
+        "12",
+        "10"
+    ],
+    "answer": "12"
+},
+{
+    "question": "Which of the following insurance companies were designated as Domestic Systemically Important Insurers (D-SIIs) by the Insurance Regulatory and Development Authority of India (IRDAI) for 2024–25?",
+    "option": [
+        "LIC, The New India Assurance, and GIC Re",
+        "LIC, HDFC ERGO, and Reliance General",
+        "LIC, Tata AIG, and Bajaj Allianz",
+        "HDFC Life, ICICI Lombard, and SBI Life"
+    ],
+    "answer": "LIC, The New India Assurance, and GIC Re"
+},
+{
+    "question": "Who received the Lifetime Achievement Award at the 2025 BCCI Naman Awards?",
+    "option": [
+        "Virat Kohli",
+        "Sachin Tendulkar",
+        "Jasprit Bumrah",
+        "Smriti Mandhana"
+    ],
+    "answer": "Sachin Tendulkar"
+},
+{
+    "question": "What is the estimated capital expenditure allocation for the financial year 2025–26?",
+    "option": [
+        "₹9 lakh crore",
+        "₹11.21 lakh crore",
+        "₹10 lakh crore",
+        "₹12.63 lakh crore"
+    ],
+    "answer": "₹11.21 lakh crore"
+},
+
+{
+    "question": "Which international organization's 17th summit, held in July 2025, had the theme 'Strengthening Global South Cooperation for a More Inclusive and Sustainable Governance'?",
+    "option": [
+        "BRICS",
+        "G20",
+        "NATO",
+        "ASEAN"
+    ],
+    "answer": "BRICS"
+},
+{
+    "question": "What is the name of India's first 5.5 Gen stealth aircraft displayed by DRDO at Aero India 2025?",
+    "option": [
+        "LCA Tejas Mk-2",
+        "Advanced Light Weight Torpedo",
+        "Advanced Medium Combat Aircraft",
+        "TEDBF"
+    ],
+    "answer": "Advanced Medium Combat Aircraft"
+},
+{
+    "question": "According to the Union Budget 2025–26, what is the projected fiscal deficit for the financial year 2025–26?",
+    "option": [
+        "3.9% of GDP",
+        "4.8% of GDP",
+        "5.1% of GDP",
+        "4.4% of GDP"
+    ],
+    "answer": "4.4% of GDP"
+},
+{
+    "question": "In which city did the Quality Council of India (QCI), India's national accreditation body, celebrate World Accreditation Day 2025?",
+    "option": [
+        "Bhopal",
+        "Indore",
+        "Jaipur",
+        "New Delhi"
+    ],
+    "answer": "New Delhi"
+},
+{
+    "question": "What was India's rank in the Climate Change Performance Index (CCPI) 2026?",
+    "option": [
+        "23rd",
+        "33rd",
+        "13th",
+        "10th"
+    ],
+    "answer": "23rd"
+},
+{
+    "question": "What is the name of the platform launched in India in March 2024 that allows individuals to report fraudulent communications, including calls, texts, and WhatsApp messages?",
+    "option": [
+        "Proctur",
+        "Ruzuku",
+        "Chakshu",
+        "Podia"
+    ],
+    "answer": "Chakshu"
+},
+{
+    "question": "What was the name of the bill passed by the West Bengal Legislative Assembly in June 2025 to establish a maximum limit on healthcare expenses in private hospitals?",
+    "option": [
+        "West Bengal Medical Cost Transparency (Amendment) Bill, 2025",
+        "West Bengal Clinical Establishments (Registration, Regulation and Transparency) (Amendment) Bill, 2025",
+        "West Bengal Health Protection (Amendment) Bill, 2025",
+        "West Bengal Patient Safety (Amendment) Bill, 2025"
+    ],
+    "answer": "West Bengal Clinical Establishments (Registration, Regulation and Transparency) (Amendment) Bill, 2025"
+},
+{
+    "question": "Which award for Lifetime Achievement in Sports Broadcasting did David Hill win in 2025?",
+    "option": [
+        "Sports Emmy Journalism Award",
+        "Sports Basketball Award",
+        "Sports Business Journal's Laureus Media Honour",
+        "Sports Business Journal's Lifetime Achievement Award"
+    ],
+    "answer": "Sports Business Journal's Lifetime Achievement Award"
+},
+{
+    "question": "Which senior Indian official attended the Shanghai Cooperation Organisation (SCO) Defence Ministers' Meeting in June 2025?",
+    "option": [
+        "Rajnath Singh",
+        "S. Jaishankar",
+        "Narendra Modi",
+        "Amit Shah"
+    ],
+    "answer": "Rajnath Singh"
+},
+{
+    "question": "In which of the following national parks did a female cheetah born in India give birth to five cubs in November 2025, marking a significant achievement under Project Cheetah?",
+    "option": [
+        "Gir National Park",
+        "Kuno National Park",
+        "Bandipur National Park",
+        "Ranthambore National Park"
+    ],
+    "answer": "Kuno National Park"
+},
+{
+    "question": "Who among the following was the Player of the Tournament in the ICC Women's Cricket World Cup 2025?",
+    "option": [
+        "Deepti Sharma",
+        "Jemimah Rodrigues",
+        "Shafali Verma",
+        "Smriti Mandhana"
+    ],
+    "answer": "Deepti Sharma"
+},
+{
+    "question": "Which veteran Indian goalkeeper announced his retirement after the Paris Olympics, bringing an end to his 18-year career, during which he played a crucial role in some of the team's historic moments?",
+    "option": [
+        "Rajnish Karmakar",
+        "Ramesh Babu",
+        "P. R. Sreejesh",
+        "M. S. Srinath"
+    ],
+    "answer": "P. R. Sreejesh"
+},
+{
+    "question": "In August 2025, the Border Security Force launched Operation Alert to strengthen security along which Indian border?",
+    "option": [
+        "Jammu and Kashmir border",
+        "Rajasthan border",
+        "Punjab border",
+        "Assam border"
+    ],
+    "answer": "Rajasthan border"
+},
+{
+    "question": "Which organization is to be established in GIFT City, Gandhinagar, from the beginning of 2026 to strengthen India's artificial intelligence ecosystem through collaboration among the government, industry, and academia?",
+    "option": [
+        "Indian AI Research Organization",
+        "Indian Institute of Artificial Intelligence",
+        "Centre for Advanced Artificial Intelligence Research",
+        "National Artificial Intelligence Authority"
+    ],
+    "answer": "Indian AI Research Organization"
+},
+{
+    "question": "Which of the following authors was awarded the Nobel Prize in Literature in 2025?",
+    "option": [
+        "László Krasznahorkai",
+        "Ernest Hemingway",
+        "John Steinbeck",
+        "George Orwell"
+    ],
+    "answer": "László Krasznahorkai"
+},
+{
+    "question": "According to the 2023 Air Quality Life Index (AQLI) report released by the Energy Policy Institute at the University of Chicago (EPIC), by how much has the average Indian's life expectancy decreased due to exposure to fine particulate air pollution (PM2.5)?",
+    "option": [
+        "5.3 years",
+        "6.7 years",
+        "2.5 years",
+        "3.8 years"
+    ],
+    "answer": "5.3 years"
+},
+{
+    "question": "Who set the Javelin F42 World Record (61.17 m) at the 2025 WPA Grand Prix?",
+    "option": [
+        "Mahendra Gurjar",
+        "Pingane Meena Vilas",
+        "Ravi Rangoli",
+        "Sumit Antil"
+    ],
+    "answer": "Mahendra Gurjar"
+},
+{
+    "question": "Which country included India in its List of Qualifications Exempt from Assessment in June 2025?",
+    "option": [
+        "Australia",
+        "United Kingdom",
+        "Canada",
+        "New Zealand"
+    ],
+    "answer": "New Zealand"
+},
+{
+    "question": "Which of the following national parks was designated as India's 58th tiger reserve in March 2025?",
+    "option": [
+        "Panna National Park",
+        "Madhav National Park",
+        "Kuno National Park",
+        "Pench National Park"
+    ],
+    "answer": "Madhav National Park"
+},
+{
+    "question": "Before the approval of the caste census in 2025, through which process was the last major effort to collect caste-based data at the national level carried out?",
+    "option": [
+        "National Sample Survey, 2005",
+        "Census of India, 1971",
+        "Socio-Economic and Caste Census (SECC), 2011",
+        "Economic Census, 2001"
+    ],
+    "answer": "Socio-Economic and Caste Census (SECC), 2011"
+},
+{
+    "question": "Who presented awards to cities under the Clean Air Survey Awards 2025?",
+    "option": [
+        "Finance Minister of the Government of India",
+        "Prime Minister of India",
+        "President of India",
+        "Environment Minister of the Government of India"
+    ],
+    "answer": "Environment Minister of the Government of India"
+},
+
+{
+    "question": "Who holds the record for the highest individual score of 165 runs in the history of Champions Trophy innings?",
+    "option": [
+        "Ibrahim Zadran",
+        "Ben Duckett",
+        "Josh Inglis",
+        "Alex Carey"
+    ],
+    "answer": "Ben Duckett"
+},
+{
+    "question": "Who among the following is the co-founder of Monk Entertainment and a prominent figure in 2025 as a digital content creator?",
+    "option": [
+        "Sanchit Patil",
+        "Jeet Shah",
+        "Ranveer Allahbadia",
+        "Abhishek Mishra"
+    ],
+    "answer": "Ranveer Allahbadia"
+},
+{
+    "question": "Which important day was observed on 26 July 2025 to commemorate India's victory over Pakistan?",
+    "option": [
+        "Republic Day",
+        "Kargil Vijay Diwas",
+        "Border Security Day",
+        "Independence Day"
+    ],
+    "answer": "Kargil Vijay Diwas"
+},
+{
+    "question": "What was the main focus of the 7th Future Food Forum 2025 held in Dubai, United Arab Emirates?",
+    "option": [
+        "Promoting tourism-based development through digital platforms",
+        "Strengthening financial inclusion and fintech collaboration",
+        "Promoting food security, trade, and innovation",
+        "Building a circular economy for global manufacturing networks"
+    ],
+    "answer": "Promoting food security, trade, and innovation"
+},
+{
+    "question": "Which range of Kaziranga National Park and Tiger Reserve was announced to be opened first for the 2025–26 tourism season in September 2025?",
+    "option": [
+        "Agartoli Range",
+        "Bagori Range",
+        "Kohora Range",
+        "Burapahar Range"
+    ],
+    "answer": "Bagori Range"
+},
+{
+    "question": "What was the name of the new security centre inaugurated by Rajnath Singh in New Delhi in November 2025?",
+    "option": [
+        "DPSU Bhawan",
+        "Bharat Defence Complex",
+        "National Defence Centre",
+        "Raksha PSU Nilayam"
+    ],
+    "answer": "DPSU Bhawan"
+},
+{
+    "question": "When did the Government of India reorganize the Atomic Energy Commission, including T. V. Somanathan and Manoj Govil?",
+    "option": [
+        "November 2024",
+        "January 2025",
+        "December 2024",
+        "March 2025"
+    ],
+    "answer": "January 2025"
+},
+{
+    "question": "Which company launched India's first air quality index-based parametric insurance policy for construction workers in the Delhi National Capital Region, notified in February 2025?",
+    "option": [
+        "Go Digit General Insurance Limited",
+        "Tata AIG General Insurance",
+        "National Insurance Company Limited",
+        "Star Health and Allied Insurance"
+    ],
+    "answer": "Go Digit General Insurance Limited"
+},
+{
+    "question": "In October 2024, which state government launched India's first integrated state-level cyber command and control centre to serve as a comprehensive hub for grievance redressal through multiple channels, including a helpline, web portal, and mobile app?",
+    "option": [
+        "Chhattisgarh",
+        "Maharashtra",
+        "Kerala",
+        "Haryana"
+    ],
+    "answer": "Maharashtra"
+},
+{
+    "question": "Which city hosted the prestigious Michelin Guide awards in February 2025?",
+    "option": [
+        "Cardiff, Wales",
+        "Edinburgh, Scotland",
+        "Glasgow, Scotland",
+        "Birmingham, England"
+    ],
+    "answer": "Glasgow, Scotland"
+},
+{
+    "question": "As of 11 June 2025, approximately how much assistance had Punjab National Bank (PNB) provided under the Rakshak Plus Scheme for the families of martyrs?",
+    "option": [
+        "₹17 crore",
+        "₹37 crore",
+        "₹27 crore",
+        "₹7 crore"
+    ],
+    "answer": "₹17 crore"
+},
+{
+    "question": "Who developed the Adarsh Sports Complex in Jaipur, which was inaugurated in April 2025?",
+    "option": [
+        "Jaipur Development Authority (JDA)",
+        "Jaipur Municipal Corporation – Greater (JMC-G)",
+        "Rajasthan Sports Authority",
+        "Ministry of Youth Affairs and Sports"
+    ],
+    "answer": "Jaipur Municipal Corporation – Greater (JMC-G)"
+},
+{
+    "question": "Which student-led national case competition launched in October 2025 aims to address malnutrition and promote SDG 2 (Zero Hunger) and SDG 3 (Good Health and Well-being)?",
+    "option": [
+        "Viksit Bharat Challenge",
+        "Udaan – Education for All",
+        "Yukti – Nutrition Nirmaan",
+        "Swasth India Mission"
+    ],
+    "answer": "Yukti – Nutrition Nirmaan"
+},
+{
+    "question": "In April 2025, which international organization recognized India's achievement in lifting 171 million people out of extreme poverty?",
+    "option": [
+        "International Monetary Fund",
+        "Asian Development Bank",
+        "United Nations",
+        "World Bank"
+    ],
+    "answer": "World Bank"
+},
+{
+    "question": "In which city did Gujarat Chief Minister Bhupendra Patel inaugurate Khel Mahakumbh 3.0 in January 2025?",
+    "option": [
+        "Surat",
+        "Rajkot",
+        "Ahmedabad",
+        "Vadodara"
+    ],
+    "answer": "Rajkot"
+},
+{
+    "question": "Which of the following parties won 5 seats in the Bihar Assembly Election 2025?",
+    "option": [
+        "Lok Janshakti Party (Ram Vilas)",
+        "Bahujan Samaj Party",
+        "Janata Dal (United)",
+        "Hindustani Awam Morcha (Secular)"
+    ],
+    "answer": "Hindustani Awam Morcha (Secular)"
+},
+{
+    "question": "Where was the Senior Asian Wrestling Championship 2025 held?",
+    "option": [
+        "Jordan",
+        "Uzbekistan",
+        "Qatar",
+        "Saudi Arabia"
+    ],
+    "answer": "Jordan"
+},
+{
+    "question": "In which Indian Union Territory was the world's highest railway arch bridge inaugurated by the Prime Minister of India in June 2025?",
+    "option": [
+        "Ladakh",
+        "Chandigarh",
+        "New Delhi",
+        "Jammu and Kashmir"
+    ],
+    "answer": "Jammu and Kashmir"
+},
+{
+    "question": "In March 2025, the Ministry of Environment, Forest and Climate Change conducted a national-level workshop on the National Adaptation Plan related to climate change in ___________.",
+    "option": [
+        "Bengaluru",
+        "Lucknow",
+        "New Delhi",
+        "Mumbai"
+    ],
+    "answer": "New Delhi"
+},
+{
+    "question": "In April 2024, ISRO Chairman S. Somanath announced the achievement of debris-free space missions by the year _____.",
+    "option": [
+        "2030",
+        "2035",
+        "2028",
+        "2032"
+    ],
+    "answer": "2030"
+},
+
+{
+    "question": "According to the Union Budget 2025–26, what is the tax-free income limit under the new income tax regime?",
+    "option": [
+        "₹13 lakh",
+        "₹15 lakh",
+        "₹10 lakh",
+        "₹12 lakh"
+    ],
+    "answer": "₹12 lakh"
+},
+{
+    "question": "Who set a new world record in the men's 89 kg weightlifting category at the 2024 Olympics by lifting 224 kg in the clean and jerk?",
+    "option": [
+        "Akbar Dzhuraev",
+        "Simon Martirosyan",
+        "Li Fabin",
+        "Carlos Nasar"
+    ],
+    "answer": "Carlos Nasar"
+},
+{
+    "question": "Which of the following is a drone-launched precision-guided missile that was successfully tested by the Defence Research and Development Organisation (DRDO) at a test range in Andhra Pradesh in July 2025?",
+    "option": [
+        "Agni-P",
+        "ULPGM-V3",
+        "Astra Mk-II",
+        "Nirbhay-V3"
+    ],
+    "answer": "ULPGM-V3"
+},
+{
+    "question": "In which Canadian province was the G7 Summit held in June 2025?",
+    "option": [
+        "Saskatchewan",
+        "Ontario",
+        "British Columbia",
+        "Alberta"
+    ],
+    "answer": "Alberta"
+},
+{
+    "question": "Who was recently appointed as the Chairperson of the Athletics Federation of India (AFI) Athletes Commission in January 2025?",
+    "option": [
+        "P. T. Usha",
+        "Anju Bobby George",
+        "Neeraj Chopra",
+        "Sourav Ganguly"
+    ],
+    "answer": "Anju Bobby George"
+},
+{
+    "question": "In November 2025, which government body expressed serious concern over Delhi's deteriorating air quality, stating that even wearing masks had become ineffective?",
+    "option": [
+        "Supreme Court of India",
+        "Ministry of Home Affairs",
+        "Ministry of Health and Family Welfare",
+        "Delhi High Court"
+    ],
+    "answer": "Supreme Court of India"
+},
+{
+    "question": "In which forest area of Kerala did a team of entomologists record seven new species of moths for the first time in 2025?",
+    "option": [
+        "Ranipuram Forest",
+        "Wayanad Wildlife Sanctuary",
+        "Silent Valley",
+        "Periyar Tiger Reserve"
+    ],
+    "answer": "Ranipuram Forest"
+},
+{
+    "question": "Researchers from which institution developed smart peptides for pH-responsive medical applications in June 2025?",
+    "option": [
+        "IIT Delhi",
+        "IIT Guwahati",
+        "BIT Mesra",
+        "BITS Pilani"
+    ],
+    "answer": "BIT Mesra"
+},
+{
+    "question": "Who wrote 'Gyaan Seepiyan: Pearls of Wisdom', released at the Jaipur Literature Festival in January 2025?",
+    "option": [
+        "Javed Akhtar",
+        "Sudha Murty",
+        "Harsh Dehejia",
+        "Benoy K. Behl"
+    ],
+    "answer": "Javed Akhtar"
+},
+{
+    "question": "What major labour benefit has been ensured for beedi and cigar workers under the new labour reforms in November 2025?",
+    "option": [
+        "Labour Protection Scheme",
+        "Employment Safety Code",
+        "Worker Welfare Act",
+        "Minimum Wage Guarantee"
+    ],
+    "answer": "Minimum Wage Guarantee"
+},
+{
+    "question": "In previous Supreme Court decisions in February 2025, manual scavenging was associated with violations of which constitutional Articles?",
+    "option": [
+        "Articles 12 and 20",
+        "Articles 22 and 32",
+        "Articles 15 and 16",
+        "Articles 17 and 21"
+    ],
+    "answer": "Articles 17 and 21"
+},
+{
+    "question": "Which first-time Member of Parliament from Thane was honoured with the Sansad Ratna Award in 2025?",
+    "option": [
+        "Rahul Shewale",
+        "Naresh Mhaske",
+        "Dr. Varsha Gaikwad",
+        "Arvind Sawant"
+    ],
+    "answer": "Naresh Mhaske"
+},
+{
+    "question": "In November 2025, the Commission for Air Quality Management (CAQM) implemented Stage II of the Graded Response Action Plan (GRAP) in Delhi-NCR. Which air quality category and AQI range does this stage correspond to?",
+    "option": [
+        "Severe (AQI 401–450)",
+        "Severe+ (AQI 451 and above)",
+        "Poor (AQI 201–300)",
+        "Very Poor (AQI 301–400)"
+    ],
+    "answer": "Very Poor (AQI 301–400)"
+},
+{
+    "question": "Which of the following organisations has the primary objective of collective defence, where an attack on one member is considered an attack on all?",
+    "option": [
+        "North Atlantic Treaty Organization (NATO)",
+        "World Health Organization (WHO)",
+        "United Nations Educational, Scientific and Cultural Organization (UNESCO)",
+        "World Trade Organization (WTO)"
+    ],
+    "answer": "North Atlantic Treaty Organization (NATO)"
+},
+{
+    "question": "At which location in Andhra Pradesh was the Rajiv Sports Complex, developed by the Greater Visakhapatnam Municipal Corporation (GVMC), inaugurated in June 2025?",
+    "option": [
+        "Dwaraka Nagar",
+        "Gajuwaka",
+        "Usha Nagar",
+        "Kommadi"
+    ],
+    "answer": "Gajuwaka"
+},
+{
+    "question": "Which organisation partnered with CBSE to launch the National Automobile Olympiad 2025?",
+    "option": [
+        "Automotive Skills Development Council",
+        "Skill India Mission",
+        "National Skill Development Corporation",
+        "NITI Aayog"
+    ],
+    "answer": "Automotive Skills Development Council"
+},
+{
+    "question": "In which district of Arunachal Pradesh did Union Sports Minister Mansukh Mandaviya inaugurate a new multipurpose Khelo India Hall in May 2025?",
+    "option": [
+        "Kamle District",
+        "East Siang District",
+        "Lower Subansiri District",
+        "Papum Pare District"
+    ],
+    "answer": "Kamle District"
+},
+{
+    "question": "In January 2025, which of the following expanded its sandbox framework to support innovation in the insurance sector?",
+    "option": [
+        "Securities and Exchange Board of India (SEBI)",
+        "Insurance Regulatory and Development Authority of India (IRDAI)",
+        "Reserve Bank of India (RBI)",
+        "Ministry of Corporate Affairs (MCA)"
+    ],
+    "answer": "Insurance Regulatory and Development Authority of India (IRDAI)"
+},
+{
+    "question": "The Fit India Movement's 'Sunday on Cycle' programme, aimed at promoting a healthy lifestyle, was held in February 2025. At which iconic location in Mumbai was it organised?",
+    "option": [
+        "Bandra–Worli Sea Link",
+        "Gateway of India",
+        "Chhatrapati Shivaji Maharaj Terminus",
+        "Marine Drive"
+    ],
+    "answer": "Marine Drive"
+},
+{
+    "question": "What action did SEBI take on 22 August 2025 regarding financial schemes on social media?",
+    "option": [
+        "Banning all financial content on social media",
+        "Creating a retail investor compensation fund",
+        "Issuing an advisory against schemes linked to FPIs",
+        "Registering finfluencers"
+    ],
+    "answer": "Issuing an advisory against schemes linked to FPIs"
+},
+
+{
+    "question": "Which summit involving regional leaders from East and Southeast Asia was held in Kuala Lumpur on 26–27 May 2025?",
+    "option": [
+        "East Asia Summit",
+        "Indo-Pacific Strategic Forum",
+        "ASEAN–China Summit",
+        "APEC"
+    ],
+    "answer": "East Asia Summit"
+},
+{
+    "question": "Where is Delhi's first e-waste eco-park being established?",
+    "option": [
+        "Rohini",
+        "Anand Vihar",
+        "Dwarka",
+        "Holambi Kalan"
+    ],
+    "answer": "Holambi Kalan"
+},
+{
+    "question": "Who is the author of the book 'Why the Constitution Matters'?",
+    "option": [
+        "Bibek Debroy",
+        "Arif Khan",
+        "Natwar Singh",
+        "D. Y. Chandrachud"
+    ],
+    "answer": "D. Y. Chandrachud"
+},
+{
+    "question": "In October 2025, what decision did the RBI Monetary Policy Committee (MPC) take regarding the repo rate and policy stance?",
+    "option": [
+        "Reduce the repo rate to 5.25% and adopt an accommodative stance",
+        "Maintain the repo rate at 5.50% and adopt a neutral stance",
+        "Maintain the repo rate at 5.90% and adopt an accommodative stance",
+        "Increase the repo rate to 5.75% and adopt an aggressive stance"
+    ],
+    "answer": "Maintain the repo rate at 5.50% and adopt a neutral stance"
+},
+{
+    "question": "In May 2025, which organisation confirmed strong growth in India's industrial and services sectors despite unemployment?",
+    "option": [
+        "Ministry of Finance",
+        "Reserve Bank of India",
+        "World Bank",
+        "NITI Aayog"
+    ],
+    "answer": "Ministry of Finance"
+},
+{
+    "question": "Who was the female cheetah released into Gandhi Sagar Wildlife Sanctuary in September 2025?",
+    "option": [
+        "Nambi",
+        "Sasha",
+        "Dheera",
+        "Aasha"
+    ],
+    "answer": "Dheera"
+},
+{
+    "question": "Where were the Special Olympics World Winter Games 2025 held?",
+    "option": [
+        "Canada",
+        "Italy",
+        "China",
+        "Iceland"
+    ],
+    "answer": "Italy"
+},
+{
+    "question": "What type of weapon is associated with the DRDO's DURGA-2 project?",
+    "option": [
+        "Hypersonic missile",
+        "Laser weapon",
+        "Plasma gun",
+        "Biological agent"
+    ],
+    "answer": "Laser weapon"
+},
+{
+    "question": "What amount did the Finance Minister announce for the Contingency Fund of Manipur on 11 March 2025?",
+    "option": [
+        "₹750 crore",
+        "₹400 crore",
+        "₹600 crore",
+        "₹500 crore"
+    ],
+    "answer": "₹500 crore"
+},
+{
+    "question": "In December 2025, what delivery milestone of the C-130J tail assembly did TLMAL achieve?",
+    "option": [
+        "200th",
+        "300th",
+        "250th",
+        "100th"
+    ],
+    "answer": "200th"
+},
+{
+    "question": "As of July 2025, how many Indian cricketers, including Rishabh Pant, had been nominated for the Laureus World Sports Awards?",
+    "option": [
+        "2",
+        "3",
+        "4",
+        "1"
+    ],
+    "answer": "2"
+},
+{
+    "question": "Which organisation published the June 2025 GEP report?",
+    "option": [
+        "World Economic Forum (WEF)",
+        "World Bank Group",
+        "Asian Development Bank (ADB)",
+        "International Monetary Fund (IMF)"
+    ],
+    "answer": "World Bank Group"
+},
+{
+    "question": "Which village in Uttarkashi was devastated by a cloudburst and floods on 5 August 2025?",
+    "option": [
+        "Bhowali",
+        "Pangot",
+        "Dharali",
+        "Kanatal"
+    ],
+    "answer": "Dharali"
+},
+{
+    "question": "Which DRDO laboratory developed the high-power laser-based Directed Energy Weapon (DEW) for IADWS?",
+    "option": [
+        "DRDE",
+        "DRDL",
+        "RCI",
+        "CHESS"
+    ],
+    "answer": "CHESS"
+},
+{
+    "question": "What was the theme of the 21st Foundation Day of the NDMA on 26 September 2025?",
+    "option": [
+        "Impact of Himalayan Disasters",
+        "Empowering Communities through Awareness",
+        "Technology for Risk Reduction, Safe Nation",
+        "Volunteering in Disaster Management"
+    ],
+    "answer": "Technology for Risk Reduction, Safe Nation"
+},
+{
+    "question": "According to the World Bank's Poverty and Equity Brief 2025, India's extreme poverty rate declined from 16.2% in 2011–12 to what percentage in 2022–23?",
+    "option": [
+        "2.8%",
+        "3.2%",
+        "2.3%",
+        "1.8%"
+    ],
+    "answer": "2.3%"
+},
+{
+    "question": "In which track event did Animesh Kujur break his own national record?",
+    "option": [
+        "800 metres",
+        "100 metres",
+        "200 metres",
+        "400 metres"
+    ],
+    "answer": "200 metres"
+},
+{
+    "question": "Which state ranked first for the financial year 2022–23 in NITI Aayog's Fiscal Health Index 2025?",
+    "option": [
+        "Karnataka",
+        "Maharashtra",
+        "Odisha",
+        "Gujarat"
+    ],
+    "answer": "Odisha"
+},
+{
+    "question": "Who became the first Indian player to score 1,000 runs against four IPL teams in IPL 2025?",
+    "option": [
+        "Shikhar Dhawan",
+        "Virat Kohli",
+        "Suresh Raina",
+        "Rohit Sharma"
+    ],
+    "answer": "Virat Kohli"
+},
+{
+    "question": "What is the capital of Bihar?",
+    "option": [
+        "Patna",
+        "Gaya",
+        "Bhagalpur",
+        "Muzaffarpur"
+    ],
+    "answer": "Patna"
+},
+
+{
+    "question": "During which event was DRAP launched in November 2025?",
+    "option": [
+        "Swachhata Pakhwada 2025",
+        "National Science Day",
+        "World Environment Day",
+        "National Youth Day"
+    ],
+    "answer": "Swachhata Pakhwada 2025"
+},
+{
+    "question": "Who was awarded the Vigyan Ratna Award for 2024?",
+    "option": [
+        "C. N. R. Rao",
+        "Govindarajan Padmanabhan",
+        "M. S. Swaminathan",
+        "Venkatraman Ramakrishnan"
+    ],
+    "answer": "Govindarajan Padmanabhan"
+},
+{
+    "question": "Which African country approved Russia's first naval base in December 2025?",
+    "option": [
+        "Libya",
+        "Sudan",
+        "Egypt",
+        "Algeria"
+    ],
+    "answer": "Sudan"
+},
+{
+    "question": "Which initiative in the Union Budget 2025–26 is associated with the target of raising ₹10 lakh crore by 2030?",
+    "option": [
+        "National Investment Plan",
+        "National Infrastructure Plan",
+        "Second Asset Monetisation Plan",
+        "National Disinvestment Plan"
+    ],
+    "answer": "Second Asset Monetisation Plan"
+},
+{
+    "question": "According to the World Bank's June 2025 report, what was India's extreme poverty rate in 2022–23?",
+    "option": [
+        "2.3%",
+        "3.5%",
+        "4.8%",
+        "5.3%"
+    ],
+    "answer": "2.3%"
+},
+
+{
+    "question": "Which country did Prime Minister Narendra Modi visit in June 2025?",
+    "option": [
+        "Bangladesh",
+        "Brazil",
+        "New Zealand",
+        "Croatia"
+    ],
+    "answer": "Croatia"
+},
+
+{
+    "question": "The SHe-Box portal announced by Uttar Pradesh in May 2025 was related to providing workplace assistance to which group?",
+    "option": [
+        "Transgender persons",
+        "Senior citizens",
+        "Farmers",
+        "Students"
+    ],
+    "answer": "Transgender persons"
+},
+{
+    "question": "Which country won the World Test Championship (WTC) final in June 2025 by defeating Australia by 5 wickets?",
+    "option": [
+        "India",
+        "South Africa",
+        "New Zealand",
+        "England"
+    ],
+    "answer": "South Africa"
+},
+{
+    "question": "Which Indian city made anti-smog guns mandatory for buildings larger than 3,000 square metres in June 2025?",
+    "option": [
+        "Mumbai",
+        "Chennai",
+        "Delhi",
+        "Kolkata"
+    ],
+    "answer": "Delhi"
+},
+
+{
+    "question": "Who is the author of the book 'The Chola Tigers: Avengers of Somnath'?",
+    "option": [
+        "Vikram Chandra",
+        "Amitav Ghosh",
+        "Chetan Bhagat",
+        "Amish Tripathi"
+    ],
+    "answer": "Amish Tripathi"
+},
+{
+    "question": "What was the estimated global GDP growth in the January 2025 update of the IMF World Economic Outlook?",
+    "option": [
+        "2.8%",
+        "4.2%",
+        "3.3%",
+        "3.7%"
+    ],
+    "answer": "3.3%"
+},
+{
+    "question": "Which organisation released the second draft of the National Essential Diagnostics List in January 2025?",
+    "option": [
+        "WHO",
+        "ICMR",
+        "UNICEF",
+        "NITI Aayog"
+    ],
+    "answer": "ICMR"
+},
+
+
+];
+
+// =====================================================
+// HELPERS
+// =====================================================
+const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+const getRandom = (arr, n) => shuffle(arr).slice(0, n);
+
+/**
+ * Build paper in FIXED section order:
+ *   1. Math          (25)
+ *   2. Reasoning     (30)
+ *   3. Science       (25)
+ *   4. CurrentAffairs(20)
+ * Total = 100
+ */
+const buildQuestionPaper = (lang) => {
+  const math = lang === "hi" ? mathQuestionsHi : mathQuestionsEn;
+  const reasoning = lang === "hi" ? reasoningQuestionsHi : reasoningQuestionsEn;
+  const science = lang === "hi" ? scienceQuestionsHi : scienceQuestionsEn;
+  const ca = lang === "hi" ? currentAffairsQuestionsHi : currentAffairsQuestionsEn;
+
+  const mathQs = getRandom(math, 25).map((q) => ({
+    ...q,
+    section: 1,
+    sectionName: { hi: "गणित", en: "Mathematics" },
+  }));
+
+  const reasoningQs = getRandom(reasoning, 30).map((q) => ({
+    ...q,
+    section: 2,
+    sectionName: { hi: "तर्कशक्ति", en: "Reasoning" },
+  }));
+
+  const scienceQs = getRandom(science, 25).map((q) => ({
+    ...q,
+    section: 3,
+    sectionName: { hi: "सामान्य विज्ञान", en: "General Science" },
+  }));
+
+  const caQs = getRandom(ca, 20).map((q) => ({
+    ...q,
+    section: 4,
+    sectionName: { hi: "करेंट अफेयर्स", en: "Current Affairs" },
+  }));
+
+  return [...mathQs, ...reasoningQs, ...scienceQs, ...caQs];
 };
 
-// --- Component ---
+// =====================================================
+// MAIN COMPONENT
+// =====================================================
 export default function RRBGroupDMockTest() {
   const [started, setStarted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [timer, setTimer] = useState(5400); // 90 minutes = 5400 seconds
-  const [language, setLanguage] = useState('hi');
+  const [timer, setTimer] = useState(5400); // 90 min
+  const [language, setLanguage] = useState("hi");
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState({
+    correct: 0,
+    wrong: 0,
+    notAttempted: 0,
+    finalScore: 0,
+  });
   const [resultDetails, setResultDetails] = useState([]);
   const [showTimerWarning, setShowTimerWarning] = useState(false);
 
@@ -294,356 +11571,256 @@ export default function RRBGroupDMockTest() {
     if (timer === 0 && started && !submitted) {
       submitExam();
     }
+    // eslint-disable-next-line
   }, [started, submitted, timer]);
 
   const startExam = () => {
-    setQuestions(buildQuestionPaper(language));
+    const paper = buildQuestionPaper(language);
+    setQuestions(paper);
     setStarted(true);
     setTimer(5400);
     setAnswers({});
     setCurrent(0);
+    setScore({ correct: 0, wrong: 0, notAttempted: 0, finalScore: 0 });
+    setResultDetails([]);
     setShowTimerWarning(false);
   };
 
   const submitExam = () => {
     let correctCount = 0;
-    let totalMarks = 0;
+    let wrongCount = 0;
+    let notAttemptedCount = 0;
     const details = questions.map((q, i) => {
-      const isCorrect = answers[i] === q.answer;
-      if (isCorrect) {
-        correctCount++;
-        totalMarks += 1; // +1 for correct answer
-      } else if (answers[i] !== undefined) {
-        totalMarks -= 0.25; // -0.25 for wrong answer (negative marking)
-      }
+      const userAns = answers[i];
+      const isCorrect = userAns === q.answer;
+      const attempted = !!userAns;
+
+      if (isCorrect) correctCount++;
+      else if (attempted) wrongCount++;
+      else notAttemptedCount++;
+
       return {
         question: q.question,
-        options: q.options,
+        option: q.option,
         correctAnswer: q.answer,
-        userAnswer: answers[i] || (language === 'hi' ? "प्रयास नहीं किया" : "Not Attempted"),
-        isCorrect: isCorrect,
+        userAnswer:
+          userAns ||
+          (language === "hi" ? "प्रयास नहीं किया" : "Not Attempted"),
+        isCorrect,
+        attempted,
+        section: q.section,
+        sectionName: q.sectionName,
       };
     });
-    setScore(Math.max(0, totalMarks)); // Score can't be negative
+
+    // RRB Group D: +1 for correct, −1/3 for wrong, 0 for unattempted
+    const finalScore = correctCount * 1 - wrongCount * (1 / 3);
+
+    setScore({
+      correct: correctCount,
+      wrong: wrongCount,
+      notAttempted: notAttemptedCount,
+      finalScore: finalScore,
+    });
     setResultDetails(details);
     setSubmitted(true);
   };
 
   const toggleLanguage = () => {
-    if (!started) {
-      setLanguage(language === 'hi' ? 'en' : 'hi');
-    }
+    if (!started) setLanguage(language === "hi" ? "en" : "hi");
   };
 
   const getText = (key) => {
-    const texts = {
-      'title': { hi: '🚂 RRB Group D Mock Test', en: '🚂 RRB Group D Mock Test' },
-      'subtitle': { hi: 'भारतीय रेलवे भर्ती', en: 'Indian Railways Recruitment' },
-      'questions': { hi: '📝 प्रश्न', en: '📝 Questions' },
-      'time': { hi: '⏱️ समय', en: '⏱️ Time' },
-      'instructions': { hi: '📋 निर्देश:', en: '📋 Instructions:' },
-      'compulsory': { hi: 'सभी प्रश्न अनिवार्य हैं', en: 'All questions are compulsory' },
-      'marks': { hi: 'प्रत्येक प्रश्न 1 अंक का है', en: 'Each question carries 1 mark' },
-      'negative': { hi: 'गलत उत्तर पर -0.25 अंक', en: '-0.25 marks for wrong answer' },
-      'start': { hi: '🚀 परीक्षा शुरू करें', en: '🚀 Start Exam' },
-      'answered': { hi: 'उत्तर दिए:', en: 'Answered:' },
-      'prev': { hi: '⬅ पिछला', en: '⬅ Prev' },
-      'next': { hi: 'अगला ➡', en: 'Next ➡' },
-      'submit': { hi: '📤 जमा करें', en: '📤 Submit' },
-      'navigator': { hi: 'प्रश्न नेविगेटर', en: 'Question Navigator' },
-      'answered_status': { hi: '🟢 उत्तर दिया', en: '🟢 Answered' },
-      'current_status': { hi: '🔵 वर्तमान', en: '🔵 Current' },
-      'unanswered_status': { hi: '⚪ अनुत्तरित', en: '⚪ Unanswered' },
-      'congrats': { hi: '🎉 बधाई हो!', en: '🎉 Congratulations!' },
-      'practice': { hi: '📖 अभ्यास जारी रखें!', en: '📖 Keep Practicing!' },
-      'passed': { hi: '✔️ उत्तीर्ण', en: '✔️ Passed' },
-      'failed': { hi: '❌ अनुत्तीर्ण', en: '❌ Failed' },
-      'review': { hi: '📋 उत्तर समीक्षा', en: '📋 Answer Review' },
-      'your_answer': { hi: 'आपका उत्तर:', en: 'Your Answer:' },
-      'correct_answer': { hi: 'सही उत्तर:', en: 'Correct Answer:' },
-      'new_test': { hi: '🔄 नई परीक्षा लें', en: '🔄 Take New Test' },
-      'warning': { hi: '⚠️ 1 मिनट से कम समय शेष!', en: '⚠️ Less than 1 minute remaining!' },
+    const t = {
+      title: { hi: "🚂 RRB Group D Mock Test", en: "🚂 RRB Group D Mock Test" },
+      subtitle: { hi: "भारतीय रेलवे भर्ती", en: "Indian Railways Recruitment" },
+      questions: { hi: "📝 प्रश्न", en: "📝 Questions" },
+      time: { hi: "⏱️ समय", en: "⏱️ Time" },
+      marks: { hi: "🎯 कुल अंक", en: "🎯 Total Marks" },
+      instructions: { hi: "📋 निर्देश:", en: "📋 Instructions:" },
+      compulsory: { hi: "सभी प्रश्न अनिवार्य हैं", en: "All questions are compulsory" },
+      eachMarks: { hi: "प्रत्येक प्रश्न 1 अंक का है", en: "Each question carries 1 mark" },
+      negativeMarking: {
+        hi: "नेगेटिव मार्किंग: प्रत्येक गलत उत्तर पर 1/3 अंक काटे जाते हैं",
+        en: "Negative Marking: 1/3 marks deducted per wrong answer",
+      },
+      sessions: {
+        hi: "क्रम: गणित (25) → तर्कशक्ति (30) → सा.विज्ञान (25) → करेंट अफेयर्स (20)",
+        en: "Order: Math (25) → Reasoning (30) → Science (25) → Current Affairs (20)",
+      },
+      start: { hi: "🚀 परीक्षा शुरू करें", en: "🚀 Start Exam" },
+      answered: { hi: "उत्तर दिए:", en: "Answered:" },
+      prev: { hi: "⬅ पिछला", en: "⬅ Prev" },
+      next: { hi: "अगला ➡", en: "Next ➡" },
+      submit: { hi: "📤 जमा करें", en: "📤 Submit" },
+      navigator: { hi: "प्रश्न नेविगेटर", en: "Question Navigator" },
+      answeredS: { hi: "🟢 उत्तर दिया", en: "🟢 Answered" },
+      currentS: { hi: "🔵 वर्तमान", en: "🔵 Current" },
+      unansweredS: { hi: "⚪ अनुत्तरित", en: "⚪ Unanswered" },
+      practice: { hi: "📖 अभ्यास जारी रखें!", en: "📖 Keep Practicing!" },
+      passed: { hi: "✔️ उत्तीर्ण", en: "✔️ Passed" },
+      failed: { hi: "❌ अनुत्तीर्ण", en: "❌ Failed" },
+      review: { hi: "📋 उत्तर समीक्षा", en: "📋 Answer Review" },
+      yourAnswer: { hi: "आपका उत्तर:", en: "Your Answer:" },
+      correctAnswer: { hi: "सही उत्तर:", en: "Correct Answer:" },
+      newTest: { hi: "🔄 नई परीक्षा लें", en: "🔄 Take New Test" },
+      warning: { hi: "⚠️ 1 मिनट से कम समय शेष!", en: "⚠️ Less than 1 minute remaining!" },
+      download: { hi: "📥 परिणाम डाउनलोड करें", en: "📥 Download Result" },
+      correct: { hi: "✔ सही", en: "✔ Correct" },
+      wrong: { hi: "✖ गलत", en: "✖ Wrong" },
+      notAttempted: { hi: "⚪ अनुत्तरित", en: "⚪ Not Attempted" },
+      langLine: {
+        hi: "भाषा: हिन्दी • नेगेटिव मार्किंग: −1/3 प्रति गलत उत्तर",
+        en: "Language: English • Negative Marking: −1/3 per wrong answer",
+      },
     };
-    return texts[key]?.[language] || texts[key]?.['en'] || key;
+    return t[key]?.[language] || t[key]?.["en"] || key;
   };
 
-  // Home Page
+  // ============ HOME ============
   if (!started) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        padding: "20px"
-      }}>
-        <div style={{
-          backgroundColor: "white",
-          padding: "25px 20px",
-          borderRadius: "16px",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
-          textAlign: "center",
-          maxWidth: "500px",
-          width: "100%",
-          animation: "fadeInUp 0.6s ease"
-        }}>
+      <div style={styles.homeWrapper}>
+        <div style={styles.homeCard}>
           <div style={{ fontSize: "48px", marginBottom: "5px" }}>🚂</div>
-          <h1 style={{ 
-            color: "#0f0c29", 
-            marginBottom: "3px", 
-            fontSize: "22px",
-            fontWeight: "700"
-          }}>
-            {getText('title')}
-          </h1>
-          <p style={{ color: "#666", fontSize: "12px", marginBottom: "15px" }}>
-            {getText('subtitle')}
-          </p>
-          <div style={{
-            height: "3px",
-            background: "linear-gradient(90deg, #0f0c29, #302b63)",
-            margin: "10px auto",
-            width: "60px"
-          }}></div>
-          
-          {/* Language Toggle */}
-          <div style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "12px",
-            marginTop: "15px",
-            marginBottom: "15px"
-          }}>
-            <span style={{ 
-              fontSize: "14px", 
-              fontWeight: language === 'hi' ? "700" : "400",
-              color: language === 'hi' ? "#0f0c29" : "#999"
-            }}>हिन्दी</span>
-            <button
-              onClick={toggleLanguage}
-              style={{
-                width: "50px",
-                height: "26px",
-                borderRadius: "13px",
-                background: language === 'hi' ? "#302b63" : "#4a90d9",
-                border: "none",
-                cursor: "pointer",
-                position: "relative",
-                transition: "all 0.3s ease"
-              }}
-            >
-              <div style={{
-                width: "20px",
-                height: "20px",
-                borderRadius: "50%",
-                background: "white",
-                position: "absolute",
-                top: "3px",
-                left: language === 'hi' ? "3px" : "27px",
-                transition: "all 0.3s ease",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
-              }}></div>
+          <h1 style={styles.homeTitle}>{getText("title")}</h1>
+          <p style={styles.homeSub}>{getText("subtitle")}</p>
+          <div style={styles.divider}></div>
+
+          <div style={styles.langRow}>
+            <span style={{ ...styles.langLabel, fontWeight: language === "hi" ? "700" : "400", color: language === "hi" ? "#0f0c29" : "#999" }}>हिन्दी</span>
+            <button onClick={toggleLanguage} style={{ ...styles.toggleBtn, background: language === "hi" ? "#302b63" : "#4a90d9" }}>
+              <div style={{ ...styles.toggleKnob, left: language === "hi" ? "3px" : "27px" }}></div>
             </button>
-            <span style={{ 
-              fontSize: "14px", 
-              fontWeight: language === 'en' ? "700" : "400",
-              color: language === 'en' ? "#0f0c29" : "#999"
-            }}>English</span>
+            <span style={{ ...styles.langLabel, fontWeight: language === "en" ? "700" : "400", color: language === "en" ? "#0f0c29" : "#999" }}>English</span>
           </div>
-          
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "10px",
-            marginTop: "10px"
-          }}>
-            <div style={{ 
-              backgroundColor: "#e8f0fe", 
-              padding: "12px", 
-              borderRadius: "10px"
-            }}>
-              <div style={{ fontSize: "11px", color: "#666" }}>{getText('questions')}</div>
-              <div style={{ fontSize: "22px", fontWeight: "bold", color: "#0f0c29" }}>100</div>
+
+          <div style={styles.statGrid}>
+            <div style={styles.statBox}>
+              <div style={styles.statLabel}>{getText("questions")}</div>
+              <div style={styles.statValue}>100</div>
             </div>
-            <div style={{ 
-              backgroundColor: "#e8f0fe", 
-              padding: "12px", 
-              borderRadius: "10px"
-            }}>
-              <div style={{ fontSize: "11px", color: "#666" }}>{getText('time')}</div>
-              <div style={{ fontSize: "22px", fontWeight: "bold", color: "#0f0c29" }}>90 min</div>
+            <div style={styles.statBox}>
+              <div style={styles.statLabel}>{getText("time")}</div>
+              <div style={styles.statValue}>90 min</div>
+            </div>
+            <div style={styles.statBox}>
+              <div style={styles.statLabel}>{getText("marks")}</div>
+              <div style={styles.statValue}>100</div>
             </div>
           </div>
 
-          <div style={{
-            backgroundColor: "#f8f9fa",
-            padding: "10px",
-            borderRadius: "10px",
-            marginTop: "10px",
-            fontSize: "12px",
-            color: "#555",
-            textAlign: "left"
-          }}>
-            <strong>{getText('instructions')}</strong>
+          <div style={styles.instructionsBox}>
+            <strong>{getText("instructions")}</strong>
             <ul style={{ margin: "5px 0 0 0", paddingLeft: "18px" }}>
-              <li>{getText('compulsory')}</li>
-              <li>{getText('marks')}</li>
-              <li>{getText('negative')}</li>
+              <li>{getText("compulsory")}</li>
+              <li>{getText("eachMarks")}</li>
+              <li style={{ color: "#dc2626", fontWeight: "600" }}>
+                ⚠️ {getText("negativeMarking")}
+              </li>
+              <li>{getText("sessions")}</li>
             </ul>
           </div>
 
-          <button
-            onClick={startExam}
-            style={{
-              padding: "14px 40px",
-              fontSize: "18px",
-              fontWeight: "bold",
-              background: "linear-gradient(135deg, #0f0c29 0%, #302b63 100%)",
-              color: "white",
-              border: "none",
-              borderRadius: "50px",
-              cursor: "pointer",
-              marginTop: "20px",
-              width: "100%",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              boxShadow: "0 4px 15px rgba(48, 43, 99, 0.4)"
-            }}
-            onMouseEnter={(e) => e.target.style.transform = "scale(1.02)"}
-            onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
-          >
-            {getText('start')}
-          </button>
+          <button onClick={startExam} style={styles.startBtn}>{getText("start")}</button>
         </div>
+        <style>{animStyles}</style>
       </div>
     );
   }
 
-  // Result Page
+  // ============ RESULT ============
   if (submitted) {
-    const percentage = ((score / questions.length) * 100).toFixed(2);
-    const isPassed = percentage >= 60;
+    const total = questions.length;
+    const maxMarks = total * 1; // 1 mark per question
+    const { correct, wrong, notAttempted, finalScore } = score;
+
+    const percentage = ((finalScore / maxMarks) * 100).toFixed(2);
+    const isPassed = Number(percentage) >= 60;
+
     return (
-      <div style={{
-        minHeight: "100vh",
-        background: "#f5f7fa",
-        padding: "15px",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-      }}>
-        <div style={{
-          maxWidth: "800px",
-          margin: "0 auto"
-        }}>
-          <div style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "25px 20px",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-            textAlign: "center",
-            marginBottom: "20px",
-            animation: "slideIn 0.5s ease"
-          }}>
-            <h1 style={{ 
-              fontSize: "24px", 
-              marginBottom: "5px",
-              color: "#2d3748"
-            }}>
-              {isPassed ? getText('congrats') : getText('practice')}
-            </h1>
-            <div style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              background: isPassed ? "#d4edda" : "#f8d7da",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "15px auto",
-              fontSize: "32px"
-            }}>
+      <div style={styles.resultWrapper}>
+        <div style={styles.resultContainer}>
+          <div style={styles.resultCard}>
+            <div style={{ fontSize: "14px", color: "#718096", marginBottom: "10px" }}>
+              📖 {getText("practice")}
+            </div>
+            <div style={{ ...styles.bigCircle, background: isPassed ? "#dcfce7" : "#fee2e2" }}>
               {isPassed ? "✅" : "📝"}
             </div>
-            <div style={{ fontSize: "40px", fontWeight: "bold", color: "#0f0c29" }}>
-              {score.toFixed(2)} <span style={{ fontSize: "20px", color: "#888" }}>/ {questions.length}</span>
+
+            <div style={styles.scoreBig}>
+              {finalScore.toFixed(2)}{" "}
+              <span style={{ fontSize: "22px", color: "#888" }}>/ {maxMarks}</span>
             </div>
-            <div style={{ 
-              fontSize: "18px", 
-              color: isPassed ? "#28a745" : "#dc3545", 
-              marginTop: "5px",
-              fontWeight: "600"
-            }}>
-              {percentage}% {isPassed ? getText('passed') : getText('failed')}
+
+            <div style={{ fontSize: "18px", color: isPassed ? "#16a34a" : "#dc2626", fontWeight: "700", marginTop: "4px" }}>
+              {percentage}% {isPassed ? getText("passed") : getText("failed")}
             </div>
+            <div style={styles.langLine}>{getText("langLine")}</div>
+
+            <div style={styles.statRow}>
+              <div style={{ ...styles.pill, background: "#dcfce7", color: "#166534" }}>
+                ✔ {getText("correct")}: {correct} (+{correct})
+              </div>
+              <div style={{ ...styles.pill, background: "#fee2e2", color: "#991b1b" }}>
+                ✖ {getText("wrong")}: {wrong} (−{(wrong * (1 / 3)).toFixed(2)})
+              </div>
+              <div style={{ ...styles.pill, background: "#fef3c7", color: "#92400e" }}>
+                ⚪ {getText("notAttempted")}: {notAttempted}
+              </div>
+            </div>
+
             <div style={{
-              marginTop: "10px",
-              fontSize: "13px",
-              color: "#718096"
+              marginTop: "14px",
+              fontSize: "12px",
+              color: "#92400e",
+              background: "#fef3c7",
+              border: "1px solid #fde68a",
+              padding: "8px 12px",
+              borderRadius: "8px",
+              fontWeight: "600",
             }}>
-              {language === 'hi' ? "भाषा: हिन्दी" : "Language: English"} • {getText('negative')}
+              ⚠️ {getText("negativeMarking")}
             </div>
+
+            <button onClick={() => window.print()} style={styles.downloadBtn}>
+              {getText("download")}
+            </button>
           </div>
 
-          <div style={{
-            backgroundColor: "white",
-            borderRadius: "16px",
-            padding: "20px 15px",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.1)"
-          }}>
-            <h2 style={{ 
-              borderBottom: "2px solid #eee", 
-              paddingBottom: "12px", 
-              marginBottom: "15px",
-              fontSize: "18px",
-              color: "#2d3748"
-            }}>
-              {getText('review')}
-            </h2>
+          <div style={styles.reviewCard}>
+            <h2 style={styles.reviewTitle}>📋 {getText("review")}</h2>
             {resultDetails.map((item, index) => (
               <div
                 key={index}
                 style={{
-                  backgroundColor: item.isCorrect ? "#f0fff4" : "#fff5f5",
-                  borderLeft: `4px solid ${item.isCorrect ? "#48bb78" : "#fc8181"}`,
-                  padding: "12px 15px",
-                  marginBottom: "12px",
-                  borderRadius: "8px",
-                  animation: `fadeIn 0.3s ease ${index * 0.05}s`
+                  ...styles.reviewItem,
+                  background: "#fffbeb",
+                  borderLeft: `4px solid ${
+                    item.isCorrect ? "#22c55e" : item.attempted ? "#ef4444" : "#f59e0b"
+                  }`,
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <h4 style={{ 
-                    margin: "0", 
-                    fontSize: "14px", 
-                    color: "#2d3748",
-                    flex: 1,
-                    marginRight: "10px"
-                  }}>
-                    Q{index + 1}. {item.question}
-                  </h4>
-                  <span style={{ fontSize: "18px", flexShrink: 0 }}>
-                    {item.isCorrect ? "✅" : "❌"}
-                  </span>
+                <div style={styles.reviewQ}>
+                  Q{index + 1}. <QuestionText text={item.question} />
                 </div>
-                <div style={{ marginTop: "8px", marginLeft: "5px", fontSize: "13px" }}>
-                  <p style={{ margin: "3px 0" }}>
-                    <strong>{getText('your_answer')}</strong>{" "}
-                    <span style={{ color: item.isCorrect ? "#48bb78" : "#fc8181" }}>
-                      {item.userAnswer}
+                <div style={styles.reviewAns}>
+                  <div>
+                    <strong>{getText("yourAnswer")} </strong>
+                    <span style={{ color: item.isCorrect ? "#16a34a" : "#dc2626" }}>
+                      <MathText text={item.userAnswer} />
                     </span>
-                  </p>
-                  {!item.isCorrect && item.userAnswer !== (language === 'hi' ? "प्रयास नहीं किया" : "Not Attempted") && (
-                    <p style={{ margin: "3px 0", color: "#dc3545", fontSize: "12px" }}>
-                      -0.25 {language === 'hi' ? 'अंक' : 'marks'}
-                    </p>
-                  )}
-                  {!item.isCorrect && (
-                    <p style={{ margin: "3px 0" }}>
-                      <strong>{getText('correct_answer')}</strong>{" "}
-                      <span style={{ color: "#48bb78" }}>{item.correctAnswer}</span>
-                    </p>
-                  )}
+                  </div>
+                  <div>
+                    <strong>{getText("correctAnswer")} </strong>
+                    <span style={{ color: "#16a34a", fontStyle: "italic" }}>
+                      <MathText text={item.correctAnswer} />
+                    </span>
+                  </div>
+                </div>
+                <div style={styles.reviewStatus}>
+                  {item.isCorrect ? "✅" : item.attempted ? "❌" : "⚪"}
                 </div>
               </div>
             ))}
@@ -659,356 +11836,241 @@ export default function RRBGroupDMockTest() {
                 setTimer(5400);
                 setShowTimerWarning(false);
                 setQuestions([]);
+                setCurrent(0);
+                setScore({ correct: 0, wrong: 0, notAttempted: 0, finalScore: 0 });
               }}
-              style={{
-                padding: "14px 35px",
-                fontSize: "16px",
-                fontWeight: "bold",
-                background: "linear-gradient(135deg, #0f0c29 0%, #302b63 100%)",
-                color: "white",
-                border: "none",
-                borderRadius: "50px",
-                cursor: "pointer",
-                width: "100%",
-                maxWidth: "300px",
-                boxShadow: "0 4px 15px rgba(48, 43, 99, 0.4)",
-                transition: "transform 0.3s ease"
-              }}
-              onMouseEnter={(e) => e.target.style.transform = "scale(1.02)"}
-              onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+              style={styles.startBtn}
             >
-              {getText('new_test')}
+              {getText("newTest")}
             </button>
           </div>
         </div>
+        <style>{animStyles}</style>
       </div>
     );
   }
 
-  // Exam Page
-  const q = questions[current] || { question: "", options: [], answer: "" };
+  // ============ EXAM ============
+  const q = questions[current] || { question: "", option: [], answer: "", sectionName: { hi: "", en: "" } };
   const answeredCount = Object.keys(answers).length;
 
+  const sectionColor = (s) => {
+    switch (s) {
+      case 1: return "#3b82f6"; // Math - blue
+      case 2: return "#8b5cf6"; // Reasoning - purple
+      case 3: return "#f59e0b"; // Science - amber
+      case 4: return "#10b981"; // Current Affairs - green
+      default: return "#302b63";
+    }
+  };
+
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f5f7fa",
-      padding: "10px",
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-    }}>
-      <div style={{
-        maxWidth: "800px",
-        margin: "0 auto"
-      }}>
-        <div style={{
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "10px 14px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          marginBottom: "10px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
+    <div style={styles.examWrapper}>
+      <div style={styles.examContainer}>
+        <div style={styles.topBar}>
           <div style={{ flex: 1 }}>
-            <p style={{ 
-              margin: "0", 
-              fontSize: "11px", 
-              color: "#718096"
-            }}>
-              Q{current + 1}/{questions.length}
+            <p style={styles.qCounter}>Q{current + 1}/{questions.length}</p>
+            <p style={styles.qSubCounter}>
+              {getText("answered")} {answeredCount}/{questions.length}
             </p>
-            <p style={{ 
-              margin: "2px 0 0", 
-              fontSize: "10px", 
-              color: "#a0aec0"
+            <p style={{
+              margin: "4px 0 0",
+              fontSize: "11px",
+              color: "white",
+              fontWeight: "700",
+              background: sectionColor(q.section),
+              display: "inline-block",
+              padding: "3px 10px",
+              borderRadius: "10px",
             }}>
-              {getText('answered')} {answeredCount}/{questions.length}
+              {q.sectionName?.[language] || q.sectionName?.en}
             </p>
           </div>
-          <div style={{
-            fontSize: "20px",
-            fontWeight: "bold",
-            color: timer < 60 ? "#fc8181" : "#0f0c29",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px"
-          }}>
+          <div style={{ ...styles.timer, color: timer < 60 ? "#fc8181" : "#0f0c29" }}>
             <span style={{ fontSize: "16px" }}>⏱️</span>
             <span>{Math.floor(timer / 60)}:{String(timer % 60).padStart(2, "0")}</span>
           </div>
         </div>
 
-        <div style={{
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "16px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          marginBottom: "10px",
-          animation: "fadeIn 0.3s ease"
-        }}>
-          <h3 style={{
-            fontSize: "16px",
-            color: "#0f0c29",
-            marginBottom: "16px",
-            fontWeight: "600",
-            lineHeight: "1.5"
-          }}>
-            {q.question}
+        <div style={styles.questionCard}>
+          <h3 style={styles.questionText}>
+            <QuestionText text={q.question} />
           </h3>
-
           <div style={{ marginTop: "5px" }}>
-            {q.options && q.options.map((op, idx) => (
+            {q.option && q.option.map((op, idx) => (
               <div
                 key={idx}
                 style={{
-                  padding: "10px 12px",
-                  margin: "5px 0",
+                  ...styles.option,
                   backgroundColor: answers[current] === op ? "#ebf8ff" : "#f7fafc",
                   border: answers[current] === op ? "2px solid #302b63" : "2px solid transparent",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                  display: "flex",
-                  alignItems: "center",
-                  transform: answers[current] === op ? "scale(1.01)" : "scale(1)"
                 }}
                 onClick={() => setAnswers({ ...answers, [current]: op })}
-                onMouseEnter={(e) => {
-                  if (answers[current] !== op) {
-                    e.currentTarget.style.backgroundColor = "#f0f0f0";
-                    e.currentTarget.style.transform = "scale(1.005)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (answers[current] !== op) {
-                    e.currentTarget.style.backgroundColor = "#f7fafc";
-                    e.currentTarget.style.transform = "scale(1)";
-                  }
-                }}
               >
                 <input
                   type="radio"
-                  id={`q${current}-opt${idx}`}
-                  name={`question-${current}`}
                   checked={answers[current] === op}
                   onChange={() => {}}
-                  style={{ marginRight: "10px", width: "16px", height: "16px", flexShrink: 0 }}
+                  style={{ marginRight: "10px", width: "16px", height: "16px" }}
                 />
-                <label
-                  htmlFor={`q${current}-opt${idx}`}
-                  style={{
-                    fontSize: "14px",
-                    cursor: "pointer",
-                    flex: 1,
-                    margin: "0",
-                    color: "#2d3748"
-                  }}
-                >
-                  {op}
+                <label style={styles.optionLabel}>
+                  <MathText text={op} />
                 </label>
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{
-          display: "flex",
-          gap: "8px",
-          flexWrap: "wrap",
-          justifyContent: "space-between"
-        }}>
+        <div style={styles.navRow}>
           <div style={{ display: "flex", gap: "8px" }}>
             <button
               onClick={() => setCurrent(Math.max(0, current - 1))}
               disabled={current === 0}
               style={{
-                padding: "8px 14px",
-                fontSize: "13px",
+                ...styles.navBtn,
                 backgroundColor: current === 0 ? "#e2e8f0" : "#302b63",
                 color: current === 0 ? "#a0aec0" : "white",
-                border: "none",
-                borderRadius: "8px",
                 cursor: current === 0 ? "not-allowed" : "pointer",
-                fontWeight: "600",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => {
-                if (current !== 0) {
-                  e.target.style.transform = "scale(1.05)";
-                  e.target.style.boxShadow = "0 4px 12px rgba(48, 43, 99, 0.3)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "scale(1)";
-                e.target.style.boxShadow = "none";
               }}
             >
-              {getText('prev')}
+              {getText("prev")}
             </button>
             <button
               onClick={() => setCurrent(Math.min(questions.length - 1, current + 1))}
               disabled={current === questions.length - 1}
               style={{
-                padding: "8px 14px",
-                fontSize: "13px",
+                ...styles.navBtn,
                 backgroundColor: current === questions.length - 1 ? "#e2e8f0" : "#302b63",
                 color: current === questions.length - 1 ? "#a0aec0" : "white",
-                border: "none",
-                borderRadius: "8px",
                 cursor: current === questions.length - 1 ? "not-allowed" : "pointer",
-                fontWeight: "600",
-                transition: "all 0.3s ease"
-              }}
-              onMouseEnter={(e) => {
-                if (current !== questions.length - 1) {
-                  e.target.style.transform = "scale(1.05)";
-                  e.target.style.boxShadow = "0 4px 12px rgba(48, 43, 99, 0.3)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = "scale(1)";
-                e.target.style.boxShadow = "none";
               }}
             >
-              {getText('next')}
+              {getText("next")}
             </button>
           </div>
-
-          <button
-            onClick={submitExam}
-            style={{
-              padding: "8px 18px",
-              fontSize: "13px",
-              backgroundColor: "#48bb78",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "600",
-              transition: "all 0.3s ease",
-              boxShadow: "0 2px 8px rgba(72, 187, 120, 0.3)"
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = "scale(1.05)";
-              e.target.style.boxShadow = "0 4px 15px rgba(72, 187, 120, 0.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = "scale(1)";
-              e.target.style.boxShadow = "0 2px 8px rgba(72, 187, 120, 0.3)";
-            }}
-          >
-            {getText('submit')}
-          </button>
+          <button onClick={submitExam} style={styles.submitBtn}>{getText("submit")}</button>
         </div>
 
-        <div style={{
-          backgroundColor: "white",
-          borderRadius: "12px",
-          padding: "12px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          marginTop: "10px"
-        }}>
-          <p style={{ 
-            margin: "0 0 8px 0", 
-            color: "#718096", 
-            fontSize: "11px", 
-            fontWeight: "600" 
-          }}>
-            {getText('navigator')}
-          </p>
-          <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "5px"
-          }}>
-            {questions.map((_, idx) => (
+        <div style={styles.navigatorCard}>
+          <p style={styles.navTitle}>{getText("navigator")}</p>
+          <div style={styles.navGrid}>
+            {questions.map((question, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrent(idx)}
+                title={`${question.sectionName?.[language] || ""}`}
                 style={{
-                  width: "32px",
-                  height: "32px",
-                  fontSize: "11px",
-                  backgroundColor: answers[idx] ? "#48bb78" : 
-                                   current === idx ? "#302b63" : "#e2e8f0",
-                  color: answers[idx] ? "white" :
-                         current === idx ? "white" : "#4a5568",
-                  border: current === idx ? "2px solid #302b63" : "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  transition: "all 0.3s ease",
-                  transform: answers[idx] ? "scale(1.05)" : "scale(1)"
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.transform = "scale(1.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.transform = answers[idx] ? "scale(1.05)" : "scale(1)";
+                  ...styles.navNum,
+                  backgroundColor: answers[idx] ? "#48bb78" :
+                                   current === idx ? sectionColor(question.section) : "#e2e8f0",
+                  color: answers[idx] || current === idx ? "white" : "#4a5568",
+                  border: current === idx ? `2px solid ${sectionColor(question.section)}` : "none",
                 }}
               >
                 {idx + 1}
               </button>
             ))}
           </div>
-          <div style={{
-            display: "flex",
-            gap: "12px",
-            marginTop: "8px",
-            fontSize: "10px",
-            color: "#4a5568",
-            flexWrap: "wrap"
-          }}>
-            <span>{getText('answered_status')}</span>
-            <span>{getText('current_status')}</span>
-            <span>{getText('unanswered_status')}</span>
+          <div style={styles.legendRow}>
+            <span>{getText("answeredS")}</span>
+            <span>{getText("currentS")}</span>
+            <span>{getText("unansweredS")}</span>
           </div>
         </div>
 
         {showTimerWarning && (
-          <div style={{
-            position: "fixed",
-            bottom: "15px",
-            right: "15px",
-            left: "15px",
-            backgroundColor: "#fc8181",
-            color: "white",
-            padding: "12px 18px",
-            borderRadius: "10px",
-            boxShadow: "0 4px 15px rgba(252, 129, 129, 0.4)",
-            textAlign: "center",
-            fontSize: "14px",
-            fontWeight: "600",
-            animation: "pulse 1.5s ease-in-out infinite",
-            maxWidth: "400px",
-            margin: "0 auto"
-          }}>
-            {getText('warning')}
-          </div>
+          <div style={styles.timerWarning}>{getText("warning")}</div>
         )}
       </div>
-      <style>
-        {`
-          @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(0.98); }
-            100% { opacity: 1; transform: scale(1); }
-          }
-          @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-        `}
-      </style>
+      <style>{animStyles}</style>
     </div>
   );
 }
+
+// =====================================================
+// STYLES
+// =====================================================
+const styles = {
+  homeWrapper: { minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", padding: "20px" },
+  homeCard: { backgroundColor: "white", padding: "25px 20px", borderRadius: "16px", boxShadow: "0 20px 60px rgba(0,0,0,0.6)", textAlign: "center", maxWidth: "500px", width: "100%" },
+  homeTitle: { color: "#0f0c29", marginBottom: "3px", fontSize: "22px", fontWeight: "700" },
+  homeSub: { color: "#666", fontSize: "12px", marginBottom: "15px" },
+  divider: { height: "3px", background: "linear-gradient(90deg, #0f0c29, #302b63)", margin: "10px auto", width: "60px" },
+  langRow: { display: "flex", justifyContent: "center", alignItems: "center", gap: "12px", margin: "15px 0" },
+  langLabel: { fontSize: "14px" },
+  toggleBtn: { width: "50px", height: "26px", borderRadius: "13px", border: "none", cursor: "pointer", position: "relative", transition: "all 0.3s ease" },
+  toggleKnob: { width: "20px", height: "20px", borderRadius: "50%", background: "white", position: "absolute", top: "3px", transition: "all 0.3s ease", boxShadow: "0 2px 4px rgba(0,0,0,0.2)" },
+  statGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginTop: "10px" },
+  statBox: { backgroundColor: "#e8f0fe", padding: "10px", borderRadius: "10px" },
+  statLabel: { fontSize: "10px", color: "#666" },
+  statValue: { fontSize: "18px", fontWeight: "bold", color: "#0f0c29" },
+  instructionsBox: { backgroundColor: "#f8f9fa", padding: "10px", borderRadius: "10px", marginTop: "10px", fontSize: "12px", color: "#555", textAlign: "left" },
+  startBtn: { padding: "14px 40px", fontSize: "18px", fontWeight: "bold", background: "linear-gradient(135deg, #0f0c29 0%, #302b63 100%)", color: "white", border: "none", borderRadius: "50px", cursor: "pointer", marginTop: "20px", width: "100%", transition: "transform 0.3s, box-shadow 0.3s", boxShadow: "0 4px 15px rgba(48, 43, 99, 0.4)" },
+  resultWrapper: { minHeight: "100vh", background: "#f5f7fa", padding: "15px", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" },
+  resultContainer: { maxWidth: "800px", margin: "0 auto" },
+  resultCard: { backgroundColor: "white", borderRadius: "16px", padding: "25px 20px", boxShadow: "0 10px 40px rgba(0,0,0,0.1)", textAlign: "center", marginBottom: "20px" },
+  bigCircle: { width: "80px", height: "80px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "15px auto", fontSize: "32px" },
+  scoreBig: { fontSize: "44px", fontWeight: "bold", color: "#0f0c29" },
+  langLine: { marginTop: "10px", fontSize: "13px", color: "#718096" },
+  statRow: { display: "flex", gap: "8px", marginTop: "18px", flexWrap: "wrap", justifyContent: "center" },
+  pill: { padding: "10px 16px", borderRadius: "10px", fontSize: "13px", fontWeight: "700", flex: 1, minWidth: "110px" },
+  downloadBtn: { marginTop: "18px", padding: "12px 32px", fontSize: "15px", fontWeight: "bold", background: "#16a34a", color: "white", border: "none", borderRadius: "50px", cursor: "pointer", boxShadow: "0 4px 15px rgba(22, 163, 74, 0.4)" },
+  reviewCard: { backgroundColor: "white", borderRadius: "16px", padding: "20px 15px", boxShadow: "0 10px 40px rgba(0,0,0,0.1)" },
+  reviewTitle: { borderBottom: "2px solid #eee", paddingBottom: "12px", marginBottom: "15px", fontSize: "18px", color: "#2d3748" },
+  reviewItem: { padding: "12px 15px", marginBottom: "12px", borderRadius: "8px", position: "relative" },
+  reviewQ: { fontSize: "14px", color: "#2d3748", marginBottom: "8px", paddingRight: "30px" },
+  reviewAns: { fontSize: "13px", display: "flex", flexDirection: "column", gap: "3px" },
+  reviewStatus: { position: "absolute", top: "12px", right: "14px", fontSize: "16px" },
+  examWrapper: { minHeight: "100vh", background: "#f5f7fa", padding: "10px", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" },
+  examContainer: { maxWidth: "800px", margin: "0 auto" },
+  topBar: { backgroundColor: "white", borderRadius: "12px", padding: "10px 14px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" },
+  qCounter: { margin: "0", fontSize: "11px", color: "#718096" },
+  qSubCounter: { margin: "2px 0 0", fontSize: "10px", color: "#a0aec0" },
+  timer: { fontSize: "20px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" },
+  questionCard: { backgroundColor: "white", borderRadius: "12px", padding: "16px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginBottom: "10px" },
+  questionText: { fontSize: "16px", color: "#0f0c29", marginBottom: "16px", fontWeight: "600", lineHeight: "1.8", whiteSpace: "normal" },
+  option: { padding: "10px 12px", margin: "5px 0", borderRadius: "8px", cursor: "pointer", transition: "all 0.3s ease", display: "flex", alignItems: "center" },
+  optionLabel: { fontSize: "14px", cursor: "pointer", flex: 1, margin: "0", color: "#2d3748", lineHeight: "1.8", whiteSpace: "normal" },
+  navRow: { display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "space-between" },
+  navBtn: { padding: "8px 14px", fontSize: "13px", border: "none", borderRadius: "8px", fontWeight: "600", transition: "all 0.3s ease" },
+  submitBtn: { padding: "8px 18px", fontSize: "13px", backgroundColor: "#48bb78", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "600", boxShadow: "0 2px 8px rgba(72, 187, 120, 0.3)" },
+  navigatorCard: { backgroundColor: "white", borderRadius: "12px", padding: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", marginTop: "10px" },
+  navTitle: { margin: "0 0 8px 0", color: "#718096", fontSize: "11px", fontWeight: "600" },
+  navGrid: { display: "flex", flexWrap: "wrap", gap: "5px" },
+  navNum: { width: "32px", height: "32px", fontSize: "11px", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", transition: "all 0.3s ease" },
+  legendRow: { display: "flex", gap: "12px", marginTop: "8px", fontSize: "10px", color: "#4a5568", flexWrap: "wrap" },
+  timerWarning: { position: "fixed", bottom: "15px", right: "15px", left: "15px", backgroundColor: "#fc8181", color: "white", padding: "12px 18px", borderRadius: "10px", boxShadow: "0 4px 15px rgba(252, 129, 129, 0.4)", textAlign: "center", fontSize: "14px", fontWeight: "600", maxWidth: "400px", margin: "0 auto", animation: "pulse 1.5s ease-in-out infinite" },
+};
+
+const animStyles = `
+  .math-text {
+    line-height: 2;
+  }
+  .katex {
+    font-size: 1.3em;
+  }
+  .katex .mfrac {
+    font-size: 1.15em;
+  }
+  .katex .mfrac .frac-line {
+    border-bottom-width: 0.08em;
+  }
+  .katex .sqrt > .root {
+    font-size: 0.85em;
+  }
+  .katex .msupsub {
+    font-size: 0.85em;
+  }
+  .optionLabel .katex {
+    font-size: 1.2em;
+  }
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`;
