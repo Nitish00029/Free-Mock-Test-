@@ -6,208 +6,188 @@ import React, { useState, useEffect, useRef } from "react";
 // Hindi Questions
 const currentAffairsHindi = [
 {
-question: "मॉस्को के ऊपर धुआँ उठने का कारण बने ड्रोन हमले में रूस की किस सुविधा को निशाना बनाए जाने की खबर सामने आई?",
+question: "चिली में ज्वालामुखी विस्फोट के बाद राख का स्तंभ कितनी ऊँचाई तक आकाश में उठा?",
 option: [
-"मॉस्को ऑयल रिफाइनरी",
-"गज़प्रोम मुख्यालय",
-"शेरेमेत्येवो हवाई अड्डा",
-"मॉस्को पावर प्लांट"
+"180 मीटर",
+"280 मीटर",
+"380 मीटर",
+"480 मीटर"
 ],
-answer: "मॉस्को ऑयल रिफाइनरी"
+answer: "380 मीटर"
 },
 {
-question: "वार्षिक द्विपक्षीय समुद्री अभ्यास SLINEX-26 का 13वाँ संस्करण किन दो देशों के बीच आयोजित किया जा रहा है?",
+question: "ग्लोबल फाइनेंशियल सेंटर्स इंडेक्स (GFCI 40) में कौन-सा शहर शीर्ष पर रहा?",
 option: [
-"भारत और श्रीलंका",
-"भारत और मालदीव",
-"भारत और इंडोनेशिया",
-"भारत और थाईलैंड"
+"लंदन",
+"न्यूयॉर्क",
+"सिंगापुर",
+"हांगकांग"
 ],
-answer: "भारत और श्रीलंका"
+answer: "न्यूयॉर्क"
 },
 {
-question: "INS त्रिशूल ने मिस्र के किस शहर में पोर्ट कॉल किया?",
+question: "TIFF 2026 में नागालैंड की किस फिल्म ने प्लेटफॉर्म प्राइज जीता?",
 option: [
-"अलेक्जेंड्रिया",
-"काहिरा",
-"पोर्ट सईद",
-"स्वेज"
+"आंग",
+"बांस",
+"नागा हिल्स",
+"द लास्ट विलेज"
 ],
-answer: "अलेक्जेंड्रिया"
+answer: "आंग"
 },
 {
-question: "बोत्सवाना से लाए गए चीते को किस वन्यजीव अभयारण्य में छोड़ा गया?",
+question: "आयुर्वेद दिवस 2026 कब मनाया जाएगा?",
 option: [
-"गांधी सागर अभयारण्य",
-"कूनो राष्ट्रीय उद्यान",
-"रणथंभौर राष्ट्रीय उद्यान",
-"बांधवगढ़ राष्ट्रीय उद्यान"
+"21 सितंबर",
+"22 सितंबर",
+"23 सितंबर",
+"24 सितंबर"
 ],
-answer: "गांधी सागर अभयारण्य"
+answer: "23 सितंबर"
 },
 {
-question: "₹5,500 करोड़ के निवेश से एशिया का पहला टेलीकॉम विनिर्माण क्षेत्र किस शहर में स्थापित किया जाएगा?",
+question: "केंद्रीय पर्यावरण मंत्री ने WWF ग्लोबल कंजर्वेशन कॉन्फ्रेंस का उद्घाटन किस शहर में किया?",
 option: [
-"ग्वालियर",
-"इंदौर",
+"जयपुर",
 "भोपाल",
-"जबलपुर"
+"लखनऊ",
+"नई दिल्ली"
 ],
-answer: "ग्वालियर"
+answer: "जयपुर"
 },
 {
-question: "बंगाल की खाड़ी में मौसम प्रणाली के मजबूत होने के साथ चक्रवात अर्नब से कितने राज्यों के प्रभावित होने की संभावना है?",
+question: "भारतीय वायु सेना (IAF) 2026 में बहुराष्ट्रीय हवाई अभ्यास ‘तरंग शक्ति’ के दूसरे संस्करण की मेजबानी कहाँ करेगी?",
 option: [
-"तीन राज्य",
-"दो राज्य",
-"चार राज्य",
-"पाँच राज्य"
+"जोधपुर, राजस्थान",
+"पुणे, महाराष्ट्र",
+"चेन्नई, तमिलनाडु",
+"बेंगलुरु, कर्नाटक"
 ],
-answer: "तीन राज्य"
+answer: "जोधपुर, राजस्थान"
 },
 {
-question: "भारत की सबसे अधिक अंतरराष्ट्रीय मैच खेलने वाली महिला हॉकी खिलाड़ी कौन बनीं?",
+question: "ममता बनर्जी के नेतृत्व वाले तृणमूल कांग्रेस गुट को नया चुनाव चिह्न कौन-सा आवंटित किया गया?",
 option: [
-"सविता पुनिया",
-"रानी रामपाल",
-"दीप ग्रेस एक्का",
-"वंदना कटारिया"
+"लिफाफा",
+"फुटबॉल खिलाड़ी",
+"क्रिकेट बैट",
+"साइकिल"
 ],
-answer: "सविता पुनिया"
+answer: "फुटबॉल खिलाड़ी"
 },
 {
-question: "'पर्यावरण और जलवायु गतिशीलता का भविष्य' विषय पर अंतरराष्ट्रीय सम्मेलन का उद्घाटन किसने किया?",
+question: "9वें इंडिया इंटरनेशनल वाटर वीक का उद्घाटन 22 सितंबर को कौन करेंगे?",
 option: [
 "नरेंद्र मोदी",
-"अमित शाह",
-"भूपेंद्र यादव",
-"जितेंद्र सिंह"
+"जगदीप धनखड़",
+"सी. पी. राधाकृष्णन",
+"गजेंद्र सिंह शेखावत"
 ],
-answer: "नरेंद्र मोदी"
+answer: "सी. पी. राधाकृष्णन"
 },
 {
-question: "अगस्त 2026 का मासिक बुलेटिन किस सर्वेक्षण के तहत जारी किया गया?",
+question: "भारत ने 2026 एशियाई खेलों में अपना पहला स्वर्ण पदक किस खेल में जीता?",
 option: [
-"आवधिक श्रम बल सर्वेक्षण (PLFS)",
-"वार्षिक उद्योग सर्वेक्षण (ASI)",
-"उपभोक्ता मूल्य सूचकांक (CPI)",
-"आर्थिक जनगणना"
+"हॉकी",
+"निशानेबाजी",
+"क्रिकेट",
+"तीरंदाजी"
 ],
-answer: "आवधिक श्रम बल सर्वेक्षण (PLFS)"
-},
-{
-question: "2026 के एशियाई खेलों में MMA सेमीफाइनल हारने के बाद सुचिका तारियाल ने कौन-सा पदक जीता?",
-option: [
-"कांस्य पदक",
-"रजत पदक",
-"स्वर्ण पदक",
-"कोई पदक नहीं"
-],
-answer: "कांस्य पदक"
+answer: "क्रिकेट"
 },
 ];
 
 // English Questions (same 88 questions translated)
 const currentAffairsEnglish = [
 {
-question: "Which Russian facility was reportedly hit in a drone strike, causing smoke to rise over Moscow?",
+question: "At what height did the ash column rise into the sky following the volcanic eruption in Chile?",
 option: [
-"Moscow Oil Refinery",
-"Gazprom Headquarters",
-"Sheremetyevo Airport",
-"Moscow Power Plant"
+"180 metres",
+"280 metres",
+"380 metres",
+"480 metres"
 ],
-answer: "Moscow Oil Refinery"
+answer: "380 metres"
 },
 {
-question: "The 13th edition of SLINEX-26, the annual bilateral maritime exercise, is being conducted between which two countries?",
+question: "Which city topped the Global Financial Centres Index (GFCI 40)?",
 option: [
-"India and Sri Lanka",
-"India and Maldives",
-"India and Indonesia",
-"India and Thailand"
+"London",
+"New York",
+"Singapore",
+"Hong Kong"
 ],
-answer: "India and Sri Lanka"
+answer: "New York"
 },
 {
-question: "INS Trishul made a port call at which city in Egypt?",
+question: "Which film from Nagaland won the Platform Prize at TIFF 2026?",
 option: [
-"Alexandria",
-"Cairo",
-"Port Said",
-"Suez"
+"Angh",
+"Bamboo",
+"Naga Hills",
+"The Last Village"
 ],
-answer: "Alexandria"
+answer: "Angh"
 },
 {
-question: "In which wildlife sanctuary was a cheetah from Botswana released?",
+question: "When will Ayurveda Day 2026 be observed?",
 option: [
-"Gandhi Sagar Sanctuary",
-"Kuno National Park",
-"Ranthambore National Park",
-"Bandhavgarh National Park"
+"September 21",
+"September 22",
+"September 23",
+"September 24"
 ],
-answer: "Gandhi Sagar Sanctuary"
+answer: "September 23"
 },
 {
-question: "Which city is set to get Asia's first Telecom Manufacturing Zone with an investment of ₹5,500 crore?",
+question: "In which city was the WWF Global Conservation Conference inaugurated by the Union Environment Minister?",
 option: [
-"Gwalior",
-"Indore",
+"Jaipur",
 "Bhopal",
-"Jabalpur"
+"Lucknow",
+"New Delhi"
 ],
-answer: "Gwalior"
+answer: "Jaipur"
 },
 {
-question: "Cyclone Arnab is likely to affect how many states as the Bay of Bengal system strengthens?",
+question: "Where will the Indian Air Force (IAF) host the second edition of the multinational air exercise ‘Tarang Shakti’ in 2026?",
 option: [
-"Three states",
-"Two states",
-"Four states",
-"Five states"
+"Jodhpur, Rajasthan",
+"Pune, Maharashtra",
+"Chennai, Tamil Nadu",
+"Bengaluru, Karnataka"
 ],
-answer: "Three states"
+answer: "Jodhpur, Rajasthan"
 },
 {
-question: "Who became India's most-capped women's hockey player?",
+question: "What new election symbol was allotted to the Mamata Banerjee-led faction of the Trinamool Congress?",
 option: [
-"Savita Punia",
-"Rani Rampal",
-"Deep Grace Ekka",
-"Vandana Katariya"
+"Envelope",
+"Football Player",
+"Cricket Bat",
+"Bicycle"
 ],
-answer: "Savita Punia"
+answer: "Football Player"
 },
 {
-question: "Who inaugurated the International Conference on 'The Future of Environment and Climate Dynamics'?",
+question: "Who will inaugurate the 9th India International Water Week on September 22?",
 option: [
 "Narendra Modi",
-"Amit Shah",
-"Bhupender Yadav",
-"Jitendra Singh"
+"Jagdeep Dhankhar",
+"C. P. Radhakrishnan",
+"Gajendra Singh Shekhawat"
 ],
-answer: "Narendra Modi"
+answer: "C. P. Radhakrishnan"
 },
 {
-question: "The Monthly Bulletin for August 2026 was released under which survey?",
+question: "In which sport did India win its first gold medal at the 2026 Asian Games?",
 option: [
-"Periodic Labour Force Survey (PLFS)",
-"Annual Survey of Industries (ASI)",
-"Consumer Price Index (CPI)",
-"Economic Census"
+"Hockey",
+"Shooting",
+"Cricket",
+"Archery"
 ],
-answer: "Periodic Labour Force Survey (PLFS)"
-},
-{
-question: "What medal did Suchika Tariyal secure at the 2026 Asian Games after losing her MMA semifinal?",
-option: [
-"Bronze Medal",
-"Silver Medal",
-"Gold Medal",
-"No Medal"
-],
-answer: "Bronze Medal"
+answer: "Cricket"
 },
 ];
 
