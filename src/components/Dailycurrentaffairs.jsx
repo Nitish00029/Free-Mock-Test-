@@ -6,188 +6,308 @@ import React, { useState, useEffect, useRef } from "react";
 // Hindi Questions
 const currentAffairsHindi = [
 {
-question: "चिली में ज्वालामुखी विस्फोट के बाद राख का स्तंभ कितनी ऊँचाई तक आकाश में उठा?",
+question: "BAFTA 2026 में ‘One Battle After Another’ किस श्रेणी में प्रमुख विजेता रही?",
 option: [
-"180 मीटर",
-"280 मीटर",
-"380 मीटर",
-"480 मीटर"
+"सर्वश्रेष्ठ एनिमेटेड फिल्म",
+"सर्वश्रेष्ठ डॉक्यूमेंट्री",
+"सर्वश्रेष्ठ फिल्म",
+"सर्वश्रेष्ठ अंतरराष्ट्रीय फिल्म"
 ],
-answer: "380 मीटर"
+answer: "सर्वश्रेष्ठ फिल्म"
 },
 {
-question: "ग्लोबल फाइनेंशियल सेंटर्स इंडेक्स (GFCI 40) में कौन-सा शहर शीर्ष पर रहा?",
+question: "ओल चिकी ने कितने साल पूरे कर लिए हैं?",
 option: [
-"लंदन",
-"न्यूयॉर्क",
-"सिंगापुर",
-"हांगकांग"
+"100 वर्ष",
+"500 वर्ष",
+"50 वर्ष",
+"1000 वर्ष"
 ],
-answer: "न्यूयॉर्क"
+answer: "100 वर्ष"
 },
 {
-question: "TIFF 2026 में नागालैंड की किस फिल्म ने प्लेटफॉर्म प्राइज जीता?",
+question: "बांग्लादेश में तारिक रहमान के शपथ ग्रहण समारोह में भारत का प्रतिनिधित्व कौन करेगा?",
 option: [
-"आंग",
-"बांस",
-"नागा हिल्स",
-"द लास्ट विलेज"
+"एस. जयशंकर",
+"ओम बिरला",
+"राजनाथ सिंह",
+"अमित शाह"
 ],
-answer: "आंग"
+answer: "एस. जयशंकर"
 },
 {
-question: "आयुर्वेद दिवस 2026 कब मनाया जाएगा?",
+question: "बहुपक्षीय नौसैनिक अभ्यास MILAN 2026 किस स्थान पर शुरू होगा?",
 option: [
-"21 सितंबर",
-"22 सितंबर",
-"23 सितंबर",
-"24 सितंबर"
+"कोच्चि",
+"विशाखापत्तनम, आंध्र प्रदेश",
+"चेन्नई",
+"मुंबई"
 ],
-answer: "23 सितंबर"
+answer: "विशाखापत्तनम, आंध्र प्रदेश"
 },
 {
-question: "केंद्रीय पर्यावरण मंत्री ने WWF ग्लोबल कंजर्वेशन कॉन्फ्रेंस का उद्घाटन किस शहर में किया?",
+question: "किस टीम ने केरल को हराकर आठवीं बार संतोष ट्रॉफी जीती?",
 option: [
-"जयपुर",
-"भोपाल",
-"लखनऊ",
-"नई दिल्ली"
+"पंजाब",
+"सर्विसेज",
+"पश्चिम बंगाल",
+"गोवा"
 ],
-answer: "जयपुर"
+answer: "सर्विसेज"
 },
 {
-question: "भारतीय वायु सेना (IAF) 2026 में बहुराष्ट्रीय हवाई अभ्यास ‘तरंग शक्ति’ के दूसरे संस्करण की मेजबानी कहाँ करेगी?",
+question: "यम्नाम खेमचंद को किस राज्य का मुख्यमंत्री नियुक्त किया गया है?",
 option: [
-"जोधपुर, राजस्थान",
-"पुणे, महाराष्ट्र",
-"चेन्नई, तमिलनाडु",
-"बेंगलुरु, कर्नाटक"
+"कर्नाटक",
+"मणिपुर",
+"मेघालय",
+"दिल्ली"
 ],
-answer: "जोधपुर, राजस्थान"
+answer: "मणिपुर"
 },
 {
-question: "ममता बनर्जी के नेतृत्व वाले तृणमूल कांग्रेस गुट को नया चुनाव चिह्न कौन-सा आवंटित किया गया?",
+question: "हरियाणा में सूरजकुंड मेले में कौन सा राज्य पार्टनर है?",
 option: [
-"लिफाफा",
-"फुटबॉल खिलाड़ी",
-"क्रिकेट बैट",
-"साइकिल"
+"राजस्थान",
+"बिहार",
+"उत्तर प्रदेश",
+"ओडिशा"
 ],
-answer: "फुटबॉल खिलाड़ी"
+answer: "बिहार"
 },
 {
-question: "9वें इंडिया इंटरनेशनल वाटर वीक का उद्घाटन 22 सितंबर को कौन करेंगे?",
+question: "हाल ही में हुए चुनाव के बाद नेपाल का प्रधानमंत्री कौन बनने वाला है?",
 option: [
-"नरेंद्र मोदी",
-"जगदीप धनखड़",
-"सी. पी. राधाकृष्णन",
-"गजेंद्र सिंह शेखावत"
+"पुष्प कमल दहल",
+"शेर बहादुर देउबा",
+"के. पी. शर्मा ओली",
+"बालेन शाह"
 ],
-answer: "सी. पी. राधाकृष्णन"
+answer: "बालेन शाह"
 },
 {
-question: "भारत ने 2026 एशियाई खेलों में अपना पहला स्वर्ण पदक किस खेल में जीता?",
+question: "अमेरिका के बाद हाल ही में किस देश ने WHO छोड़ दिया?",
 option: [
-"हॉकी",
-"निशानेबाजी",
-"क्रिकेट",
-"तीरंदाजी"
+"भारत",
+"भूटान",
+"नेपाल",
+"अर्जेंटीना"
 ],
-answer: "क्रिकेट"
+answer: "अर्जेंटीना"
+},
+{
+question: "विश्व खुशहाली रिपोर्ट के अनुसार, भारत का स्थान क्या है?",
+option: [
+"116",
+"114",
+"115",
+"110"
+],
+answer: "114"
+},
+{
+question: "निम्नलिखित में से किस लेखक को हिंदी संस्मरण “जीते जी इलाहाबाद” के लिए साहित्य अकादमी पुरस्कार 2025 मिला?",
+option: [
+"नवतेज सरना",
+"ममता कालिया",
+"एन. प्रभाकरन",
+"प्रसून बंद्योपाध्याय"
+],
+answer: "ममता कालिया"
+},
+{
+question: "हाल ही में किस तमिल लेखक ने ज्ञानपीठ पुरस्कार जीता और यह सम्मान पाने वाले तीसरे तमिल लेखक बने?",
+option: [
+"जयमोहन",
+"पेरुमल मुरुगन",
+"वैरामुथु",
+"एस. रामकृष्णन"
+],
+answer: "वैरामुथु"
+},
+{
+question: "हाल ही में मंगोलिया के प्रधानमंत्री कौन बने हैं?",
+option: [
+"उख़नागीन खुरेलसुख",
+"लुवसन्नामस्राइन ओयुन-एरदीन",
+"उचरल न्याम-ओसोर",
+"खल्तमागीन बटुल्गा"
+],
+answer: "उचरल न्याम-ओसोर"
+},
+{
+question: "हाल ही में सुर्खियों में रही 'मिशन मित्र' पहल किस भारतीय अंतरिक्ष मिशन से जुड़ी है?",
+option: [
+"चंद्रयान-3",
+"आदित्य-L1",
+"गगनयान",
+"मंगलयान"
+],
+answer: "गगनयान"
+},
+{
+question: "खेलो इंडिया ट्राइबल गेम्स 2026 में किस राज्य ने शीर्ष स्थान हासिल किया है?",
+option: [
+"मध्य प्रदेश",
+"कर्नाटक",
+"छत्तीसगढ़",
+"ओडिशा"
+],
+answer: "छत्तीसगढ़"
 },
 ];
 
 // English Questions (same 88 questions translated)
 const currentAffairsEnglish = [
 {
-question: "At what height did the ash column rise into the sky following the volcanic eruption in Chile?",
+question: "At BAFTA 2026, ‘One Battle After Another’ dominated in which category?",
 option: [
-"180 metres",
-"280 metres",
-"380 metres",
-"480 metres"
+"Best Animated Film",
+"Best Documentary",
+"Best Film",
+"Best International Film"
 ],
-answer: "380 metres"
+answer: "Best Film"
 },
 {
-question: "Which city topped the Global Financial Centres Index (GFCI 40)?",
+question: "Ol Chiki has completed how many years?",
 option: [
-"London",
-"New York",
-"Singapore",
-"Hong Kong"
+"100 yr",
+"500 yr",
+"50 yr",
+"1000 yr"
 ],
-answer: "New York"
+answer: "100 yr"
 },
 {
-question: "Which film from Nagaland won the Platform Prize at TIFF 2026?",
+question: "Who will represent India at Tarique Rahman’s oath ceremony in Bangladesh?",
 option: [
-"Angh",
-"Bamboo",
-"Naga Hills",
-"The Last Village"
+"S. Jaishankar",
+"Om Birla",
+"Rajnath Singh",
+"Amit Shah"
 ],
-answer: "Angh"
+answer: "S. Jaishankar"
 },
 {
-question: "When will Ayurveda Day 2026 be observed?",
+question: "The multilateral naval exercise MILAN 2026 will begin at which location?",
 option: [
-"September 21",
-"September 22",
-"September 23",
-"September 24"
+"Kochi",
+"Visakhapatnam, Andhra Pradesh",
+"Chennai",
+"Mumbai"
 ],
-answer: "September 23"
+answer: "Visakhapatnam, Andhra Pradesh"
 },
 {
-question: "In which city was the WWF Global Conservation Conference inaugurated by the Union Environment Minister?",
+question: "Which team defeated Kerala to win the Santosh Trophy for the 8th time?",
 option: [
-"Jaipur",
-"Bhopal",
-"Lucknow",
-"New Delhi"
+"Punjab",
+"Services",
+"West Bengal",
+"Goa"
 ],
-answer: "Jaipur"
+answer: "Services"
 },
 {
-question: "Where will the Indian Air Force (IAF) host the second edition of the multinational air exercise ‘Tarang Shakti’ in 2026?",
+question: "Yumnam Khemchand has been appointed as the CM of which state?",
 option: [
-"Jodhpur, Rajasthan",
-"Pune, Maharashtra",
-"Chennai, Tamil Nadu",
-"Bengaluru, Karnataka"
+"Karnataka",
+"Manipur",
+"Meghalaya",
+"Delhi"
 ],
-answer: "Jodhpur, Rajasthan"
+answer: "Manipur"
 },
 {
-question: "What new election symbol was allotted to the Mamata Banerjee-led faction of the Trinamool Congress?",
+question: "Which state is the partner in Surajkund Mela in Haryana?",
 option: [
-"Envelope",
-"Football Player",
-"Cricket Bat",
-"Bicycle"
+"Rajasthan",
+"Bihar",
+"Uttar Pradesh",
+"Odisha"
 ],
-answer: "Football Player"
+answer: "Bihar"
 },
 {
-question: "Who will inaugurate the 9th India International Water Week on September 22?",
+question: "Who is set to become the Prime Minister of Nepal after the recent election?",
 option: [
-"Narendra Modi",
-"Jagdeep Dhankhar",
-"C. P. Radhakrishnan",
-"Gajendra Singh Shekhawat"
+"Pushpa Kamal Dahal",
+"Sher Bahadur Deuba",
+"KP Sharma Oli",
+"Balen Shah"
 ],
-answer: "C. P. Radhakrishnan"
+answer: "Balen Shah"
 },
 {
-question: "In which sport did India win its first gold medal at the 2026 Asian Games?",
+question: "Which country recently quit WHO after USA?",
 option: [
-"Hockey",
-"Shooting",
-"Cricket",
-"Archery"
+"India",
+"Bhutan",
+"Nepal",
+"Argentina"
 ],
-answer: "Cricket"
+answer: "Argentina"
+},
+{
+question: "As per the World Happiness Report, what is the rank of India?",
+option: [
+"116",
+"114",
+"115",
+"110"
+],
+answer: "114"
+},
+{
+question: "Which of the following authors won the Sahitya Akademi Award 2025 for the Hindi memoir “Jeete Jee Allahabad”?",
+option: [
+"Navtej Sarna",
+"Mamta Kalia",
+"N. Prabhakaran",
+"Prasun Bandyopadhyay"
+],
+answer: "Mamta Kalia"
+},
+{
+question: "Which Tamil writer recently won the Jnanpith Award, becoming the third Tamil writer to receive the honour?",
+option: [
+"Jeyamohan",
+"Perumal Murugan",
+"Vairamuthu",
+"S. Ramakrishnan"
+],
+answer: "Vairamuthu"
+},
+{
+question: "Who has become the Prime Minister of Mongolia recently?",
+option: [
+"Ukhnaagiin Khürelsükh",
+"Luvsannamsrain Oyun-Erdene",
+"Uchral Nyam-Osor",
+"Khaltmaagiin Battulga"
+],
+answer: "Uchral Nyam-Osor"
+},
+{
+question: "The “Mission Mitra” initiative, recently in news, is associated with which Indian space mission?",
+option: [
+"Chandrayaan-3",
+"Aditya-L1",
+"Gaganyaan",
+"Mangalyaan"
+],
+answer: "Gaganyaan"
+},
+{
+question: "Which state has topped the Khelo India Tribal Games 2026?",
+option: [
+"Madhya Pradesh",
+"Karnataka",
+"Chhattisgarh",
+"Odisha"
+],
+answer: "Chhattisgarh"
 },
 ];
 
