@@ -58,7 +58,7 @@ import SSCCGL from "./components/ssccgl";
 import SSCCHSL from "./components/sscchsl";
 import UPSC from "./components/upsc";
 import NEET from "./components/neet";
-import Teachersnots from './components/Teachersnots';
+import Teachersnots from "./components/Teachersnots";
 
 function App() {
   return (
