@@ -21652,13 +21652,21 @@ const getRandom = (arr, n) => {
   return shuffle(arr).slice(0, Math.min(n, arr.length));
 };
 
-// Pick random questions from a flat array
-const pickFromArray = (questionsArray, count) => {
-  return getRandom(questionsArray, count);
-};
-
 // Time: 120 minutes total for 100 questions
 const TOTAL_TIME = 120 * 60; // 7200 seconds
+
+// =====================================================
+// SECTION CONFIG - ORDER AS PER USER REQUEST
+// सामाजिक विज्ञान → विज्ञान → गणित → हिन्दी → अंग्रेज़ी → करेंट अफेयर्स
+// =====================================================
+const SECTION_CONFIG = [
+  { key: "social", labelHi: "सामाजिक विज्ञान", labelEn: "Social Science", count: 40 },
+  { key: "science", labelHi: "विज्ञान", labelEn: "Science", count: 25 },
+  { key: "math", labelHi: "गणित", labelEn: "Math", count: 10 },
+  { key: "hindi", labelHi: "हिन्दी", labelEn: "Hindi", count: 10 },
+  { key: "english", labelHi: "अंग्रेज़ी", labelEn: "English", count: 5 },
+  { key: "current", labelHi: "करेंट अफेयर्स", labelEn: "Current Affairs", count: 10 },
+];
 
 // =====================================================
 // 🚀 MAIN COMPONENT
@@ -21667,7 +21675,8 @@ export default function BiharPoliceMockTest() {
   const [started, setStarted] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [language, setLanguage] = useState("hi");
-  const [questions, setQuestions] = useState([]);
+  const [sections, setSections] = useState([]);
+  const [questions, setQuestions] = useState([]); // flat list (continuous 1-100)
   const [current, setCurrent] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [answers, setAnswers] = useState({});
@@ -21698,37 +21707,67 @@ export default function BiharPoliceMockTest() {
   }, [started, submitted, timeLeft]);
 
   const startExam = () => {
-    // Build mixed question set based on selected language
-    const hindiQs = pickFromArray(hindiQuestions, 10);
-    const englishQs = pickFromArray(englishQuestions, 5);
-    const mathQs =
-      language === "hi"
-        ? pickFromArray(mathQuestionsHi, 10)
-        : pickFromArray(mathQuestionsEn, 10);
+    // Build section-wise questions based on selected language
     const socialQs =
       language === "hi"
-        ? pickFromArray(socialQuestionsHi, 40)
-        : pickFromArray(socialQuestionsEn, 40);
+        ? getRandom(socialQuestionsHi, 40)
+        : getRandom(socialQuestionsEn, 40);
     const scienceQs =
       language === "hi"
-        ? pickFromArray(scienceQuestionsHi, 25)
-        : pickFromArray(scienceQuestionsEn, 25);
+        ? getRandom(scienceQuestionsHi, 25)
+        : getRandom(scienceQuestionsEn, 25);
+    const mathQs =
+      language === "hi"
+        ? getRandom(mathQuestionsHi, 10)
+        : getRandom(mathQuestionsEn, 10);
+    const hindiQs = getRandom(hindiQuestions, 10);
+    const englishQs = getRandom(englishQuestions, 5);
     const currentQs =
       language === "hi"
-        ? pickFromArray(currentAffairsQuestionsHi, 10)
-        : pickFromArray(currentAffairsQuestionsEn, 10);
+        ? getRandom(currentAffairsQuestionsHi, 10)
+        : getRandom(currentAffairsQuestionsEn, 10);
 
-    // Combine and shuffle all questions together (fully mixed)
-    const allQuestions = shuffle([
-      ...hindiQs,
-      ...englishQs,
-      ...mathQs,
-      ...socialQs,
-      ...scienceQs,
-      ...currentQs,
-    ]);
+    // Build sections array in the requested order
+    const builtSections = [
+      {
+        key: "social",
+        label: language === "hi" ? "सामाजिक विज्ञान" : "Social Science",
+        questions: socialQs,
+      },
+      {
+        key: "science",
+        label: language === "hi" ? "विज्ञान" : "Science",
+        questions: scienceQs,
+      },
+      {
+        key: "math",
+        label: language === "hi" ? "गणित" : "Math",
+        questions: mathQs,
+      },
+      {
+        key: "hindi",
+        label: language === "hi" ? "हिन्दी" : "Hindi",
+        questions: hindiQs,
+      },
+      {
+        key: "english",
+        label: language === "hi" ? "अंग्रेज़ी" : "English",
+        questions: englishQs,
+      },
+      {
+        key: "current",
+        label: language === "hi" ? "करेंट अफेयर्स" : "Current Affairs",
+        questions: currentQs,
+      },
+    ];
 
-    setQuestions(allQuestions);
+    // Flatten questions - CONTINUOUS numbering (1 to 100)
+    const flatQuestions = builtSections.flatMap((sec) =>
+      sec.questions.map((q) => ({ ...q, sectionKey: sec.key }))
+    );
+
+    setSections(builtSections);
+    setQuestions(flatQuestions);
     setStarted(true);
     setSubmitted(false);
     setCurrent(0);
@@ -21767,10 +21806,10 @@ export default function BiharPoliceMockTest() {
           userAns || (language === "hi" ? "प्रयास नहीं किया" : "Not Attempted"),
         isCorrect,
         attempted,
+        sectionKey: q.sectionKey,
       });
     });
 
-    // 1 mark per correct, no negative marking
     const finalScore = correctCount;
 
     setScore({
@@ -21837,6 +21876,7 @@ export default function BiharPoliceMockTest() {
       notAttempted: { hi: "⚪ अनुत्तरित", en: "⚪ Not Attempted" },
       langLine: { hi: "भाषा: हिन्दी", en: "Language: English" },
       sectionLabel: { hi: "प्रश्न", en: "Question" },
+      sectionHeader: { hi: "अनुभाग", en: "Section" },
     };
     return t[key]?.[language] || t[key]?.["en"] || key;
   };
@@ -21928,6 +21968,26 @@ export default function BiharPoliceMockTest() {
     const percentage = ((finalScore / maxMarks) * 100).toFixed(2);
     const isPassed = Number(percentage) >= 60;
 
+    // Group results by section (in order)
+    const sectionResults = SECTION_CONFIG.map((cfg) => {
+      const sectionDetails = resultDetails.filter(
+        (d) => d.sectionKey === cfg.key
+      );
+      const secCorrect = sectionDetails.filter((d) => d.isCorrect).length;
+      const secWrong = sectionDetails.filter(
+        (d) => !d.isCorrect && d.attempted
+      ).length;
+      const secNotAttempted = sectionDetails.filter((d) => !d.attempted).length;
+      return {
+        ...cfg,
+        details: sectionDetails,
+        correct: secCorrect,
+        wrong: secWrong,
+        notAttempted: secNotAttempted,
+        total: sectionDetails.length,
+      };
+    });
+
     return (
       <div style={styles.resultWrapper}>
         <div style={styles.resultContainer}>
@@ -22003,50 +22063,82 @@ export default function BiharPoliceMockTest() {
             </button>
           </div>
 
-          <div style={styles.reviewCard}>
-            <h2 style={styles.reviewTitle}>📋 {getText("review")}</h2>
-            {resultDetails.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  ...styles.reviewItem,
-                  background: "#fffbeb",
-                  borderLeft: `4px solid ${
-                    item.isCorrect
-                      ? "#22c55e"
-                      : item.attempted
-                      ? "#ef4444"
-                      : "#f59e0b"
-                  }`,
-                }}
-              >
-                <div style={styles.reviewQ}>
-                  Q{index + 1}. <QuestionText text={item.question} />
-                </div>
-                <div style={styles.reviewAns}>
-                  <div>
-                    <strong>{getText("yourAnswer")} </strong>
-                    <span
-                      style={{
-                        color: item.isCorrect ? "#16a34a" : "#dc2626",
-                      }}
-                    >
-                      <MathText text={item.userAnswer} />
-                    </span>
+          {/* Section-wise summary */}
+          <div style={styles.sectionSummaryCard}>
+            <h2 style={styles.reviewTitle}>
+              📊 {language === "hi" ? "अनुभागवार परिणाम" : "Section-wise Result"}
+            </h2>
+            <div style={styles.sectionSummaryGrid}>
+              {sectionResults.map((sec) => (
+                <div key={sec.key} style={styles.sectionSummaryItem}>
+                  <div style={styles.sectionSummaryName}>
+                    {language === "hi" ? sec.labelHi : sec.labelEn}
                   </div>
-                  <div>
-                    <strong>{getText("correctAnswer")} </strong>
-                    <span style={{ color: "#16a34a", fontStyle: "italic" }}>
-                      <MathText text={item.correctAnswer} />
-                    </span>
+                  <div style={styles.sectionSummaryScore}>
+                    {sec.correct}/{sec.total}
+                  </div>
+                  <div style={styles.sectionSummaryDetails}>
+                    <span style={{ color: "#16a34a" }}>✔{sec.correct}</span>
+                    <span style={{ color: "#dc2626" }}>✖{sec.wrong}</span>
+                    <span style={{ color: "#f59e0b" }}>⚪{sec.notAttempted}</span>
                   </div>
                 </div>
-                <div style={styles.reviewStatus}>
-                  {item.isCorrect ? "✅" : item.attempted ? "❌" : "⚪"}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
+          {/* Section-wise Answer Review */}
+          {sectionResults.map((sec) => (
+            <div key={sec.key} style={styles.reviewCard}>
+              <h2 style={styles.sectionReviewTitle}>
+                {language === "hi" ? sec.labelHi : sec.labelEn}{" "}
+                <span style={styles.sectionReviewCount}>
+                  ({sec.correct}/{sec.total})
+                </span>
+              </h2>
+              {sec.details.map((item, index) => (
+                <div
+                  key={index}
+                  style={{
+                    ...styles.reviewItem,
+                    background: "#fffbeb",
+                    borderLeft: `4px solid ${
+                      item.isCorrect
+                        ? "#22c55e"
+                        : item.attempted
+                        ? "#ef4444"
+                        : "#f59e0b"
+                    }`,
+                  }}
+                >
+                  <div style={styles.reviewQ}>
+                    Q{index + 1}. <QuestionText text={item.question} />
+                  </div>
+                  <div style={styles.reviewAns}>
+                    <div>
+                      <strong>{getText("yourAnswer")} </strong>
+                      <span
+                        style={{
+                          color: item.isCorrect ? "#16a34a" : "#dc2626",
+                        }}
+                      >
+                        <MathText text={item.userAnswer} />
+                      </span>
+                    </div>
+                    <div>
+                      <strong>{getText("correctAnswer")} </strong>
+                      <span style={{ color: "#16a34a", fontStyle: "italic" }}>
+                        <MathText text={item.correctAnswer} />
+                      </span>
+                    </div>
+                  </div>
+                  <div style={styles.reviewStatus}>
+                    {item.isCorrect ? "✅" : item.attempted ? "❌" : "⚪"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
 
           <div style={{ textAlign: "center", marginTop: "20px" }}>
             <button
@@ -22058,6 +22150,7 @@ export default function BiharPoliceMockTest() {
                 setTimeLeft(TOTAL_TIME);
                 setShowTimerWarning(false);
                 setQuestions([]);
+                setSections([]);
                 setCurrent(0);
                 setScore({
                   correct: 0,
@@ -22085,6 +22178,10 @@ export default function BiharPoliceMockTest() {
     0
   );
 
+  // Find current section label ONLY for top badge
+  const currentSection = sections.find((sec) => sec.key === q.sectionKey);
+  const sectionLabel = currentSection ? currentSection.label : "";
+
   const confirmSubmit = () => {
     if (
       window.confirm(
@@ -22102,6 +22199,8 @@ export default function BiharPoliceMockTest() {
       <div style={styles.examContainer}>
         <div style={styles.topBar}>
           <div style={{ flex: 1 }}>
+            {/* ONLY SHOW SECTION BADGE HERE - not between questions */}
+            <p style={styles.sectionBadge}>{sectionLabel}</p>
             <p style={styles.qCounter}>
               Q{current + 1}/{questions.length}
             </p>
@@ -22123,6 +22222,7 @@ export default function BiharPoliceMockTest() {
           </div>
         </div>
 
+        {/* QUESTION CARD - NO SECTION LABEL BETWEEN QUESTIONS */}
         <div style={styles.questionCard}>
           <h3 style={styles.questionText}>
             <QuestionText text={q.question} />
@@ -22199,6 +22299,7 @@ export default function BiharPoliceMockTest() {
           </button>
         </div>
 
+        {/* SIMPLE NAVIGATOR - 1 to 100 continuous, no section names */}
         <div style={styles.navigatorCard}>
           <p style={styles.navTitle}>{getText("navigator")}</p>
           <div style={styles.navGrid}>
@@ -22399,6 +22500,7 @@ const styles = {
     borderRadius: "16px",
     padding: "20px 15px",
     boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+    marginBottom: "15px",
   },
   reviewTitle: {
     borderBottom: "2px solid #eee",
@@ -22447,6 +22549,16 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  sectionBadge: {
+    margin: "0 0 3px 0",
+    fontSize: "12px",
+    fontWeight: "700",
+    color: "#302b63",
+    background: "#e8f0fe",
+    display: "inline-block",
+    padding: "2px 10px",
+    borderRadius: "20px",
   },
   qCounter: { margin: "0", fontSize: "11px", color: "#718096" },
   qSubCounter: { margin: "2px 0 0", fontSize: "10px", color: "#a0aec0" },
@@ -22563,6 +22675,57 @@ const styles = {
     maxWidth: "400px",
     margin: "0 auto",
     animation: "pulse 1.5s ease-in-out infinite",
+  },
+  sectionSummaryCard: {
+    backgroundColor: "white",
+    borderRadius: "16px",
+    padding: "20px 15px",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+    marginBottom: "15px",
+  },
+  sectionSummaryGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+    gap: "10px",
+    marginTop: "10px",
+  },
+  sectionSummaryItem: {
+    background: "#f8f9fa",
+    borderRadius: "10px",
+    padding: "10px",
+    textAlign: "center",
+    borderLeft: "3px solid #302b63",
+  },
+  sectionSummaryName: {
+    fontSize: "12px",
+    fontWeight: "700",
+    color: "#302b63",
+    marginBottom: "4px",
+  },
+  sectionSummaryScore: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "#0f0c29",
+  },
+  sectionSummaryDetails: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "8px",
+    marginTop: "4px",
+    fontSize: "11px",
+    fontWeight: "600",
+  },
+  sectionReviewTitle: {
+    borderBottom: "2px solid #eee",
+    paddingBottom: "10px",
+    marginBottom: "12px",
+    fontSize: "16px",
+    color: "#302b63",
+  },
+  sectionReviewCount: {
+    fontSize: "13px",
+    color: "#718096",
+    fontWeight: "400",
   },
 };
 
