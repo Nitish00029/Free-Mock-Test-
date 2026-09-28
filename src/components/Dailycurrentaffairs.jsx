@@ -6,308 +6,188 @@ import React, { useState, useEffect, useRef } from "react";
 // Hindi Questions
 const currentAffairsHindi = [
 {
-question: "BAFTA 2026 में ‘One Battle After Another’ किस श्रेणी में प्रमुख विजेता रही?",
+question: "आईसीजी शिप शौनक हाल ही में किस मिशन के तहत ऑस्ट्रेलिया के लिए रवाना हुआ?",
 option: [
-"सर्वश्रेष्ठ एनिमेटेड फिल्म",
-"सर्वश्रेष्ठ डॉक्यूमेंट्री",
-"सर्वश्रेष्ठ फिल्म",
-"सर्वश्रेष्ठ अंतरराष्ट्रीय फिल्म"
+"क्वाड-एट-सी शिप ऑब्जर्वर मिशन",
+"इंडो-पैसिफिक मैरीटाइम एक्सरसाइज",
+"मालाबार नौसैनिक अभ्यास",
+"सी ड्रैगन अभ्यास"
 ],
-answer: "सर्वश्रेष्ठ फिल्म"
+answer: "क्वाड-एट-सी शिप ऑब्जर्वर मिशन"
 },
 {
-question: "ओल चिकी ने कितने साल पूरे कर लिए हैं?",
+question: "विश्व पर्यटन दिवस 2026 किस तारीख को मनाया जाएगा?",
 option: [
-"100 वर्ष",
-"500 वर्ष",
-"50 वर्ष",
-"1000 वर्ष"
+"25 सितंबर",
+"26 सितंबर",
+"27 सितंबर",
+"28 सितंबर"
 ],
-answer: "100 वर्ष"
+answer: "27 सितंबर"
 },
 {
-question: "बांग्लादेश में तारिक रहमान के शपथ ग्रहण समारोह में भारत का प्रतिनिधित्व कौन करेगा?",
+question: "हाल ही में AFSPA को किन राज्यों में बढ़ाया गया?",
 option: [
-"एस. जयशंकर",
-"ओम बिरला",
-"राजनाथ सिंह",
-"अमित शाह"
+"असम, मेघालय और त्रिपुरा",
+"मणिपुर, नागालैंड और अरुणाचल प्रदेश",
+"मिजोरम, त्रिपुरा और सिक्किम",
+"मेघालय, असम और मिजोरम"
 ],
-answer: "एस. जयशंकर"
+answer: "मणिपुर, नागालैंड और अरुणाचल प्रदेश"
 },
 {
-question: "बहुपक्षीय नौसैनिक अभ्यास MILAN 2026 किस स्थान पर शुरू होगा?",
+question: "ऑक्सफोर्ड इकोनॉमिक्स ग्लोबल सिटीज इंडेक्स 2026 में भारत का सबसे ऊंचा स्थान प्राप्त करने वाला शहर कौन-सा है?",
 option: [
-"कोच्चि",
-"विशाखापत्तनम, आंध्र प्रदेश",
-"चेन्नई",
-"मुंबई"
+"मुंबई",
+"बेंगलुरु",
+"दिल्ली",
+"चेन्नई"
 ],
-answer: "विशाखापत्तनम, आंध्र प्रदेश"
+answer: "दिल्ली"
 },
 {
-question: "किस टीम ने केरल को हराकर आठवीं बार संतोष ट्रॉफी जीती?",
+question: "हाल ही में महाराष्ट्र सरकार ने कितने तालुकाओं को सूखा प्रभावित घोषित किया?",
 option: [
-"पंजाब",
-"सर्विसेज",
-"पश्चिम बंगाल",
-"गोवा"
+"225 तालुका",
+"245 तालुका",
+"265 तालुका",
+"285 तालुका"
 ],
-answer: "सर्विसेज"
+answer: "265 तालुका"
 },
 {
-question: "यम्नाम खेमचंद को किस राज्य का मुख्यमंत्री नियुक्त किया गया है?",
+question: "OAG Megahubs 2026 में दिल्ली एयरपोर्ट को वैश्विक कनेक्टिविटी रैंकिंग में कौन-सा स्थान मिला?",
 option: [
-"कर्नाटक",
-"मणिपुर",
-"मेघालय",
-"दिल्ली"
+"18वां",
+"23वां",
+"28वां",
+"33वां"
 ],
-answer: "मणिपुर"
+answer: "28वां"
 },
 {
-question: "हरियाणा में सूरजकुंड मेले में कौन सा राज्य पार्टनर है?",
+question: "केंद्रीय मंत्री नितिन गडकरी ने 'मुख्यमंत्री सुगम परिवहन बस सेवा' और PM E-Bus Sewa किस राज्य में शुरू की?",
 option: [
 "राजस्थान",
-"बिहार",
-"उत्तर प्रदेश",
-"ओडिशा"
-],
-answer: "बिहार"
-},
-{
-question: "हाल ही में हुए चुनाव के बाद नेपाल का प्रधानमंत्री कौन बनने वाला है?",
-option: [
-"पुष्प कमल दहल",
-"शेर बहादुर देउबा",
-"के. पी. शर्मा ओली",
-"बालेन शाह"
-],
-answer: "बालेन शाह"
-},
-{
-question: "अमेरिका के बाद हाल ही में किस देश ने WHO छोड़ दिया?",
-option: [
-"भारत",
-"भूटान",
-"नेपाल",
-"अर्जेंटीना"
-],
-answer: "अर्जेंटीना"
-},
-{
-question: "विश्व खुशहाली रिपोर्ट के अनुसार, भारत का स्थान क्या है?",
-option: [
-"116",
-"114",
-"115",
-"110"
-],
-answer: "114"
-},
-{
-question: "निम्नलिखित में से किस लेखक को हिंदी संस्मरण “जीते जी इलाहाबाद” के लिए साहित्य अकादमी पुरस्कार 2025 मिला?",
-option: [
-"नवतेज सरना",
-"ममता कालिया",
-"एन. प्रभाकरन",
-"प्रसून बंद्योपाध्याय"
-],
-answer: "ममता कालिया"
-},
-{
-question: "हाल ही में किस तमिल लेखक ने ज्ञानपीठ पुरस्कार जीता और यह सम्मान पाने वाले तीसरे तमिल लेखक बने?",
-option: [
-"जयमोहन",
-"पेरुमल मुरुगन",
-"वैरामुथु",
-"एस. रामकृष्णन"
-],
-answer: "वैरामुथु"
-},
-{
-question: "हाल ही में मंगोलिया के प्रधानमंत्री कौन बने हैं?",
-option: [
-"उख़नागीन खुरेलसुख",
-"लुवसन्नामस्राइन ओयुन-एरदीन",
-"उचरल न्याम-ओसोर",
-"खल्तमागीन बटुल्गा"
-],
-answer: "उचरल न्याम-ओसोर"
-},
-{
-question: "हाल ही में सुर्खियों में रही 'मिशन मित्र' पहल किस भारतीय अंतरिक्ष मिशन से जुड़ी है?",
-option: [
-"चंद्रयान-3",
-"आदित्य-L1",
-"गगनयान",
-"मंगलयान"
-],
-answer: "गगनयान"
-},
-{
-question: "खेलो इंडिया ट्राइबल गेम्स 2026 में किस राज्य ने शीर्ष स्थान हासिल किया है?",
-option: [
 "मध्य प्रदेश",
-"कर्नाटक",
-"छत्तीसगढ़",
-"ओडिशा"
+"महाराष्ट्र",
+"गुजरात"
 ],
-answer: "छत्तीसगढ़"
+answer: "मध्य प्रदेश"
+},
+{
+question: "'मेक इन इंडिया' पहल ने वर्ष 2026 में कितने वर्ष पूरे किए?",
+option: [
+"10 वर्ष",
+"11 वर्ष",
+"12 वर्ष",
+"13 वर्ष"
+],
+answer: "12 वर्ष"
+},
+{
+question: "हाल ही में CBSE के नए अध्यक्ष के रूप में किसे नियुक्त किया गया है?",
+option: [
+"मनदीप के. भंडारी",
+"संजय कुमार",
+"राहुल सिंह",
+"हिमांशु गुप्ता"
+],
+answer: "मनदीप के. भंडारी"
 },
 ];
 
 // English Questions (same 88 questions translated)
 const currentAffairsEnglish = [
 {
-question: "At BAFTA 2026, ‘One Battle After Another’ dominated in which category?",
+question: "Under which mission did ICG Ship Shaunak recently sail for Australia?",
 option: [
-"Best Animated Film",
-"Best Documentary",
-"Best Film",
-"Best International Film"
+"QUAD-at-Sea Ship Observer Mission",
+"Indo-Pacific Maritime Exercise",
+"Malabar Naval Exercise",
+"Sea Dragon Exercise"
 ],
-answer: "Best Film"
+answer: "QUAD-at-Sea Ship Observer Mission"
 },
 {
-question: "Ol Chiki has completed how many years?",
+question: "On which date will World Tourism Day 2026 be observed?",
 option: [
-"100 yr",
-"500 yr",
-"50 yr",
-"1000 yr"
+"25 September",
+"26 September",
+"27 September",
+"28 September"
 ],
-answer: "100 yr"
+answer: "27 September"
 },
 {
-question: "Who will represent India at Tarique Rahman’s oath ceremony in Bangladesh?",
+question: "In which states was AFSPA recently extended?",
 option: [
-"S. Jaishankar",
-"Om Birla",
-"Rajnath Singh",
-"Amit Shah"
+"Assam, Meghalaya and Tripura",
+"Manipur, Nagaland and Arunachal Pradesh",
+"Mizoram, Tripura and Sikkim",
+"Meghalaya, Assam and Mizoram"
 ],
-answer: "S. Jaishankar"
+answer: "Manipur, Nagaland and Arunachal Pradesh"
 },
 {
-question: "The multilateral naval exercise MILAN 2026 will begin at which location?",
+question: "Which Indian city secured the highest position in the Oxford Economics Global Cities Index 2026?",
 option: [
-"Kochi",
-"Visakhapatnam, Andhra Pradesh",
-"Chennai",
-"Mumbai"
+"Mumbai",
+"Bengaluru",
+"Delhi",
+"Chennai"
 ],
-answer: "Visakhapatnam, Andhra Pradesh"
+answer: "Delhi"
 },
 {
-question: "Which team defeated Kerala to win the Santosh Trophy for the 8th time?",
+question: "How many talukas in Maharashtra were recently declared drought-affected?",
 option: [
-"Punjab",
-"Services",
-"West Bengal",
-"Goa"
+"225 Talukas",
+"245 Talukas",
+"265 Talukas",
+"285 Talukas"
 ],
-answer: "Services"
+answer: "265 Talukas"
 },
 {
-question: "Yumnam Khemchand has been appointed as the CM of which state?",
+question: "What rank did Delhi Airport achieve in the global connectivity ranking of OAG Megahubs 2026?",
 option: [
-"Karnataka",
-"Manipur",
-"Meghalaya",
-"Delhi"
+"18th",
+"23rd",
+"28th",
+"33rd"
 ],
-answer: "Manipur"
+answer: "28th"
 },
 {
-question: "Which state is the partner in Surajkund Mela in Haryana?",
+question: "In which state did Union Minister Nitin Gadkari launch the 'Mukhyamantri Sugam Parivahan Bus Service' and PM E-Bus Sewa?",
 option: [
 "Rajasthan",
-"Bihar",
-"Uttar Pradesh",
-"Odisha"
-],
-answer: "Bihar"
-},
-{
-question: "Who is set to become the Prime Minister of Nepal after the recent election?",
-option: [
-"Pushpa Kamal Dahal",
-"Sher Bahadur Deuba",
-"KP Sharma Oli",
-"Balen Shah"
-],
-answer: "Balen Shah"
-},
-{
-question: "Which country recently quit WHO after USA?",
-option: [
-"India",
-"Bhutan",
-"Nepal",
-"Argentina"
-],
-answer: "Argentina"
-},
-{
-question: "As per the World Happiness Report, what is the rank of India?",
-option: [
-"116",
-"114",
-"115",
-"110"
-],
-answer: "114"
-},
-{
-question: "Which of the following authors won the Sahitya Akademi Award 2025 for the Hindi memoir “Jeete Jee Allahabad”?",
-option: [
-"Navtej Sarna",
-"Mamta Kalia",
-"N. Prabhakaran",
-"Prasun Bandyopadhyay"
-],
-answer: "Mamta Kalia"
-},
-{
-question: "Which Tamil writer recently won the Jnanpith Award, becoming the third Tamil writer to receive the honour?",
-option: [
-"Jeyamohan",
-"Perumal Murugan",
-"Vairamuthu",
-"S. Ramakrishnan"
-],
-answer: "Vairamuthu"
-},
-{
-question: "Who has become the Prime Minister of Mongolia recently?",
-option: [
-"Ukhnaagiin Khürelsükh",
-"Luvsannamsrain Oyun-Erdene",
-"Uchral Nyam-Osor",
-"Khaltmaagiin Battulga"
-],
-answer: "Uchral Nyam-Osor"
-},
-{
-question: "The “Mission Mitra” initiative, recently in news, is associated with which Indian space mission?",
-option: [
-"Chandrayaan-3",
-"Aditya-L1",
-"Gaganyaan",
-"Mangalyaan"
-],
-answer: "Gaganyaan"
-},
-{
-question: "Which state has topped the Khelo India Tribal Games 2026?",
-option: [
 "Madhya Pradesh",
-"Karnataka",
-"Chhattisgarh",
-"Odisha"
+"Maharashtra",
+"Gujarat"
 ],
-answer: "Chhattisgarh"
+answer: "Madhya Pradesh"
+},
+{
+question: "How many years did the 'Make in India' initiative complete in 2026?",
+option: [
+"10 Years",
+"11 Years",
+"12 Years",
+"13 Years"
+],
+answer: "12 Years"
+},
+{
+question: "Who has been appointed as the new Chairperson of CBSE?",
+option: [
+"Mandeep K Bhandari",
+"Sanjay Kumar",
+"Rahul Singh",
+"Himanshu Gupta"
+],
+answer: "Mandeep K Bhandari"
 },
 ];
 
