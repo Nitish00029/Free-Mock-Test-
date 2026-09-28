@@ -17,6 +17,7 @@ const MyCourses = () => {
     { id: 6, title: "SSC GD 10 year + PYQ Hindi", button: "Start", link: "/ssc-gd-hindi" },
     { id: 6, title: "SSC GD 10 year + PYQ English", button: "Start", link: "/ssc-gd" },
     { id: 3, title: "BSEB 10th + 12th Class all Mock Tests", button: "Start", link: "/bseb-10-12" },
+    { id: 3, title: "My Teacher's Notes", button: "Start", link: "/nots" },
     { id: 7, title: "CBSE 10th + 12th Class all Mock Tests", button: "Start", link: "/cbse-10-12" }
   ];
 
