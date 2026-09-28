@@ -58,6 +58,7 @@ import SSCCGL from "./components/ssccgl";
 import SSCCHSL from "./components/sscchsl";
 import UPSC from "./components/upsc";
 import NEET from "./components/neet";
+import Teachersnots from './components/Teachersnots';
 
 function App() {
   return (
@@ -86,6 +87,7 @@ function App() {
 <Route path="/class-12-political-science" element={<B12Political />} />
 <Route path="/class-12-psychology" element={<B12Psychology />} />
 <Route path="/class-12-sociology" element={<B12Sociology />} />
+<Route path="/nots" element={<Teachersnots />} />
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -131,6 +133,7 @@ function App() {
             <Route
               path="/class-10-social-science"
               element={<SocialScienceMockTest />}
+            
             />
 
           </Routes>
