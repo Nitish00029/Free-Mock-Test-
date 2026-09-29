@@ -534,7 +534,7 @@ const TeacherNotes = () => {
 
           <h1 style={styles.heading}>
             <span style={styles.booksIcon}>📚</span>
-            Teachers' Notes
+            Teacher's Notes
           </h1>
           <p style={styles.subHeading}>
             Select a teacher to open their notes.
