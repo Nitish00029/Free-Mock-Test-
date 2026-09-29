@@ -6,188 +6,182 @@ import React, { useState, useEffect, useRef } from "react";
 // Hindi Questions
 const currentAffairsHindi = [
 {
-question: "आईसीजी शिप शौनक हाल ही में किस मिशन के तहत ऑस्ट्रेलिया के लिए रवाना हुआ?",
+question: "मतदाता दिवस कब मनाया जाता है?",
 option: [
-"क्वाड-एट-सी शिप ऑब्जर्वर मिशन",
-"इंडो-पैसिफिक मैरीटाइम एक्सरसाइज",
-"मालाबार नौसैनिक अभ्यास",
-"सी ड्रैगन अभ्यास"
+"25 जनवरी",
+"26 जनवरी",
+"27 जनवरी",
+"28 जनवरी"
 ],
-answer: "क्वाड-एट-सी शिप ऑब्जर्वर मिशन"
+answer: "25 जनवरी"
 },
+
 {
-question: "विश्व पर्यटन दिवस 2026 किस तारीख को मनाया जाएगा?",
+question: "निम्नलिखित में से कौन-सा PM e-Vidya पहल के अंतर्गत शामिल नहीं है?",
 option: [
-"25 सितंबर",
-"26 सितंबर",
-"27 सितंबर",
-"28 सितंबर"
+"DIKSHA",
+"SWAYAM",
+"SATHEE",
+"PRAGYAN"
 ],
-answer: "27 सितंबर"
+answer: "PRAGYAN"
 },
+
 {
-question: "हाल ही में AFSPA को किन राज्यों में बढ़ाया गया?",
+question: "ईरान ने किस रेलवे लिंक पर रेल पटरी बिछाने का कार्य पूरा किया है?",
 option: [
-"असम, मेघालय और त्रिपुरा",
-"मणिपुर, नागालैंड और अरुणाचल प्रदेश",
-"मिजोरम, त्रिपुरा और सिक्किम",
-"मेघालय, असम और मिजोरम"
+"तेहरान–मशहद",
+"चाबहार–ज़ाहेदान",
+"तेहरान–तबरीज़",
+"इस्फहान–शिराज"
 ],
-answer: "मणिपुर, नागालैंड और अरुणाचल प्रदेश"
+answer: "चाबहार–ज़ाहेदान"
 },
+
 {
-question: "ऑक्सफोर्ड इकोनॉमिक्स ग्लोबल सिटीज इंडेक्स 2026 में भारत का सबसे ऊंचा स्थान प्राप्त करने वाला शहर कौन-सा है?",
+question: "भारतीय पत्तन अधिनियम, 2025 के तहत निम्नलिखित में से किन बंदरगाहों को मेगा पोर्ट घोषित किया गया है?",
+option: [
+"दीनदयाल (कांडला)",
+"जवाहरलाल नेहरू",
+"पारादीप और मुंद्रा",
+"उपरोक्त सभी"
+],
+answer: "उपरोक्त सभी"
+},
+
+{
+question: "महिला एकल स्क्वैश में एशियाई खेलों का पदक जीतने वाली तीसरी भारतीय खिलाड़ी कौन बनीं?",
+option: [
+"अनाहत सिंह",
+"जोशना चिनप्पा",
+"दीपिका पल्लीकल",
+"तन्वी खन्ना"
+],
+answer: "अनाहत सिंह"
+},
+
+{
+question: "ODI क्रिकेट में 15,000 रन बनाने वाले दूसरे बल्लेबाज कौन बने?",
+option: [
+"रोहित शर्मा",
+"विराट कोहली",
+"सचिन तेंदुलकर",
+"एम.एस. धोनी"
+],
+answer: "विराट कोहली"
+},
+
+{
+question: "एशियाई खेल 2026 में बारानिका इलंगोवन ने किस स्पर्धा में ऐतिहासिक पदक जीता?",
+option: [
+"ऊँची कूद",
+"पोल वॉल्ट",
+"लंबी कूद",
+"त्रिकूद"
+],
+answer: "पोल वॉल्ट"
+},
+
+{
+question: "भारत की पहली LNG-संचालित ट्रेन को किस स्थान से हरी झंडी दिखाई गई?",
 option: [
 "मुंबई",
-"बेंगलुरु",
-"दिल्ली",
+"साबरमती",
+"नई दिल्ली",
 "चेन्नई"
 ],
-answer: "दिल्ली"
-},
-{
-question: "हाल ही में महाराष्ट्र सरकार ने कितने तालुकाओं को सूखा प्रभावित घोषित किया?",
-option: [
-"225 तालुका",
-"245 तालुका",
-"265 तालुका",
-"285 तालुका"
-],
-answer: "265 तालुका"
-},
-{
-question: "OAG Megahubs 2026 में दिल्ली एयरपोर्ट को वैश्विक कनेक्टिविटी रैंकिंग में कौन-सा स्थान मिला?",
-option: [
-"18वां",
-"23वां",
-"28वां",
-"33वां"
-],
-answer: "28वां"
-},
-{
-question: "केंद्रीय मंत्री नितिन गडकरी ने 'मुख्यमंत्री सुगम परिवहन बस सेवा' और PM E-Bus Sewa किस राज्य में शुरू की?",
-option: [
-"राजस्थान",
-"मध्य प्रदेश",
-"महाराष्ट्र",
-"गुजरात"
-],
-answer: "मध्य प्रदेश"
-},
-{
-question: "'मेक इन इंडिया' पहल ने वर्ष 2026 में कितने वर्ष पूरे किए?",
-option: [
-"10 वर्ष",
-"11 वर्ष",
-"12 वर्ष",
-"13 वर्ष"
-],
-answer: "12 वर्ष"
-},
-{
-question: "हाल ही में CBSE के नए अध्यक्ष के रूप में किसे नियुक्त किया गया है?",
-option: [
-"मनदीप के. भंडारी",
-"संजय कुमार",
-"राहुल सिंह",
-"हिमांशु गुप्ता"
-],
-answer: "मनदीप के. भंडारी"
+answer: "साबरमती"
 },
 ];
 
 // English Questions (same 88 questions translated)
 const currentAffairsEnglish = [
 {
-question: "Under which mission did ICG Ship Shaunak recently sail for Australia?",
+question: "When is Voters' Day celebrated?",
 option: [
-"QUAD-at-Sea Ship Observer Mission",
-"Indo-Pacific Maritime Exercise",
-"Malabar Naval Exercise",
-"Sea Dragon Exercise"
+"25 Jan",
+"26 Jan",
+"27 Jan",
+"28 Jan"
 ],
-answer: "QUAD-at-Sea Ship Observer Mission"
+answer: "25 Jan"
 },
+
 {
-question: "On which date will World Tourism Day 2026 be observed?",
+question: "Which one of the following is NOT covered by the PM e-Vidya initiative?",
 option: [
-"25 September",
-"26 September",
-"27 September",
-"28 September"
+"DIKSHA",
+"SWAYAM",
+"SATHEE",
+"PRAGYAN"
 ],
-answer: "27 September"
+answer: "PRAGYAN"
 },
+
 {
-question: "In which states was AFSPA recently extended?",
+question: "Iran has completed rail laying on which railway link?",
 option: [
-"Assam, Meghalaya and Tripura",
-"Manipur, Nagaland and Arunachal Pradesh",
-"Mizoram, Tripura and Sikkim",
-"Meghalaya, Assam and Mizoram"
+"Tehran–Mashhad",
+"Chabahar–Zahedan",
+"Tehran–Tabriz",
+"Isfahan–Shiraz"
 ],
-answer: "Manipur, Nagaland and Arunachal Pradesh"
+answer: "Chabahar–Zahedan"
 },
+
 {
-question: "Which Indian city secured the highest position in the Oxford Economics Global Cities Index 2026?",
+question: "Which of the following ports have been declared as Mega Ports under the Indian Ports Act, 2025?",
+option: [
+"Deendayal (Kandla)",
+"Jawaharlal Nehru",
+"Paradip and Mundra",
+"All of the above"
+],
+answer: "All of the above"
+},
+
+{
+question: "Who became the 3rd Indian to win an Asian Games medal in Women’s Singles Squash?",
+option: [
+"Anahat Singh",
+"Joshna Chinappa",
+"Dipika Pallikal",
+"Tanvi Khanna"
+],
+answer: "Anahat Singh"
+},
+
+{
+question: "Who became the second batter to score 15,000 runs in ODI cricket?",
+option: [
+"Rohit Sharma",
+"Virat Kohli",
+"Sachin Tendulkar",
+"MS Dhoni"
+],
+answer: "Virat Kohli"
+},
+
+{
+question: "Baranica Elangovan won a historic medal in which event at the Asian Games 2026?",
+option: [
+"High Jump",
+"Pole Vault",
+"Long Jump",
+"Triple Jump"
+],
+answer: "Pole Vault"
+},
+
+{
+question: "India’s first LNG-powered train was flagged off from which place?",
 option: [
 "Mumbai",
-"Bengaluru",
-"Delhi",
+"Sabarmati",
+"New Delhi",
 "Chennai"
 ],
-answer: "Delhi"
-},
-{
-question: "How many talukas in Maharashtra were recently declared drought-affected?",
-option: [
-"225 Talukas",
-"245 Talukas",
-"265 Talukas",
-"285 Talukas"
-],
-answer: "265 Talukas"
-},
-{
-question: "What rank did Delhi Airport achieve in the global connectivity ranking of OAG Megahubs 2026?",
-option: [
-"18th",
-"23rd",
-"28th",
-"33rd"
-],
-answer: "28th"
-},
-{
-question: "In which state did Union Minister Nitin Gadkari launch the 'Mukhyamantri Sugam Parivahan Bus Service' and PM E-Bus Sewa?",
-option: [
-"Rajasthan",
-"Madhya Pradesh",
-"Maharashtra",
-"Gujarat"
-],
-answer: "Madhya Pradesh"
-},
-{
-question: "How many years did the 'Make in India' initiative complete in 2026?",
-option: [
-"10 Years",
-"11 Years",
-"12 Years",
-"13 Years"
-],
-answer: "12 Years"
-},
-{
-question: "Who has been appointed as the new Chairperson of CBSE?",
-option: [
-"Mandeep K Bhandari",
-"Sanjay Kumar",
-"Rahul Singh",
-"Himanshu Gupta"
-],
-answer: "Mandeep K Bhandari"
+answer: "Sabarmati"
 },
 ];
 
