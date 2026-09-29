@@ -8,6 +8,7 @@ const subjectIcons = {
   chemistry: '🧪',
   mathematics: '📐',
   maths: '📐',
+  math: '📐',
   biology: '🧬',
   english: '📖',
   hindi: '📕',
@@ -26,8 +27,26 @@ const subjectIcons = {
 
 const getIcon = (teacher) => {
   if (teacher.icon) return teacher.icon;
-  const key = (teacher.subject || '').toLowerCase().trim();
-  return subjectIcons[key] || subjectIcons.default;
+
+  const subject = (teacher.subject || '').toLowerCase().trim();
+  if (!subject) return subjectIcons.default;
+
+  // 1. Pehle poora exact match try karo
+  if (subjectIcons[subject]) return subjectIcons[subject];
+
+  // 2. Subject ke har word ko check karo (start se)
+  const words = subject.split(/[\s(),./\-_]+/).filter(Boolean);
+  for (const word of words) {
+    if (subjectIcons[word]) return subjectIcons[word];
+  }
+
+  // 3. Partial match - agar koi icon key subject ke andar kahin bhi mile
+  const keys = Object.keys(subjectIcons).filter((k) => k !== 'default');
+  for (const key of keys) {
+    if (subject.includes(key)) return subjectIcons[key];
+  }
+
+  return subjectIcons.default;
 };
 
 // ----------------------------------------------------------------------
@@ -36,34 +55,34 @@ const getIcon = (teacher) => {
 const teachers = [
   {
     id: 1,
-    name: 'Prof. Sharma',
-    subject: 'Physics',
-    driveLink: 'https://drive.google.com/file/d/1AAoGoMvEqC98cF4hMtlgEa2X9gZqEjWr/view?usp=drivesdk',
+    name: 'Amit Niraj Sagle  Why Grammar',
+    subject: 'English(Verb 1)',
+    driveLink: 'https://drive.google.com/file/d/1CMI_K6toQu1Me_UNEp1leQ62y8ZpgIP-/view?usp=drivesdk',
   },
-  {
-    id: 2,
-    name: 'Dr. Mehta',
-    subject: 'Chemistry',
-    driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_2/view?usp=drivesdk',
-  },
-  {
-    id: 3,
-    name: 'Mrs. Kapoor',
-    subject: 'Mathematics',
-    driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_3/view?usp=drivesdk',
-  },
-  {
-    id: 4,
-    name: 'Mr. Verma',
-    subject: 'Biology',
-    driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_4/view?usp=drivesdk',
-  },
-  {
-    id: 5,
-    name: 'Ms. Rao',
-    subject: 'English',
-    driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_5/view?usp=drivesdk',
-  },
+  // {
+  //   id: 2,
+  //   name: 'Dr. Mehta',
+  //   subject: 'Chemistry',
+  //   driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_2/view?usp=drivesdk',
+  // },
+  // {
+  //   id: 3,
+  //   name: 'Mrs. Kapoor',
+  //   subject: 'Mathematics',
+  //   driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_3/view?usp=drivesdk',
+  // },
+  // {
+  //   id: 4,
+  //   name: 'Mr. Verma',
+  //   subject: 'Biology',
+  //   driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_4/view?usp=drivesdk',
+  // },
+  // {
+  //   id: 5,
+  //   name: 'Ms. Rao',
+  //   subject: 'English',
+  //   driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_5/view?usp=drivesdk',
+  // },
 ];
 
 // ----------------------------------------------------------------------
@@ -488,7 +507,7 @@ const TeacherNotes = () => {
             </a>
           ))}
         </div>
-      // </nav> */}
+      </nav> */}
 
       {/* 📦 Main content */}
       <div style={styles.content}>
