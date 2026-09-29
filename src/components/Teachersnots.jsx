@@ -55,7 +55,7 @@ const getIcon = (teacher) => {
 const teachers = [
   {
     id: 1,
-    name: 'Amit Niraj Sagle  Why Grammar',
+    name: 'Amit Niraj Sehgal  Why Grammar',
     subject: 'English(Verb 1)',
     driveLink: 'https://drive.google.com/file/d/1CMI_K6toQu1Me_UNEp1leQ62y8ZpgIP-/view?usp=drivesdk',
   },
