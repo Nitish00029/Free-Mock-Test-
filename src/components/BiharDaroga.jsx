@@ -331,7 +331,7 @@ const shiftsDataRaw = [
   answer: "a-iii, b-iv, c-i, d-ii"
 },
 {
-  question: "10 सेमी व्यास और 56 मीटर लंबाई वाले तार का आयतन (सेमी³ में) कितना है?",
+  question: "10 सेमी व्यास और 56 मीटर लंबाई वाले तार का आयतन (सेमी³ में) कितना है?\nπ = $\\frac{22}{7}$ लें",
   option: [
     "441000",
     "440700",
@@ -1333,7 +1333,7 @@ const shiftsDataRaw = [
   answer: "a-iii, b-iv, c-i, d-i"
 },
 {
-  question: "The volume (in cm³) of a wire of diameter 10 cm and length 56 m is:",
+  question: "The volume (in cm³) of a wire of diameter 10 cm and length 56 m is:\ntake π = $\\frac{22}{7}$",
   option: [
     "441000",
     "440700",
