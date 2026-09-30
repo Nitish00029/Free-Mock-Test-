@@ -6,182 +6,208 @@ import React, { useState, useEffect, useRef } from "react";
 // Hindi Questions
 const currentAffairsHindi = [
 {
-question: "मतदाता दिवस कब मनाया जाता है?",
+question: "SpaceX के Starship ने पहली बार कौन-सी उपलब्धि हासिल की, जिसके दौरान 26 Starlink satellites तैनात किए गए?",
 option: [
-"25 जनवरी",
-"26 जनवरी",
-"27 जनवरी",
-"28 जनवरी"
+"चंद्रमा की कक्षा में पहुँचना",
+"कक्षा (Orbit) में पहुँचना",
+"मंगल की कक्षा में पहुँचना",
+"अंतरिक्ष स्टेशन से जुड़ना"
 ],
-answer: "25 जनवरी"
+answer: "कक्षा (Orbit) में पहुँचना"
 },
-
 {
-question: "निम्नलिखित में से कौन-सा PM e-Vidya पहल के अंतर्गत शामिल नहीं है?",
+question: "भारतीय सशस्त्र बलों का दल किस संयुक्त सैन्य अभ्यास में भाग लेने के लिए रवाना हुआ है?",
 option: [
-"DIKSHA",
-"SWAYAM",
-"SATHEE",
-"PRAGYAN"
+"युद्ध अभ्यास 2026",
+"KAZIND-2026",
+"सूर्य किरण 2026",
+"मालाबार 2026"
 ],
-answer: "PRAGYAN"
+answer: "KAZIND-2026"
 },
-
 {
-question: "ईरान ने किस रेलवे लिंक पर रेल पटरी बिछाने का कार्य पूरा किया है?",
+question: "‘मंदर’, जिसे हाल ही में GI Tag प्रदान किया गया, किस राज्य का पारंपरिक लोक वाद्य यंत्र है?",
 option: [
-"तेहरान–मशहद",
-"चाबहार–ज़ाहेदान",
-"तेहरान–तबरीज़",
-"इस्फहान–शिराज"
+"बिहार",
+"झारखंड",
+"छत्तीसगढ़",
+"ओडिशा"
 ],
-answer: "चाबहार–ज़ाहेदान"
+answer: "झारखंड"
 },
-
 {
-question: "भारतीय पत्तन अधिनियम, 2025 के तहत निम्नलिखित में से किन बंदरगाहों को मेगा पोर्ट घोषित किया गया है?",
+question: "2026 का SASTRA-रामानुजन पुरस्कार किसने जीता?",
 option: [
-"दीनदयाल (कांडला)",
-"जवाहरलाल नेहरू",
-"पारादीप और मुंद्रा",
-"उपरोक्त सभी"
+"स्टैनफोर्ड शोधकर्ता",
+"हार्वर्ड शोधकर्ता",
+"कैम्ब्रिज शोधकर्ता",
+"ऑक्सफोर्ड शोधकर्ता"
 ],
-answer: "उपरोक्त सभी"
+answer: "स्टैनफोर्ड शोधकर्ता"
 },
-
 {
-question: "महिला एकल स्क्वैश में एशियाई खेलों का पदक जीतने वाली तीसरी भारतीय खिलाड़ी कौन बनीं?",
+question: "पाकिस्तान के पहले अंतरिक्ष यात्री का मिशन किस अंतरिक्ष स्टेशन से संबंधित है?",
 option: [
-"अनाहत सिंह",
-"जोशना चिनप्पा",
-"दीपिका पल्लीकल",
-"तन्वी खन्ना"
+"अंतर्राष्ट्रीय अंतरिक्ष स्टेशन (ISS)",
+"तियांगोंग अंतरिक्ष स्टेशन",
+"मीर अंतरिक्ष स्टेशन",
+"स्काईलैब"
 ],
-answer: "अनाहत सिंह"
+answer: "तियांगोंग अंतरिक्ष स्टेशन"
 },
-
 {
-question: "ODI क्रिकेट में 15,000 रन बनाने वाले दूसरे बल्लेबाज कौन बने?",
+question: "पराली जलाने पर रोक लगाने के लिए हरियाणा सरकार ने किस विशेष बल को तैनात करने की घोषणा की है?",
 option: [
-"रोहित शर्मा",
-"विराट कोहली",
-"सचिन तेंदुलकर",
-"एम.एस. धोनी"
+"ग्रीन प्रोटेक्शन फोर्स",
+"पराली प्रोटेक्शन फोर्स",
+"क्रॉप सेफ्टी फोर्स",
+"फार्म प्रोटेक्शन फोर्स"
 ],
-answer: "विराट कोहली"
+answer: "पराली प्रोटेक्शन फोर्स"
 },
-
 {
-question: "एशियाई खेल 2026 में बारानिका इलंगोवन ने किस स्पर्धा में ऐतिहासिक पदक जीता?",
+question: "एशियाई खेल 2026 में भाला फेंक (Javelin Throw) स्पर्धा में पदक जीतने वाले भारतीय खिलाड़ियों में कौन शामिल हैं?",
 option: [
-"ऊँची कूद",
-"पोल वॉल्ट",
-"लंबी कूद",
-"त्रिकूद"
+"यशवीर सिंह और रोहित यादव",
+"नीरज चोपड़ा और किशोर जेना",
+"तजिंदरपाल सिंह तूर और यशवीर सिंह",
+"रोहित यादव और अन्नू रानी"
 ],
-answer: "पोल वॉल्ट"
+answer: "यशवीर सिंह और रोहित यादव"
 },
-
 {
-question: "भारत की पहली LNG-संचालित ट्रेन को किस स्थान से हरी झंडी दिखाई गई?",
+question: "FAO के COFO 28 में भारत ने निम्नलिखित में से किस विषय पर अपने वन एवं जलवायु प्रयासों को प्रस्तुत किया?",
 option: [
-"मुंबई",
-"साबरमती",
-"नई दिल्ली",
-"चेन्नई"
+"वन आवरण, बॉन चैलेंज और जलवायु कार्रवाई",
+"महासागर संरक्षण, ब्लू इकोनॉमी और जलवायु वित्त",
+"मरुस्थलीकरण, तटीय सुरक्षा और हरित हाइड्रोजन",
+"वन्यजीव जनगणना, समुद्री जीवविज्ञान और कार्बन ट्रेडिंग"
 ],
-answer: "साबरमती"
+answer: "वन आवरण, बॉन चैलेंज और जलवायु कार्रवाई"
+},
+{
+question: "11 वर्ष की आयु में सबसे कम उम्र की महिला ग्रैंडमास्टर बनने वाली शतरंज खिलाड़ी कौन हैं?",
+option: [
+"वैशाली रमेशबाबू",
+"दिव्या देशमुख",
+"बोदाना सिवानंदन",
+"कोनेरू हम्पी"
+],
+answer: "बोदाना सिवानंदन"
+},
+{
+question: "एशियाई खेल 2026 में 400m Hurdles में कांस्य पदक जीतकर किस भारतीय एथलीट ने P.T. Usha का रिकॉर्ड तोड़ा?",
+option: [
+"विथ्या रामराज",
+"हिमा दास",
+"ज्योति याराजी",
+"अंजू बॉबी जॉर्ज"
+],
+answer: "विथ्या रामराज"
 },
 ];
 
 // English Questions (same 88 questions translated)
 const currentAffairsEnglish = [
 {
-question: "When is Voters' Day celebrated?",
+question: "SpaceX’s Starship achieved which milestone for the first time, during which it deployed 26 Starlink satellites?",
 option: [
-"25 Jan",
-"26 Jan",
-"27 Jan",
-"28 Jan"
+"Reached lunar orbit",
+"Reached orbit",
+"Reached Mars orbit",
+"Docked with a space station"
 ],
-answer: "25 Jan"
+answer: "Reached orbit"
 },
-
 {
-question: "Which one of the following is NOT covered by the PM e-Vidya initiative?",
+question: "The Indian Armed Forces contingent has departed to participate in which joint military exercise?",
 option: [
-"DIKSHA",
-"SWAYAM",
-"SATHEE",
-"PRAGYAN"
+"Yudh Abhyas 2026",
+"KAZIND-2026",
+"Surya Kiran 2026",
+"Malabar 2026"
 ],
-answer: "PRAGYAN"
+answer: "KAZIND-2026"
 },
-
 {
-question: "Iran has completed rail laying on which railway link?",
+question: "‘Mandar’, which was recently granted a GI Tag, is a traditional folk percussion instrument of which state?",
 option: [
-"Tehran–Mashhad",
-"Chabahar–Zahedan",
-"Tehran–Tabriz",
-"Isfahan–Shiraz"
+"Bihar",
+"Jharkhand",
+"Chhattisgarh",
+"Odisha"
 ],
-answer: "Chabahar–Zahedan"
+answer: "Jharkhand"
 },
-
 {
-question: "Which of the following ports have been declared as Mega Ports under the Indian Ports Act, 2025?",
+question: "Who won the 2026 SASTRA-Ramanujan Award?",
 option: [
-"Deendayal (Kandla)",
-"Jawaharlal Nehru",
-"Paradip and Mundra",
-"All of the above"
+"Stanford Researcher",
+"Harvard Researcher",
+"Cambridge Researcher",
+"Oxford Researcher"
 ],
-answer: "All of the above"
+answer: "Stanford Researcher"
 },
-
 {
-question: "Who became the 3rd Indian to win an Asian Games medal in Women’s Singles Squash?",
+question: "Pakistan’s first astronaut is set to undertake a mission to which space station?",
 option: [
-"Anahat Singh",
-"Joshna Chinappa",
-"Dipika Pallikal",
-"Tanvi Khanna"
+"International Space Station (ISS)",
+"Tiangong Space Station",
+"Mir Space Station",
+"Skylab"
 ],
-answer: "Anahat Singh"
+answer: "Tiangong Space Station"
 },
-
 {
-question: "Who became the second batter to score 15,000 runs in ODI cricket?",
+question: "Which special force has the Haryana government announced to deploy to curb stubble burning?",
 option: [
-"Rohit Sharma",
-"Virat Kohli",
-"Sachin Tendulkar",
-"MS Dhoni"
+"Green Protection Force",
+"Parali Protection Force",
+"Crop Safety Force",
+"Farm Protection Force"
 ],
-answer: "Virat Kohli"
+answer: "Parali Protection Force"
 },
-
 {
-question: "Baranica Elangovan won a historic medal in which event at the Asian Games 2026?",
+question: "Which of the following Indian athletes won medals in the Javelin Throw event at the Asian Games 2026?",
 option: [
-"High Jump",
-"Pole Vault",
-"Long Jump",
-"Triple Jump"
+"Yashvir Singh and Rohit Yadav",
+"Neeraj Chopra and Kishore Jena",
+"Tajinderpal Singh Toor and Yashvir Singh",
+"Rohit Yadav and Annu Rani"
 ],
-answer: "Pole Vault"
+answer: "Yashvir Singh and Rohit Yadav"
 },
-
 {
-question: "India’s first LNG-powered train was flagged off from which place?",
+question: "At FAO COFO 28, India highlighted its efforts related to which of the following?",
 option: [
-"Mumbai",
-"Sabarmati",
-"New Delhi",
-"Chennai"
+"Forest Cover, Bonn Challenge and Climate Action",
+"Ocean Conservation, Blue Economy and Climate Finance",
+"Desertification, Coastal Security and Green Hydrogen",
+"Wildlife Census, Marine Biology and Carbon Trading"
 ],
-answer: "Sabarmati"
+answer: "Forest Cover, Bonn Challenge and Climate Action"
+},
+{
+question: "Who became the youngest woman Grandmaster at the age of 11?",
+option: [
+"Vaishali Rameshbabu",
+"Divya Deshmukh",
+"Bodhana Sivanandan",
+"Koneru Humpy"
+],
+answer: "Bodhana Sivanandan"
+},
+{
+question: "Which Indian athlete broke P.T. Usha’s record by winning bronze in the 400m Hurdles at the Asian Games 2026?",
+option: [
+"Vithya Ramraj",
+"Hima Das",
+"Jyothi Yarraji",
+"Anju Bobby George"
+],
+answer: "Vithya Ramraj"
 },
 ];
 
