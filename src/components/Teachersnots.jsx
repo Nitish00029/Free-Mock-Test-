@@ -59,12 +59,12 @@ const teachers = [
     subject: 'English(Verb 1)',
     driveLink: 'https://drive.google.com/file/d/1CMI_K6toQu1Me_UNEp1leQ62y8ZpgIP-/view?usp=drivesdk',
   },
-  // {
-  //   id: 2,
-  //   name: 'Dr. Mehta',
-  //   subject: 'Chemistry',
-  //   driveLink: 'https://drive.google.com/file/d/PASTE_YOUR_LINK_HERE_2/view?usp=drivesdk',
-  // },
+   {
+     id: 2,
+    name: 'Amit Niraj Sehgal  Why Grammar',
+    subject: 'English(Tense)',
+    driveLink: 'https://drive.google.com/file/d/161t3KcF_KXV-KNvUDRpFHxvx7WYgCJS4/view?usp=drivesdk',
+    },
   // {
   //   id: 3,
   //   name: 'Mrs. Kapoor',
