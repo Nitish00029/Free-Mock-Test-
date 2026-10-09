@@ -331,7 +331,7 @@ const shiftsDataRaw = [
   answer: "a-iii, b-iv, c-i, d-ii"
 },
 {
-  question: "10 सेमी व्यास और 56 मीटर लंबाई वाले तार का आयतन (सेमी³ में) कितना है?\nπ = $\\frac{22}{7}$ लें",
+  question: "10 सेमी व्यास और 56 मीटर लंबाई वाले तार का आयतन (सेमी³ में) कितना है?",
   option: [
     "441000",
     "440700",
@@ -1333,7 +1333,7 @@ const shiftsDataRaw = [
   answer: "a-iii, b-iv, c-i, d-i"
 },
 {
-  question: "The volume (in cm³) of a wire of diameter 10 cm and length 56 m is:\ntake π = $\\frac{22}{7}$",
+  question: "The volume (in cm³) of a wire of diameter 10 cm and length 56 m is:",
   option: [
     "441000",
     "440700",
@@ -2117,7 +2117,2207 @@ const shiftsDataRaw = [
     },
   },
   // 👇 Naya paper add karna hai toh bas ye block copy-paste karo aur id/name badlo
-  { id: 2, name: "Paper Set 2", available: false, languages: { hindi: [], english: [] } },
+  { id: 2, name: "Paper Set 2", available: true, languages: { hindi: [
+    {
+question: "भारत के संविधान के अनुच्छेद 106 के अनुसार, निम्नलिखित में से कौन संसद के किसी भी सदन के सदस्यों के वेतन का निर्धारण करता है?",
+option: [
+"संसद",
+"भारत के राष्ट्रपति",
+"केंद्रीय वित्त मंत्रालय",
+"वित्त आयोग"
+],
+answer: "संसद"
+},
+
+{
+question: "2025 में दिल्ली के मुख्यमंत्री के रूप में किसने शपथ ली?",
+option: [
+"आतिशी",
+"रेखा गुप्ता",
+"शीला दीक्षित",
+"मंजींदर सिंह सिरसा"
+],
+answer: "रेखा गुप्ता"
+},
+
+{
+question: "पाइनस और साइकस ________ से संबंधित हैं।",
+option: [
+"आवृतबीजी",
+"थैलोफाइटा",
+"ब्रायोफाइटा",
+"अनावृतबीजी"
+],
+answer: "अनावृतबीजी"
+},
+
+{
+question: "कोशिका की खोज किसने की थी?",
+option: [
+"बी. रॉबर्ट हुक",
+"टी. शवानी",
+"शुल्ज़",
+"कार्ल आंद्रे"
+],
+answer: "बी. रॉबर्ट हुक"
+},
+
+{
+question: "बिहार राज्य का क्षेत्रफल कितना है?",
+option: [
+"98,763 वर्ग किमी",
+"92,263 वर्ग किमी",
+"94,163 वर्ग किमी",
+"99,279 वर्ग किमी"
+],
+answer: "94,163 वर्ग किमी"
+},
+
+{
+question: "निम्नलिखित में से कौन-सा कथन सही है?\n1. खिलजी वंश दिल्ली सल्तनत पर शासन करने वाला दूसरा वंश था।\n2. खिलजी वंश ने लगभग 30 वर्षों तक शासन किया।",
+option: [
+"केवल 1 सही",
+"केवल 2 सही",
+"1 और 2 दोनों सही",
+"न तो 1 और न ही 2 सही"
+],
+answer: "1 और 2 दोनों सही"
+},
+
+{
+question: "यूनानी मेगस्थनीज निम्नलिखित में से किस राजा के दरबार में राजदूत था?",
+option: [
+"अशोक",
+"चंद्रगुप्त मौर्य",
+"बिंबिसार",
+"महापद्म नंद"
+],
+answer: "चंद्रगुप्त मौर्य"
+},
+
+{
+question: "भारतीय संविधान का कौन-सा अनुच्छेद भारत में धार्मिक स्वतंत्रता की रक्षा करता है?",
+option: [
+"अनुच्छेद 28",
+"अनुच्छेद 27",
+"अनुच्छेद 26",
+"अनुच्छेद 25"
+],
+answer: "अनुच्छेद 25"
+},
+
+{
+question: "Implementation का हिंदी पारिभाषिक शब्द है—",
+option: [
+"प्रभावित करना",
+"निहितार्थ",
+"आयातित",
+"कार्यान्वयन"
+],
+answer: "कार्यान्वयन"
+},
+
+{
+question: "महात्मा गांधी दक्षिण अफ्रीका से भारत किस वर्ष लौटे थे?",
+option: [
+"1905",
+"1920",
+"1915",
+"1910"
+],
+answer: "1915"
+},
+
+{
+question: "राज ने 25% की छूट मिलने पर एक कमीज खरीदते समय 20 रुपये बचाए। छूट देने से पहले कमीज की कीमत क्या थी?",
+option: [
+"75 रुपये",
+"80 रुपये",
+"90 रुपये",
+"100 रुपये"
+],
+answer: "80 रुपये"
+},
+
+{
+question: "‘Plan’ शब्द का हिंदी अर्थ क्या है?",
+option: [
+"योजना",
+"फल",
+"नगर",
+"समय"
+],
+answer: "योजना"
+},
+
+{
+question: "वेदों को भारत-आर्य सभ्यता का सबसे प्राचीन साहित्यिक अभिलेख माना जाता है। चार वेद हैं: ऋग्वेद, सामवेद, यजुर्वेद और चौथा _______ है।",
+option: [
+"अथर्ववेद",
+"शिल्पवेद",
+"आयुर्वेद",
+"धनुर्वेद"
+],
+answer: "अथर्ववेद"
+},
+
+{
+question: "बिहार सरकार द्वारा सतत जीविकोपार्जन योजना (SJY) कब शुरू की गई थी?",
+option: [
+"15 अगस्त 2016",
+"5 अगस्त 2018",
+"2 अक्टूबर 2015",
+"1 जनवरी 2020"
+],
+answer: "5 अगस्त 2018"
+},
+
+{
+question: "आईसीसी महिला विश्व कप 2025 के फाइनल में ‘प्लेयर ऑफ द मैच’ का पुरस्कार किसे दिया गया?",
+option: [
+"स्मृति मंधाना",
+"लॉरा वोल्वार्ड्ट",
+"शैफाली वर्मा",
+"दीप्ति शर्मा"
+],
+answer: "शैफाली वर्मा"
+},
+
+{
+question: "2025 में स्थापित राष्ट्रीय हल्दी बोर्ड का मुख्यालय कहाँ स्थित है?",
+option: [
+"कोलकाता",
+"कोच्चि",
+"गुंटूर",
+"निजामाबाद"
+],
+answer: "निजामाबाद"
+},
+
+{
+question: "भगवान विष्णु को समर्पित खजुराहो का लक्ष्मण मंदिर मंदिर वास्तुकला की किस शैली का उदाहरण है?",
+option: [
+"वेसर शैली",
+"नागर शैली",
+"द्रविड़ शैली",
+"ओडिशा शैली"
+],
+answer: "नागर शैली"
+},
+
+{
+question: "निम्नलिखित में से कौन-सा युग्म सही ढंग से सुमेलित नहीं है?",
+option: [
+"विटामिन C – एस्कॉर्बिक अम्ल",
+"विटामिन A – रेटिनॉल",
+"विटामिन D – कैल्सीफेरॉल",
+"विटामिन E – कैल्सिफेरो"
+],
+answer: "विटामिन E – कैल्सिफेरो"
+},
+
+{
+question: "1861 में भारतीय पुरातत्व सर्वेक्षण की स्थापना किसने की थी?",
+option: [
+"अलेक्जेंडर कनिंघम",
+"जयंती पटनायक",
+"सौरभ कुमार",
+"गिरीश कुमार"
+],
+answer: "अलेक्जेंडर कनिंघम"
+},
+
+{
+question: "कृषि मीडिया पुरस्कार 2025 के लिए किसे चुना गया है?",
+option: [
+"पी. साईनाथ",
+"अम्शी प्रसन्नकुमार",
+"रवीश कुमार",
+"निखिल वागले"
+],
+answer: "अम्शी प्रसन्नकुमार"
+},
+
+{
+question: "भारत के प्रथम राष्ट्रीय डॉल्फिन अनुसंधान केंद्र (NDRC) का उद्घाटन कहाँ किया गया था?",
+option: [
+"वाराणसी, उत्तर प्रदेश",
+"पटना, बिहार",
+"गुवाहाटी, असम",
+"कोलकाता, पश्चिम बंगाल"
+],
+answer: "पटना, बिहार"
+},
+
+{
+question: "‘महात्मा गांधी एंड बिहार, सम रिमिनिसेंसेज’ के लेखक कौन थे?",
+option: [
+"जे. पी. नारायण",
+"डॉ. राजेंद्र प्रसाद",
+"कर्पूरी ठाकुर",
+"राज कुमार शुक्ल"
+],
+answer: "डॉ. राजेंद्र प्रसाद"
+},
+
+{
+question: "“Contingency Fund” का हिंदी रूप चुनें—",
+option: [
+"आकस्मिक निधि",
+"राजस्व निधि",
+"बजट निधि",
+"विकास निधि"
+],
+answer: "आकस्मिक निधि"
+},
+
+{
+question: "2025 में संयुक्त राज्य अमेरिका के 47वें राष्ट्रपति कौन बने?",
+option: [
+"डोनाल्ड ट्रंप",
+"जो बाइडेन",
+"कमला हैरिस",
+"जेडी वेंस"
+],
+answer: "डोनाल्ड ट्रंप"
+},
+
+{
+question: "2025 के अर्थशास्त्र के नोबेल पुरस्कार का आधा हिस्सा प्राप्त करने वाले पुरस्कार विजेताओं में से एक कौन हैं?",
+option: [
+"डैरोन एसेमोग्लू",
+"एस्थर डुफ्लो",
+"जोएल मोकिर",
+"एंगस डीटन"
+],
+answer: "जोएल मोकिर"
+},
+
+{
+question: "रामधारी सिंह दिनकर को किस कृति पर साहित्य अकादमी पुरस्कार मिला?",
+option: [
+"द्वंद्व",
+"उर्वशी",
+"संस्कृति के चार अध्याय",
+"इनमें से कोई नहीं"
+],
+answer: "संस्कृति के चार अध्याय"
+},
+
+{
+question: "‘मिट्टी की बारात’ नामक कविता-संग्रह के लेखक कौन हैं?",
+option: [
+"जयशंकर प्रसाद",
+"शिवमंगल सिंह सुमन",
+"महादेवी वर्मा",
+"मैथिलीशरण गुप्त"
+],
+answer: "शिवमंगल सिंह सुमन"
+},
+
+{
+question: "$7^7$ को 4 से भाग देने पर शेषफल क्या होगा?",
+option: [
+"1",
+"2",
+"3",
+"0"
+],
+answer: "3"
+},
+
+{
+question: "जुलाई 2025 में एआई फॉर गुड ग्लोबल समिट कहाँ आयोजित किया गया था?",
+option: [
+"पेरिस, फ्रांस",
+"न्यूयॉर्क, अमेरिका",
+"जिनेवा, स्विट्ज़रलैंड",
+"टोक्यो, जापान"
+],
+answer: "जिनेवा, स्विट्ज़रलैंड"
+},
+
+{
+question: "इस्लाम एक प्रमुख विश्व धर्म है, जिसे पैगंबर मुहम्मद ने अरब में किस शताब्दी में प्रचारित किया था?",
+option: [
+"5वीं शताब्दी",
+"4वीं शताब्दी",
+"7वीं शताब्दी",
+"6वीं शताब्दी"
+],
+answer: "7वीं शताब्दी"
+},
+
+{
+question: "‘मोदी गवर्नमेंट: न्यू सर्ज ऑफ कम्यूनलिज्म’ पुस्तक के लेखक कौन हैं?",
+option: [
+"एम. जे. अकबर",
+"जसवंत सिंह",
+"प्रणब मुखर्जी",
+"सीताराम येचुरी"
+],
+answer: "सीताराम येचुरी"
+},
+
+{
+question: "निम्नलिखित में से किस ग्रह के प्राकृतिक उपग्रहों या चंद्रमाओं की संख्या सबसे अधिक है?",
+option: [
+"बृहस्पति",
+"मंगल",
+"शनि",
+"शुक्र"
+],
+answer: "शनि"
+},
+
+{
+question: "न्यूटन का कौन-सा नियम बताता है कि प्रकृति में प्रत्येक क्रिया (बल) के बराबर और विपरीत प्रतिक्रिया होती है?",
+option: [
+"दूसरा",
+"पहला",
+"चौथा",
+"तीसरा"
+],
+answer: "तीसरा"
+},
+
+{
+question: "महानदी नदी के संबंध में निम्नलिखित में से कौन-सा कथन गलत है?",
+option: [
+"महानदी का उद्गम छत्तीसगढ़ के उच्चभूमि क्षेत्र से होता है।",
+"यह ओडिशा से होकर बहती है और बंगाल की खाड़ी में पहुँचती है।",
+"इस नदी की लंबाई लगभग 680 किमी है।",
+"इसका जल निकासी बेसिन महाराष्ट्र, छत्तीसगढ़, झारखंड और ओडिशा तक फैला हुआ है।"
+],
+answer: "इस नदी की लंबाई लगभग 680 किमी है।"
+},
+
+{
+question: "निम्नलिखित में से किसे फरवरी 2023 में झारखंड का राज्यपाल नियुक्त किया गया था?",
+option: [
+"सी. पी. राधाकृष्णन",
+"रमेश बैस",
+"टी. गहलोत",
+"आर. एन. रवि"
+],
+answer: "सी. पी. राधाकृष्णन"
+},
+
+{
+question: "540 के कुल गुणनखंडों की संख्या कितनी है?",
+option: [
+"24",
+"30",
+"48",
+"54"
+],
+answer: "24"
+},
+
+{
+question: "निम्नलिखित में से किस संगठन ने SAARTHI मोबाइल ऐप लॉन्च किया है?",
+option: [
+"भारतीय रिज़र्व बैंक",
+"भारतीय प्रतिभूति और विनिमय बोर्ड",
+"भारतीय बीमा विनियामक और विकास प्राधिकरण",
+"भारतीय दूरसंचार विनियामक प्राधिकरण"
+],
+answer: "भारतीय प्रतिभूति और विनिमय बोर्ड"
+},
+
+{
+question: "बराबर की गुफाएँ किससे संबंधित हैं?",
+option: [
+"आजीविक",
+"जैन",
+"बौद्ध",
+"ब्राह्मण"
+],
+answer: "आजीविक"
+},
+
+{
+question: "एक वर्ग की भुजा मापते समय 2% अधिक की त्रुटि की जाती है। वर्ग के परिकलित क्षेत्रफल में त्रुटि का प्रतिशत कितना होगा?",
+option: [
+"2%",
+"4%",
+"4.4%",
+"4.04%"
+],
+answer: "4.04%"
+},
+
+{
+question: "मुगल शासक अकबर का जन्म _________ में हुआ था।",
+option: [
+"अमरकोट",
+"फतेहपुर सीकरी",
+"सियालकोट",
+"आगरा"
+],
+answer: "अमरकोट"
+},
+
+{
+question: "भारत के संविधान का संरक्षक कौन है?",
+option: [
+"सर्वोच्च न्यायालय",
+"राष्ट्रपति",
+"राज्यसभा",
+"लोकसभा"
+],
+answer: "सर्वोच्च न्यायालय"
+},
+
+{
+question: "भारत में राष्ट्रीय पंचायती राज दिवस कब मनाया जाता है?",
+option: [
+"10 अप्रैल",
+"24 अप्रैल",
+"4 जून",
+"3 मई"
+],
+answer: "24 अप्रैल"
+},
+
+{
+question: "अगस्त 2025 में स्पेनिश टेनिस स्टार कार्लोस अल्काराज़ ने अपना पहला सिनसिनाटी ओपन खिताब किस खिलाड़ी के फाइनल में हटने के बाद जीता?",
+option: [
+"अलेक्जेंडर ज्वेरेव",
+"नोवाक जोकोविच",
+"जानिक सिनर",
+"डेनिल मेदवेदेव"
+],
+answer: "जानिक सिनर"
+},
+
+{
+question: "‘ऑपरेशन फ्लड’ को किस नाम से भी जाना जाता है?",
+option: [
+"नीली क्रांति",
+"गुलाबी क्रांति",
+"रजत क्रांति",
+"श्वेत क्रांति"
+],
+answer: "श्वेत क्रांति"
+},
+
+{
+question: "42वें संविधान संशोधन अधिनियम, 1976 द्वारा कितने मौलिक कर्तव्य जोड़े गए थे?",
+option: [
+"दस",
+"ग्यारह",
+"पंद्रह",
+"तेरह"
+],
+answer: "दस"
+},
+
+{
+question: "अरुणाचल प्रदेश की राजधानी क्या है?",
+option: [
+"कोहिमा",
+"आइज़ोल",
+"इम्फाल",
+"ईटानगर"
+],
+answer: "ईटानगर"
+},
+
+{
+question: "अगस्त 2024 में ‘क्लाइमेट चेंजमेकर्स’ संवाद के लिए निम्नलिखित में से किस संगठन ने NABARD के साथ साझेदारी की?",
+option: [
+"संयुक्त राष्ट्र",
+"अंतर्राष्ट्रीय मुद्रा कोष",
+"विश्व बैंक",
+"डॉयचे गेसेलशाफ्ट फ्यूर इंटरनेशनेले ज़ुसामेनआर्बाइट (GIZ GmbH)"
+],
+answer: "डॉयचे गेसेलशाफ्ट फ्यूर इंटरनेशनेले ज़ुसामेनआर्बाइट (GIZ GmbH)"
+},
+
+{
+question: "‘कानून का शासन’ अभिव्यक्ति का क्या अर्थ है?",
+option: [
+"कानून व्यक्ति की समझ के अनुसार व्यक्तिपरक होता है",
+"कानून से ऊपर कोई व्यक्ति नहीं है",
+"कानून बनाने में सहायता करने वाले नियम",
+"वकील बनने के नियम"
+],
+answer: "कानून से ऊपर कोई व्यक्ति नहीं है"
+},
+
+{
+question: "निम्नलिखित में से कौन-सी संख्या सबसे छोटी है?",
+option: [
+"$\frac{7}{11}$",
+"$\frac{3}{4}$",
+"$\frac{5}{7}$",
+"$\frac{4}{5}$"
+],
+answer: "$\frac{7}{11}$"
+},
+
+{
+question: "SEBI द्वारा गठित उच्च-स्तरीय समिति (HLC) की अध्यक्षता के लिए किसे नियुक्त किया गया है, जो हितों के टकराव, प्रकटीकरण और संबंधित दायित्वों को नियंत्रित करने वाले प्रावधानों की समीक्षा करेगी?",
+option: [
+"उदय कोटक",
+"इंजेती श्रीनिवास",
+"प्रत्यूष सिन्हा",
+"जी. महालिंगम"
+],
+answer: "प्रत्यूष सिन्हा"
+},
+
+{
+question: "ऋग्वेद में 1028 सूक्तों का संकलन है, जिन्हें कितने मंडलों में वर्गीकृत किया गया है?",
+option: [
+"12",
+"15",
+"8",
+"10"
+],
+answer: "10"
+},
+
+{
+question: "‘सीमित संप्रभुता’ के सिद्धांत के प्रतिपादक कौन हैं?",
+option: [
+"लॉक",
+"रूसो",
+"स्पेंसर",
+"गार्नर"
+],
+answer: "लॉक"
+},
+
+{
+question: "2025 तक, स्पेसएक्स की स्टारलिंक परियोजना के कारण मुख्य रूप से किस देश के पास कक्षा में सबसे अधिक उपग्रह हैं और वह विश्व में अग्रणी है?",
+option: [
+"रूस",
+"चीन",
+"संयुक्त राज्य अमेरिका",
+"यूनाइटेड किंगडम"
+],
+answer: "संयुक्त राज्य अमेरिका"
+},
+
+{
+question: "एक उत्तल लेंस को ऐसे द्रव में डुबोया जाता है जिसका अपवर्तनांक लेंस के अपवर्तनांक के बराबर है। तब लेंस की फोकस दूरी क्या होगी?",
+option: [
+"अपरिवर्तित रहेगी",
+"शून्य हो जाएगी",
+"छोटी लेकिन शून्य नहीं होगी",
+"अनंत हो जाएगी"
+],
+answer: "अनंत हो जाएगी"
+},
+
+{
+question: "“Transfer” शब्द का हिंदी अर्थ क्या है?",
+option: [
+"स्वागत",
+"स्थानांतरण",
+"सूचना",
+"विश्राम"
+],
+answer: "स्थानांतरण"
+},
+
+{
+question: "अंग्रेजी शब्द “Adversity” के लिए निम्नलिखित में से कौन-सा हिंदी शब्द सबसे उपयुक्त है?",
+option: [
+"बदला",
+"परिस्थिति",
+"विपरीत",
+"विपत्ति"
+],
+answer: "विपत्ति"
+},
+
+{
+question: "अमेरिका ने नागासाकी पर परमाणु बम कब गिराया था?",
+option: [
+"6 अगस्त, 1945",
+"9 अगस्त, 1945",
+"7 अगस्त, 1944",
+"15 अगस्त, 1943"
+],
+answer: "9 अगस्त, 1945"
+},
+
+{
+question: "दिसंबर 2025 में 18वीं बिहार विधान सभा के अध्यक्ष के रूप में किसे निर्वाचित किया गया?",
+option: [
+"नंद किशोर यादव",
+"नरेंद्र नारायण यादव",
+"डॉ. प्रेम कुमार",
+"सम्राट चौधरी"
+],
+answer: "डॉ. प्रेम कुमार"
+},
+
+{
+question: "निम्नलिखित में से किस दिन खिलाफत दिवस मनाया गया था?",
+option: [
+"13 अप्रैल, 1919",
+"17 अक्टूबर, 1919",
+"23 नवंबर, 1919",
+"7 मई, 1919"
+],
+answer: "17 अक्टूबर, 1919"
+},
+
+{
+question: "राष्ट्रीय एकता दिवस कब मनाया जाता है?",
+option: [
+"31 नवंबर",
+"8 नवंबर",
+"31 अक्टूबर",
+"11 मार्च"
+],
+answer: "31 अक्टूबर"
+},
+
+{
+question: "भारत में राष्ट्रीय मतदाता दिवस (NVD) कब मनाया जाता है?",
+option: [
+"24 जनवरी",
+"25 जनवरी",
+"26 जनवरी",
+"27 जनवरी"
+],
+answer: "25 जनवरी"
+},
+
+{
+question: "भारत छोड़ो आंदोलन के दौरान पहली समानांतर सरकार कहाँ स्थापित की गई थी?",
+option: [
+"सतारा",
+"बलिया",
+"तमलुक",
+"लखनऊ"
+],
+answer: "तमलुक"
+},
+
+{
+question: "बिहार का आधिकारिक राज्य पक्षी कौन-सा है?",
+option: [
+"ग्रेट हॉर्नबिल",
+"घरेलू कौआ",
+"भारतीय रोबिन",
+"घरेलू गौरैया"
+],
+answer: "घरेलू गौरैया"
+},
+
+{
+question: "निम्नलिखित में से कौन-सा ताप विद्युत संयंत्र बिहार में स्थित नहीं है?",
+option: [
+"मुजफ्फरपुर",
+"बरौनी",
+"औरैया",
+"कहलगाँव"
+],
+answer: "औरैया"
+},
+
+{
+question: "राम अकेले एक बाड़ को 12 घंटे में रंग सकता है। श्याम उसी बाड़ को अकेले 18 घंटे में रंग सकता है। यदि वे एक ही समय पर काम शुरू करते हैं और बिना रुके साथ काम करते हैं, तो पूरी बाड़ को रंगने में उन्हें कितना समय लगेगा?",
+option: [
+"10 घंटे",
+"8 घंटे",
+"7.2 घंटे",
+"16 घंटे"
+],
+answer: "7.2 घंटे"
+},
+
+{
+question: "2025 में ‘पटना मेट्रो रेल परियोजना’ की स्थिति के संबंध में निम्नलिखित में से कौन-सा कथन सही है?\n1. प्राथमिकता गलियारे (मलाही पकड़ी से न्यू ISBT) का पहला परीक्षण जून 2025 में किया गया था।\n2. इस परियोजना का मुख्य रूप से वित्तपोषण विश्व बैंक द्वारा किया जा रहा है।\n3. इसमें लगभग 31 किमी की कुल लंबाई वाले दो गलियारे शामिल हैं।",
+option: [
+"केवल 1 और 2",
+"केवल 1 और 3",
+"केवल 2 और 3",
+"1, 2 और 3"
+],
+answer: "केवल 1 और 3"
+},
+
+{
+question: "हीराकुंड बाँध किस नदी पर बनाया गया है?",
+option: [
+"महानदी",
+"ब्रह्मपुत्र",
+"गोदावरी",
+"गंगा"
+],
+answer: "महानदी"
+},
+
+{
+question: "“unique” का सही हिंदी अनुवाद चुनें।",
+option: [
+"पुराना",
+"अनूठा",
+"नवप्रवर्तनशील",
+"समर्थ"
+],
+answer: "अनूठा"
+},
+
+{
+question: "विश्व रेबीज़ दिवस 2024 की विषय-वस्तु क्या थी?",
+option: [
+"एक स्वास्थ्य दृष्टिकोण",
+"रेबीज़: तथ्य और रोकथाम",
+"रेबीज़ की सीमाओं को तोड़ना",
+"2030 तक रेबीज़ का उन्मूलन"
+],
+answer: "रेबीज़ की सीमाओं को तोड़ना"
+},
+
+{
+question: "पृथ्वी द्वारा किसी वस्तु पर नीचे की दिशा में लगाया जाने वाला आकर्षण बल कहलाता है—",
+option: [
+"पेशीय बल",
+"वायु प्रतिरोध",
+"घर्षण बल",
+"गुरुत्वाकर्षण बल"
+],
+answer: "गुरुत्वाकर्षण बल"
+},
+
+{
+question: "निम्नलिखित में से किस पदार्थ का घनत्व सबसे अधिक है?",
+option: [
+"सोना",
+"पारा",
+"तांबा",
+"लोहा"
+],
+answer: "सोना"
+},
+
+{
+question: "सर्वाधिक क्षेत्रफल और उत्पादन वाला बाजरा उत्पादक राज्य ________ है।",
+option: [
+"राजस्थान",
+"मध्य प्रदेश",
+"उत्तर प्रदेश",
+"आंध्र प्रदेश"
+],
+answer: "राजस्थान"
+},
+
+{
+question: "दिसंबर 2025 में भारत के मुख्य सूचना आयुक्त (CIC) के रूप में किसे नियुक्त किया गया है?",
+option: [
+"हीरालाल सामरिया",
+"राज कुमार गोयल",
+"जया वर्मा सिन्हा",
+"विनोद कुमार तिवारी"
+],
+answer: "राज कुमार गोयल"
+},
+
+{
+question: "बिहार में सतत जीविकोपार्जन योजना (SJY) की कार्यान्वयन एजेंसी कौन-सा संगठन है?",
+option: [
+"बिहार राज्य औद्योगिक विकास निगम (BSIDC)",
+"बिहार ग्रामीण आजीविका संवर्धन सोसाइटी (JEEViKA)",
+"बिहार राज्य दुग्ध सहकारी संघ लिमिटेड (COMFED)",
+"बिहार शहरी आधारभूत संरचना विकास निगम (BUIDCO)"
+],
+answer: "बिहार ग्रामीण आजीविका संवर्धन सोसाइटी (JEEViKA)"
+},
+
+{
+question: "यदि एक घड़ी 1 बजे एक बार, 2 बजे दो बार और इसी प्रकार बजती है, तो एक दिन में वह कुल कितनी बार बजेगी?",
+option: [
+"78",
+"156",
+"200",
+"180"
+],
+answer: "156"
+},
+
+{
+question: "एक दो अंकों की संख्या और उसके अंकों के स्थानों को आपस में बदलने पर प्राप्त संख्या का अंतर 36 है। उस संख्या के दोनों अंकों का अंतर कितना है?",
+option: [
+"9",
+"3",
+"5",
+"4"
+],
+answer: "4"
+},
+
+{
+question: "राष्ट्रीय गणित दिवस प्रत्येक वर्ष किस तारीख को मनाया जाता है?",
+option: [
+"21 दिसंबर",
+"22 दिसंबर",
+"26 दिसंबर",
+"28 दिसंबर"
+],
+answer: "22 दिसंबर"
+},
+
+{
+question: "निम्नलिखित में से किसे 16वें वित्त आयोग का अध्यक्ष नियुक्त किया गया है?",
+option: [
+"वाई. वी. रेड्डी",
+"डॉ. विजय केलकर",
+"अरविंद पनगढ़िया",
+"एन. के. सिंह"
+],
+answer: "अरविंद पनगढ़िया"
+},
+
+{
+question: "भौतिकी में आजीवन योगदान के लिए राष्ट्रीय विज्ञान पुरस्कार 2025 में मरणोपरांत विज्ञान रत्न से किसे सम्मानित किया गया?",
+option: [
+"प्रो. सी. एन. आर. राव",
+"प्रो. जयंत विष्णु नार्लीकर",
+"प्रो. ए. पी. जे. अब्दुल कलाम",
+"प्रो. रघुनाथ माशेलकर"
+],
+answer: "प्रो. जयंत विष्णु नार्लीकर"
+},
+
+{
+question: "सुदर्शन झील का निर्माण किसने करवाया था?",
+option: [
+"अशोक",
+"चंद्रगुप्त",
+"समुद्रगुप्त",
+"बिंदुसार"
+],
+answer: "चंद्रगुप्त"
+},
+
+{
+question: "पिता की आयु और पुत्र की आयु का अनुपात 3 : 1 है। उनकी आयु का गुणनफल 147 है। 5 वर्ष बाद उनकी आयु का अनुपात क्या होगा?",
+option: [
+"13 : 6",
+"12 : 5",
+"14 : 6",
+"3 : 2"
+],
+answer: "13 : 6"
+},
+
+{
+question: "निम्नलिखित में से कौन-सा भविष्य निधि, भविष्य निधि अधिनियम 1925 के अंतर्गत स्थापित किया गया है?",
+option: [
+"सांविधिक भविष्य निधि",
+"मान्यता प्राप्त भविष्य निधि",
+"अमान्यता प्राप्त भविष्य निधि",
+"लोक भविष्य निधि"
+],
+answer: "सांविधिक भविष्य निधि"
+},
+
+{
+question: "निम्नलिखित में से प्राकृतिक स्रोत-अम्ल का कौन-सा युग्म गलत सुमेलित है?",
+option: [
+"चींटी का डंक – ऑक्सैलिक अम्ल",
+"सिरका – एसिटिक अम्ल",
+"संतरा – साइट्रिक अम्ल",
+"इमली – टार्टरिक अम्ल"
+],
+answer: "चींटी का डंक – ऑक्सैलिक अम्ल"
+},
+
+{
+question: "निम्नलिखित में से किस राज्य में विधान परिषद नहीं है?",
+option: [
+"महाराष्ट्र",
+"केरल",
+"तेलंगाना",
+"कर्नाटक"
+],
+answer: "केरल"
+},
+
+{
+question: "ग्रामीण बैंक मॉडल की अवधारणा किसने दी थी, जिसने भारत में क्षेत्रीय ग्रामीण बैंकों (RRBs) के निर्माण को प्रेरित किया?",
+option: [
+"अब्दुल हामिद",
+"मुहम्मद यूनुस",
+"रेजवान अहमद तौफीक",
+"जियाउर रहमान"
+],
+answer: "मुहम्मद यूनुस"
+},
+
+{
+question: "भारतीय संविधान में कितने मौलिक कर्तव्य सूचीबद्ध हैं?",
+option: [
+"ग्यारह",
+"आठ",
+"नौ",
+"दस"
+],
+answer: "ग्यारह"
+},
+
+{
+question: "अंतर्राष्ट्रीय महिला दिवस प्रत्येक वर्ष किस तारीख को मनाया जाता है?",
+option: [
+"5 मार्च",
+"8 मार्च",
+"10 अप्रैल",
+"15 फरवरी"
+],
+answer: "8 मार्च"
+},
+
+{
+question: "जनवरी 2022 में भारत सरकार ने यूक्रेन में फँसे भारतीयों को निकालने के लिए कौन-सा निकासी अभियान शुरू किया था?",
+option: [
+"ऑपरेशन गंगा",
+"ऑपरेशन सेफ होमकमिंग",
+"ऑपरेशन वंदे भारत",
+"ऑपरेशन राहत"
+],
+answer: "ऑपरेशन गंगा"
+},
+
+{
+question: "विज्ञान भवन, नई दिल्ली में राष्ट्रपति द्रौपदी मुर्मू द्वारा प्रदान किए गए 58वें ज्ञानपीठ पुरस्कार के प्राप्तकर्ता कौन थे?",
+option: [
+"अमिताव घोष और अरुंधति रॉय",
+"गुलज़ार और जगद्गुरु रामभद्राचार्य",
+"विक्रम सेठ और आशापूर्णा देवी",
+"सी. नारायण रेड्डी और महाश्वेता देवी"
+],
+answer: "गुलज़ार और जगद्गुरु रामभद्राचार्य"
+},
+
+{
+question: "दिव्यांगजनों के समावेशन और सशक्तीकरण का उत्सव मनाने के लिए पर्पल फेस्ट 2025 कब और कहाँ आयोजित किया गया था?",
+option: [
+"15 जनवरी, 2025, इंडिया गेट पर",
+"22 मार्च, 2025, राष्ट्रपति भवन के अमृत उद्यान में",
+"10 फरवरी, 2025, नेहरू पार्क में",
+"18 मार्च, 2025, जवाहरलाल नेहरू स्टेडियम में"
+],
+answer: "22 मार्च, 2025, राष्ट्रपति भवन के अमृत उद्यान में"
+},
+
+{
+question: "तुगलक वंश के शासनकाल के दौरान भारत पर किसने आक्रमण किया था?",
+option: [
+"तैमूर",
+"महमूद गज़नी",
+"चंगेज़ खान",
+"मुहम्मद गौरी"
+],
+answer: "तैमूर"
+},
+
+{
+question: "कौन-सी पर्वत श्रृंखला शिवालिक श्रेणी को अपने एक भाग के रूप में शामिल करती है?",
+option: [
+"पश्चिमी घाट",
+"पूर्वी घाट",
+"हिमालय",
+"अरावली"
+],
+answer: "हिमालय"
+},
+
+{
+question: "पुष्कर मेला पुष्कर में आयोजित होता है। यह किस जिले के अंतर्गत आता है?",
+option: [
+"कोटा",
+"अजमेर",
+"आमेर",
+"बीकानेर"
+],
+answer: "अजमेर"
+},
+
+{
+question: "चंद्रगुप्त मौर्य के शिक्षक कौन थे?",
+option: [
+"विष्णु शर्मा",
+"विष्णु गुप्त",
+"स्कंदगुप्त",
+"कल्हण"
+],
+answer: "विष्णु गुप्त"
+},
+
+{
+question: "राजभाषा विभाग की स्थापना किस वर्ष की गई थी?",
+option: [
+"1970",
+"1975",
+"1980",
+"1985"
+],
+answer: "1975"
+},
+
+{
+question: "बिहार का सर्वाधिक जनसंख्या वाला जिला कौन-सा है?",
+option: [
+"बक्सर",
+"पटना",
+"शिवहर",
+"गया"
+],
+answer: "पटना"
+},
+
+{
+question: "पौधों में लचीलापन किस स्थायी ऊतक के कारण संभव होता है?",
+option: [
+"कोलेनकाइमा",
+"एरेन्काइमा",
+"एपिडर्मिस",
+"क्यूटिकल"
+],
+answer: "कोलेनकाइमा"
+},
+
+{
+question: "‘जोजिला सुरंग परियोजना’ कहाँ स्थित है?",
+option: [
+"उत्तर प्रदेश",
+"सिक्किम",
+"जम्मू और कश्मीर",
+"ओडिशा"
+],
+answer: "जम्मू और कश्मीर"
+},
+
+{
+question: "जुगाली करने वाले मवेशियों में ‘आंत्रिक किण्वन’ के दौरान निम्नलिखित में से कौन-सी गैस उत्पन्न होती है?",
+option: [
+"कार्बन मोनोऑक्साइड",
+"मीथेन",
+"कार्बन डाइऑक्साइड",
+"अमोनिया"
+],
+answer: "मीथेन"
+},
+
+{
+question: "विश्व हिंदी दिवस प्रत्येक वर्ष कब मनाया जाता है?",
+option: [
+"9 जनवरी",
+"10 जनवरी",
+"14 सितंबर",
+"26 जनवरी"
+],
+answer: "10 जनवरी"
+},
+  ], english: [
+{
+  question: "As per Article 106 of the Constitution of India, who among the following determines the salaries of the members of either Houses of Parliament?",
+  option: [
+    "Parliament",
+    "President of India",
+    "Union Finance Ministry",
+    "Finance Commission"
+  ],
+  answer: "Parliament"
+},
+
+{
+  question: "Who was sworn in as the Chief Minister of Delhi in 2025?",
+  option: [
+    "Atishi",
+    "Rekha Gupta",
+    "Sheila Dikshit",
+    "Manjinder Singh Sirsa"
+  ],
+  answer: "Rekha Gupta"
+},
+
+{
+  question: "Pines and Cycas belong to ______.",
+  option: [
+    "Angiosperm",
+    "Thallophyta",
+    "Bryophyta",
+    "Gymnosperm"
+  ],
+  answer: "Gymnosperm"
+},
+
+{
+  question: "Who discovered the cell?",
+  option: [
+    "B. Robert Hook",
+    "T. Shavani",
+    "Schulz",
+    "Carl Andre"
+  ],
+  answer: "B. Robert Hook"
+},
+
+{
+  question: "What is the area of Bihar state?",
+  option: [
+    "98,763 km²",
+    "92,263 km²",
+    "94,163 km²",
+    "99,279 km²"
+  ],
+  answer: "94,163 km²"
+},
+
+{
+  question: "Which of the following statements is correct?\n1. The Khilji Dynasty was the second dynasty to rule the Delhi Sultanate.\n2. The Khilji Dynasty ruled for about 30 years.",
+  option: [
+    "Only 1 Correct",
+    "Only 2 Correct",
+    "Both 1 and 2",
+    "Neither 1 nor 2"
+  ],
+  answer: "Both 1 and 2"
+},
+
+{
+  question: "Megasthenes, a Greek, was the ambassador in the court of which of the following kings?",
+  option: [
+    "Ashoka",
+    "Chandragupta Maurya",
+    "Bimbisara",
+    "Mahapadma Nanda"
+  ],
+  answer: "Chandragupta Maurya"
+},
+
+{
+  question: "Which Article of the Indian Constitution safeguards the freedom of religion in India?",
+  option: [
+    "Article 28",
+    "Article 27",
+    "Article 26",
+    "Article 25"
+  ],
+  answer: "Article 25"
+},
+
+{
+  question: "Implementation का हिन्दी पारिभाषिक शब्द है-",
+  option: [
+    "प्रभावित करना",
+    "निहितार्थ",
+    "आयातित",
+    "कार्यान्वयन"
+  ],
+  answer: "कार्यान्वयन"
+},
+
+{
+  question: "In which year, did Mahatma Gandhi return to India from South Africa?",
+  option: [
+    "1905",
+    "1920",
+    "1915",
+    "1910"
+  ],
+  answer: "1915"
+},
+
+{
+  question: "Raj bought a shirt and saved Rs. 20 when a discount of 25% was given. What was the price of the shirt before the discount?",
+  option: [
+    "Rs. 75",
+    "Rs. 80",
+    "Rs. 90",
+    "Rs. 100"
+  ],
+  answer: "Rs. 80"
+},
+
+{
+  question: "What is the Hindi meaning of the word “Plan”?",
+  option: [
+    "योजना",
+    "फल",
+    "नगर",
+    "समय"
+  ],
+  answer: "योजना"
+},
+
+{
+  question: "The Vedas are considered the earliest literary record of Indo-Aryan civilisation. There are four Vedas: Rigveda, Samaveda, Yajurveda and the fourth one is _______.",
+  option: [
+    "Atharvaveda",
+    "Shilpaveda",
+    "Ayurveda",
+    "Dhanurveda"
+  ],
+  answer: "Atharvaveda"
+},
+
+{
+  question: "When was the Satat Jeevikoparjan Yojana (SJY) launched by the Government of Bihar?",
+  option: [
+    "15th August 2016",
+    "5th August 2018",
+    "2nd October 2015",
+    "1st January 2020"
+  ],
+  answer: "5th August 2018"
+},
+
+{
+  question: "Who was awarded the ‘Player of the Match’ in the final of the ICC Women’s World Cup 2025?",
+  option: [
+    "Smriti Mandhana",
+    "Laura Wolvaardt",
+    "Shafali Verma",
+    "Deepti Sharma"
+  ],
+  answer: "Shafali Verma"
+},
+
+{
+  question: "Where is the headquarters of the National Turmeric Board, which was established in 2025?",
+  option: [
+    "Kolkata",
+    "Kochi",
+    "Guntur",
+    "Nizamabad"
+  ],
+  answer: "Nizamabad"
+},
+
+{
+  question: "The Lakshmana temple of Khajuraho, dedicated to Lord Vishnu, is an example of which style of temple architecture?",
+  option: [
+    "Vesara",
+    "Nagara",
+    "Dravidian",
+    "Odisha"
+  ],
+  answer: "Nagara"
+},
+
+{
+  question: "Which of the following pairs is not correctly matched?",
+  option: [
+    "Vitamin C – Ascorbic acid",
+    "Vitamin A – Retinol",
+    "Vitamin D – Calciferol",
+    "Vitamin E – Calcifero"
+  ],
+  answer: "Vitamin E – Calcifero"
+},
+
+{
+  question: "In 1861, Archaeological Survey of India was founded by :",
+  option: [
+    "Alexander Cunningham",
+    "Jayanti Patnaik",
+    "Saurabh Kumar",
+    "Girish Kumar"
+  ],
+  answer: "Alexander Cunningham"
+},
+
+{
+  question: "Who has been selected for the Krishi Media Award 2025?",
+  option: [
+    "P. Sainath",
+    "Amshi Prasannakumar",
+    "Ravish Kumar",
+    "Nikhil Wagle"
+  ],
+  answer: "Amshi Prasannakumar"
+},
+
+{
+  question: "Where was India's First National Dolphin Research Centre (NDRC) inaugurated?",
+  option: [
+    "Varanasi, Uttar Pradesh",
+    "Patna, Bihar",
+    "Guwahati, Assam",
+    "Kolkata, West Bengal"
+  ],
+  answer: "Patna, Bihar"
+},
+
+{
+  question: "Who was the author of Mahatma Gandhi and Bihar, Some Reminiscences?",
+  option: [
+    "J P Narayan",
+    "Dr Rajendra Prasad",
+    "Karpoori Thakur",
+    "Raj Kumar Shukla"
+  ],
+  answer: "Dr Rajendra Prasad"
+},
+
+{
+  question: "\"Contingency Fund\" का हिंदी रूप चुनें–",
+  option: [
+    "आकस्मिक निधि",
+    "राजस्व निधि",
+    "बजट निधि",
+    "विकास निधि"
+  ],
+  answer: "आकस्मिक निधि"
+},
+
+{
+  question: "Who became the 47th President of the United States in 2025?",
+  option: [
+    "Donald Trump",
+    "Joe Biden",
+    "Kamala Harris",
+    "JD Vance"
+  ],
+  answer: "Donald Trump"
+},
+
+{
+  question: "One of the laureates who received half of the 2025 Nobel Prize in Economic Sciences is:",
+  option: [
+    "Daron Acemoglu",
+    "Esther Duflo",
+    "Joel Mokyr",
+    "Angus Deaton"
+  ],
+  answer: "Joel Mokyr"
+},
+
+{
+  question: "रामधारी सिंह दिनकर को किस कृति पर साहित्य अकादमी पुरस्कार मिला?",
+  option: [
+    "द्वंद्व",
+    "उर्वशी",
+    "संस्कृति के चार अध्याय",
+    "इनमें से कोई नहीं"
+  ],
+  answer: "संस्कृति के चार अध्याय"
+},
+
+{
+  question: "Who is the author of 'Mitti Ki Baarat', a collection of poems?",
+  option: [
+    "Jaishankar Prasad",
+    "Shivmangal Singh Suman",
+    "Mahadevi Verma",
+    "Maithilisharan Gupt"
+  ],
+  answer: "Shivmangal Singh Suman"
+},
+
+{
+  question: "The remainder when $7^7$ is divided by 4 is -",
+  option: [
+    "1",
+    "2",
+    "3",
+    "0"
+  ],
+  answer: "3"
+},
+
+{
+  question: "Where was the AI for Good Global Summit held in July 2025?",
+  option: [
+    "Paris, France",
+    "New York, USA",
+    "Geneva, Switzerland",
+    "Tokyo, Japan"
+  ],
+  answer: "Geneva, Switzerland"
+},
+
+{
+  question: "Islam is a major world religion promulgated by the Prophet Muhammad in Arabia in the:",
+  option: [
+    "5th century",
+    "4th century",
+    "7th century",
+    "6th century"
+  ],
+  answer: "7th century"
+},
+
+{
+  question: "Who is the author of the book ‘Modi Government: New Surge of Communalism’?",
+  option: [
+    "M J Akbar",
+    "Jaswant Singh",
+    "Pranab Mukherjee",
+    "Sitaram Yechury"
+  ],
+  answer: "Sitaram Yechury"
+},
+
+{
+  question: "Which one of the following planets has the largest number of natural satellites or Moons?",
+  option: [
+    "Jupiter",
+    "Mars",
+    "Saturn",
+    "Venus"
+  ],
+  answer: "Saturn"
+},
+
+{
+  question: "Which Law of Newton states that for every action (force) in nature there is an equal and opposite reaction?",
+  option: [
+    "2nd",
+    "1st",
+    "4th",
+    "3rd"
+  ],
+  answer: "3rd"
+},
+
+{
+  question: "With regard to the river Mahanadi, which of the following statements is incorrect?",
+  option: [
+    "Mahanadi originates from the highlands of Chhattisgarh.",
+    "It passes through Odisha and reaches the Bay of Bengal.",
+    "The length of this river is about 680 km.",
+    "Its drainage basin extends to Maharashtra, Chhattisgarh, Jharkhand and Odisha."
+  ],
+  answer: "The length of this river is about 680 km."
+},
+
+{
+  question: "Who among the following was appointed as the Governor of Jharkhand in February 2023?",
+  option: [
+    "CP Radhakrishnan",
+    "Ramesh Bais",
+    "T Gahlot",
+    "RN Ravi"
+  ],
+  answer: "CP Radhakrishnan"
+},
+
+{
+  question: "The total number of factors of 540 is-",
+  option: [
+    "24",
+    "30",
+    "48",
+    "54"
+  ],
+  answer: "24"
+},
+
+{
+  question: "Which of the following organizations has launched SAARTHI mobile app?",
+  option: [
+    "RBI",
+    "SEBI",
+    "IRDAI",
+    "TRAI"
+  ],
+  answer: "SEBI"
+},
+
+{
+  question: "The Barabar caves are associated with:",
+  option: [
+    "Ajivikas",
+    "Jainas",
+    "Buddhists",
+    "Brahmanas"
+  ],
+  answer: "Ajivikas"
+},
+
+{
+  question: "An error of 2% in excess is made while measuring the side of a square. The percentage of error in the calculated area of the square is -",
+  option: [
+    "2%",
+    "4%",
+    "4.4%",
+    "4.04%"
+  ],
+  answer: "4.04%"
+},
+
+{
+  question: "The Mughal ruler Akbar was born in _________.",
+  option: [
+    "Amarkot",
+    "Fatehpur Sikri",
+    "Sialkot",
+    "Agra"
+  ],
+  answer: "Amarkot"
+},
+
+{
+  question: "The guardian of the Constitution of India is:",
+  option: [
+    "The Supreme Court",
+    "The President",
+    "The Rajya Sabha",
+    "The Lok Sabha"
+  ],
+  answer: "The Supreme Court"
+},
+
+{
+  question: "When is National Panchayati Raj Day observed in India?",
+  option: [
+    "10th April",
+    "24th April",
+    "4th June",
+    "3rd May"
+  ],
+  answer: "24th April"
+},
+
+{
+  question: "In August 2025, Spanish tennis star Carlos Alcaraz won his first-ever Cincinnati Open title after which player retired in the final?",
+  option: [
+    "Alexander Zverev",
+    "Novak Djokovic",
+    "Jannik Sinner",
+    "Danil Medvedev"
+  ],
+  answer: "Jannik Sinner"
+},
+
+{
+  question: "'Operation Flood' is also known as",
+  option: [
+    "Blue Revolution",
+    "Pink Revolution",
+    "Silver Revolution",
+    "White Revolution"
+  ],
+  answer: "White Revolution"
+},
+
+{
+  question: "How many fundamental duties were added by the 42nd Constitutional Amendment Act 1976?",
+  option: [
+    "Ten",
+    "Eleven",
+    "Fifteen",
+    "Thirteen"
+  ],
+  answer: "Ten"
+},
+
+{
+  question: "What is the capital of Arunachal Pradesh?",
+  option: [
+    "Kohima",
+    "Aizawl",
+    "Imphal",
+    "Itanagar"
+  ],
+  answer: "Itanagar"
+},
+
+{
+  question: "Which organisation partnered with NABARD for 'Climate Changemakers' dialogue in August 2024?",
+  option: [
+    "United Nations",
+    "IMF",
+    "World Bank",
+    "Deutsche Gesellschaft für Internationale Zusammenarbeit GIZ GmbH"
+  ],
+  answer: "Deutsche Gesellschaft für Internationale Zusammenarbeit GIZ GmbH"
+},
+
+{
+  question: "What is meant by the expression 'rule of law'?",
+  option: [
+    "Law is subjective to one's understanding",
+    "No person is above law",
+    "Rules that help making law",
+    "Rules to become a lawyer"
+  ],
+  answer: "No person is above law"
+},
+
+{
+  question: "Which of the following number is the smallest?",
+  option: [
+    "$\\frac{7}{11}$",
+    "$\\frac{3}{4}$",
+    "$\\frac{5}{7}$",
+    "$\\frac{4}{5}$"
+  ],
+  answer: "$\\frac{7}{11}$"
+},
+
+{
+  question: "Who has been appointed as the Chairperson of the high-level committee (HLC) formed by SEBI to review provisions governing conflict of interest, disclosures, and related obligations?",
+  option: [
+    "Uday Kotak",
+    "Injeti Srinivas",
+    "Pratyush Sinha",
+    "G Mahalingam"
+  ],
+  answer: "Pratyush Sinha"
+},
+
+{
+  question: "The Rigveda comprises a compilation of 1028 hymns that are categorised into how many Mandalas?",
+  option: [
+    "12",
+    "15",
+    "8",
+    "10"
+  ],
+  answer: "10"
+},
+
+{
+  question: "Who is the originator of the theory of \"Limited Sovereignty\"?",
+  option: [
+    "Locke",
+    "Rousseau",
+    "Spencer",
+    "Garner"
+  ],
+  answer: "Locke"
+},
+
+{
+  question: "As of 2025, which country leads the world with the highest number of satellites in orbit, largely due to SpaceX’s Starlink project?",
+  option: [
+    "Russia",
+    "China",
+    "United States",
+    "United Kingdom"
+  ],
+  answer: "United States"
+},
+
+{
+  question: "A convex lens is dipped in a liquid whose refractive index is equal to the refractive index of the lens. Then the focal length of the lens will:",
+  option: [
+    "Remain unchanged",
+    "Become zero",
+    "Become small but non-zero",
+    "Become infinite"
+  ],
+  answer: "Become infinite"
+},
+
+{
+  question: "What is the Hindi meaning of the word “Transfer”?",
+  option: [
+    "स्वागत",
+    "स्थानांतरण",
+    "सूचना",
+    "विश्राम"
+  ],
+  answer: "स्थानांतरण"
+},
+
+{
+  question: "Which Hindi word best corresponds to the English term \"Adversity\"?",
+  option: [
+    "बदला",
+    "परिस्थिति",
+    "विपरीत",
+    "विपत्ति"
+  ],
+  answer: "विपत्ति"
+},
+
+{
+  question: "America dropped the atom bomb on Nagasaki on:",
+  option: [
+    "6 August, 1945",
+    "9 August, 1945",
+    "7th August, 1944",
+    "15th August, 1943"
+  ],
+  answer: "9 August, 1945"
+},
+
+{
+  question: "Who was elected as the Speaker of the 18th Bihar Legislative Assembly in December 2025?",
+  option: [
+    "Nand Kishore Yadav",
+    "Narendra Narayan Yadav",
+    "Dr. Prem Kumar",
+    "Samrat Chaudhary"
+  ],
+  answer: "Dr. Prem Kumar"
+},
+
+{
+  question: "On which of the following days was Khilafat Day observed?",
+  option: [
+    "13 April, 1919",
+    "17 October, 1919",
+    "23 November, 1919",
+    "7 May, 1919"
+  ],
+  answer: "17 October, 1919"
+},
+
+{
+  question: "When is National Unity Day observed?",
+  option: [
+    "31 November",
+    "8 November",
+    "31 October",
+    "11 March"
+  ],
+  answer: "31 October"
+},
+
+{
+  question: "When is the National Voters' Day (NVD) observed in India?",
+  option: [
+    "24 January",
+    "25 January",
+    "26 January",
+    "27 January"
+  ],
+  answer: "25 January"
+},
+
+{
+  question: "Where was the first parallel government made during the Quit India Movement?",
+  option: [
+    "Satara",
+    "Ballia",
+    "Tamluk",
+    "Lucknow"
+  ],
+  answer: "Tamluk"
+},
+
+{
+  question: "What is the official state bird of Bihar?",
+  option: [
+    "Great Hornbill",
+    "House Crow",
+    "Indian Robin",
+    "House Sparrow"
+  ],
+  answer: "House Sparrow"
+},
+
+{
+  question: "Which of the following Thermal power plant is not situated in Bihar?",
+  option: [
+    "Muzaffarpur",
+    "Barauni",
+    "Auraiya",
+    "Kahalgaon"
+  ],
+  answer: "Auraiya"
+},
+
+{
+  question: "Ram can paint a fence by himself in 12 hours. Shyam can paint the same fence by herself in 18 hours. If they start at the same time and work together without stopping, how long will it take them to paint the entire fence?",
+  option: [
+    "10 hours",
+    "8 hours",
+    "7.2 hours",
+    "16 hours"
+  ],
+  answer: "7.2 hours"
+},
+
+{
+  question: "Which of the following statements regarding the 'Patna Metro Rail Project' status in 2025 is CORRECT?\n1. The first trial run of the Priority Corridor (Malahi Pakri to New ISBT) was conducted in June 2025.\n2. The project is being funded primarily by the World Bank.\n3. It consists of two corridors with a total length of approximately 31 km.",
+  option: [
+    "1 and 2 only",
+    "1 and 3 only",
+    "2 and 3 only",
+    "1, 2, and 3"
+  ],
+  answer: "1 and 3 only"
+},
+
+{
+  question: "Hirakud Dam is built on the river:",
+  option: [
+    "Mahanadi",
+    "Brahmaputra",
+    "Godavari",
+    "Ganga"
+  ],
+  answer: "Mahanadi"
+},
+
+{
+  question: "Choose the correct Hindi translation for \"unique\":",
+  option: [
+    "पुराना",
+    "अनूठा",
+    "नवप्रवर्तनशील",
+    "समर्थ"
+  ],
+  answer: "अनूठा"
+},
+
+{
+  question: "What is the theme for World Rabies Day 2024?",
+  option: [
+    "One Health Approach",
+    "Rabies: Facts and Prevention",
+    "Breaking Rabies Boundaries",
+    "Eradicating Rabies by 2030"
+  ],
+  answer: "Breaking Rabies Boundaries"
+},
+
+{
+  question: "The attractional force applied by the earth on an object in the downward direction is called",
+  option: [
+    "Muscular Force",
+    "Air Resistance",
+    "Frictional Force",
+    "Gravitational Force"
+  ],
+  answer: "Gravitational Force"
+},
+
+{
+  question: "Which of the following substances has the highest density?",
+  option: [
+    "Gold",
+    "Mercury",
+    "Copper",
+    "Iron"
+  ],
+  answer: "Gold"
+},
+
+{
+  question: "The state having the maximum area and production of pearl millet is ________.",
+  option: [
+    "Rajasthan",
+    "Madhya Pradesh",
+    "Uttar Pradesh",
+    "Andhra Pradesh"
+  ],
+  answer: "Rajasthan"
+},
+
+{
+  question: "Who has been appointed as the Chief Information Commissioner (CIC) of India in December 2025?",
+  option: [
+    "Heeralal Samariya",
+    "Raj Kumar Goyal",
+    "Jaya Verma Sinha",
+    "Vinod Kumar Tiwari"
+  ],
+  answer: "Raj Kumar Goyal"
+},
+
+{
+  question: "Which organization is the implementing agency for the Satat Jeevikoparjan Yojana (SJY) in Bihar?",
+  option: [
+    "Bihar State Industrial Development Corporation (BSIDC)",
+    "Bihar Rural Livelihoods Promotion Society (JEEViKA)",
+    "Bihar State Milk Co-operative Federation Ltd. (COMFED)",
+    "Bihar Urban Infrastructure Development Corporation (BUIDCO)"
+  ],
+  answer: "Bihar Rural Livelihoods Promotion Society (JEEViKA)"
+},
+
+{
+  question: "If a clock strikes once at 1 o'clock, twice at 2 o'clock and so on, how many times will it strike in a day?",
+  option: [
+    "78",
+    "156",
+    "200",
+    "180"
+  ],
+  answer: "156"
+},
+
+{
+  question: "The difference between a two-digit number and the number obtained by interchanging the positions of its digits is 36. What is the difference between the two digits of that number?",
+  option: [
+    "9",
+    "3",
+    "5",
+    "4"
+  ],
+  answer: "4"
+},
+
+{
+  question: "On which date is National Mathematics Day celebrated annually?",
+  option: [
+    "December 21",
+    "December 22",
+    "December 26",
+    "December 28"
+  ],
+  answer: "December 22"
+},
+
+{
+  question: "Who among the following is appointed as the chairman of the 16th Finance Commission?",
+  option: [
+    "YV Reddy",
+    "Dr Vijay Kelkar",
+    "Arvind Panagariya",
+    "NK Singh"
+  ],
+  answer: "Arvind Panagariya"
+},
+
+{
+  question: "Who was posthumously awarded the Vigyan Ratna in the Rashtriya Vigyan Puraskar 2025 for lifetime contributions to physics?",
+  option: [
+    "Prof. C.N.R. Rao",
+    "Prof. Jayant Vishnu Narlikar",
+    "Prof. A.P.J. Abdul Kalam",
+    "Prof. Raghunath Mashelkar"
+  ],
+  answer: "Prof. Jayant Vishnu Narlikar"
+},
+
+{
+  question: "Who got built Sudarshan Lake?",
+  option: [
+    "Ashoka",
+    "Chandragupta",
+    "Samudragupta",
+    "Bindusara"
+  ],
+  answer: "Chandragupta"
+},
+
+{
+  question: "The ratio of the father's age to the son’s age is 3 ∶ 1. The product of their ages is 147. The ratio of their ages after 5 year will be-",
+  option: [
+    "13 ∶ 6",
+    "12 ∶ 5",
+    "14 ∶ 6",
+    "3 ∶ 2"
+  ],
+  answer: "13 ∶ 6"
+},
+
+{
+  question: "Which one of the following Provident Fund is set up under the Provident Fund Act 1925?",
+  option: [
+    "Statutory Provident Fund",
+    "Recognised Provident Fund",
+    "Unrecognised Provident Fund",
+    "Public Provident Fund"
+  ],
+  answer: "Statutory Provident Fund"
+},
+
+{
+  question: "Which of the following pair of natural source-acid pair is matched incorrectly?",
+  option: [
+    "Ant sting - Oxalic acid",
+    "Vinegar - Acetic acid",
+    "Orange - Citric acid",
+    "Tamarind - Tartaric acid"
+  ],
+  answer: "Ant sting - Oxalic acid"
+},
+
+{
+  question: "Which state does NOT have a Vidhan Parishad (Legislative Council)?",
+  option: [
+    "Maharashtra",
+    "Kerala",
+    "Telangana",
+    "Karnataka"
+  ],
+  answer: "Kerala"
+},
+
+{
+  question: "Who gave the concept of the Grameen Bank Model, which has inspired the creation of Regional Rural Banks (RRBS) in India?",
+  option: [
+    "Abdul Hamid",
+    "Muhammad Yunus",
+    "Rejwan Ahammad Taufiq",
+    "Ziaur Rahman"
+  ],
+  answer: "Muhammad Yunus"
+},
+
+{
+  question: "How many Fundamental Duties are listed in the Indian Constitution?",
+  option: [
+    "Eleven",
+    "Eight",
+    "Nine",
+    "Ten"
+  ],
+  answer: "Eleven"
+},
+
+{
+  question: "On which date is International Women’s Day celebrated annually?",
+  option: [
+    "5 March",
+    "8 March",
+    "10 April",
+    "15 February"
+  ],
+  answer: "8 March"
+},
+
+{
+  question: "In January 2022, which evacuation mission did the government of India launch to evacuate the Indians stranded in Ukraine?",
+  option: [
+    "Operation Ganga",
+    "Operation Safe Homecoming",
+    "Operation Vande Bharat",
+    "Operation Raahat"
+  ],
+  answer: "Operation Ganga"
+},
+
+{
+  question: "Who were the recipients of the 58th Jnanpith Award, as conferred by President Droupadi Murmu at Vigyan Bhavan, New Delhi?",
+  option: [
+    "Amitav Ghosh and Arundhati Roy",
+    "Gulzar and Jagadguru Rambhadracharya",
+    "Vikram Seth and Ashapurna Devi",
+    "C. Narayana Reddy and Mahasweta Devi"
+  ],
+  answer: "Gulzar and Jagadguru Rambhadracharya"
+},
+
+{
+  question: "When and where was the Purple Fest 2025 held to celebrate inclusivity and empowerment for Divyangjan?",
+  option: [
+    "January 15, 2025, at India Gate",
+    "March 22, 2025, at Rashtrapati Bhavan’s Amrit Udyan",
+    "February 10, 2025, at Nehru Park",
+    "March 18, 2025, at Jawaharlal Nehru Stadium"
+  ],
+  answer: "March 22, 2025, at Rashtrapati Bhavan’s Amrit Udyan"
+},
+
+{
+  question: "Who invaded India during the rule of Tughlaq Dynasty?",
+  option: [
+    "Timur",
+    "Mahmud of Ghazni",
+    "Chengiz Khan",
+    "Muhammad Ghori"
+  ],
+  answer: "Timur"
+},
+
+{
+  question: "Which mountain range includes the Shiwalik range as a part?",
+  option: [
+    "Western Ghats",
+    "Eastern Ghats",
+    "Himalayas",
+    "Aravalli"
+  ],
+  answer: "Himalayas"
+},
+
+{
+  question: "Pushkar Mela is held in Pushkar. Which district does it come under?",
+  option: [
+    "Kota",
+    "Ajmer",
+    "Amer",
+    "Bikaner"
+  ],
+  answer: "Ajmer"
+},
+
+{
+  question: "Who was the teacher of Chandragupta Maurya?",
+  option: [
+    "Vishnu Sharma",
+    "Vishnu Gupta",
+    "Skandgupta",
+    "Kalhan"
+  ],
+  answer: "Vishnu Gupta"
+},
+
+{
+  question: "The Department of Official Language was established in which year?",
+  option: [
+    "1970",
+    "1975",
+    "1980",
+    "1985"
+  ],
+  answer: "1975"
+},
+
+{
+  question: "Which is the most populated district of Bihar?",
+  option: [
+    "Buxar",
+    "Patna",
+    "Shivhar",
+    "Gaya"
+  ],
+  answer: "Patna"
+},
+
+{
+  question: "What is the name of the permanent tissue due to which flexibility in plants is possible?",
+  option: [
+    "Collenchyma",
+    "Aerenchyma",
+    "Epidermis",
+    "Cuticle"
+  ],
+  answer: "Collenchyma"
+},
+
+{
+  question: "Where is the 'Zojila Tunnel Project' located?",
+  option: [
+    "Uttar Pradesh",
+    "Sikkim",
+    "Jammu & Kashmir",
+    "Odisha"
+  ],
+  answer: "Jammu & Kashmir"
+},
+
+{
+  question: "Which of the following gas is produced by ruminating cattle during 'enteric fermentation'?",
+  option: [
+    "Carbon monoxide",
+    "Methane",
+    "Carbon dioxide",
+    "Ammonia"
+  ],
+  answer: "Methane"
+},
+
+{
+  question: "When is World Hindi Day (Vishwa Hindi Diwas) observed annually?",
+  option: [
+    "January 9",
+    "January 10",
+    "September 14",
+    "January 26"
+  ],
+  answer: "January 10"
+},
+] } },
   { id: 3, name: "Paper Set 3", available: false, languages: { hindi: [], english: [] } },
   { id: 4, name: "Paper Set 4", available: false, languages: { hindi: [], english: [] } },
 ];
